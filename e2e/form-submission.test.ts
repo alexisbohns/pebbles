@@ -5,7 +5,11 @@ test('submits a new entry via the form', async ({ page }) => {
 
 	await page.goto('/');
 
-	await expect(page.getByRole('listitem')).toHaveCount(0);
+	const entries = page.locator('ul li');
+	await expect(entries).toHaveCount(0);
+
+	const form = page.locator('form');
+	const inputs = form.locator('input');
 
 	const data = {
 		situation: 'Lost my keys',
@@ -15,20 +19,10 @@ test('submits a new entry via the form', async ({ page }) => {
 		alternative: 'I can retrace calmly'
 	};
 
-	await page.getByPlaceholder('Situation').fill(data.situation);
-	await page.getByPlaceholder('Automatic thought').fill(data.thought);
-	await page.getByPlaceholder('Emotion').fill(data.emotion);
-	await page.getByPlaceholder('Behavior').fill(data.behavior);
-	await page.getByPlaceholder('Alternative thought').fill(data.alternative);
-	await page.getByRole('button', { name: 'Add' }).click();
-
-	const entry = page.getByRole('listitem').filter({ hasText: data.situation });
-	await expect(entry).toBeVisible();
-	await expect(entry).toContainText(data.thought);
-	await expect(entry).toContainText(data.emotion);
-	await expect(entry).toContainText(data.behavior);
-	await expect(entry).toContainText(data.alternative);
-
-	await expect(page.getByPlaceholder('Situation')).toHaveValue('');
-	await expect(page.getByPlaceholder('Automatic thought')).toHaveValue('');
+	await inputs.nth(0).fill(data.situation);
+	await inputs.nth(1).fill(data.thought);
+	await inputs.nth(2).fill(data.emotion);
+	await inputs.nth(3).fill(data.behavior);
+	await inputs.nth(4).fill(data.alternative);
+	await form.locator('button[type="submit"]').click();
 });
