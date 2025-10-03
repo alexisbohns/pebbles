@@ -2,7 +2,7 @@
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/alexisbohns/pebbles)
 
-Pebbles is a small experimental app inspired by **Beck’s cognitive columns** (CBT) and the work of James Clear (*Atomic Habits*) and Daniel Kahneman (*Thinking, Fast and Slow*).  
+Pebbles is a small experimental app inspired by **Beck’s cognitive columns** (CBT) and the work of James Clear (_Atomic Habits_) and Daniel Kahneman (_Thinking, Fast and Slow_).  
 The goal is to provide a simple, accessible tool to **identify automatic thoughts**, connect them to emotions and behaviors, and reframe them with more helpful alternatives.
 
 ## 🚀 Current features
