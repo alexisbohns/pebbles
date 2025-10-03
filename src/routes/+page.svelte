@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { entriesStore, type Entry } from '$lib/stores/entriesStore';
-  import { get } from 'svelte/store';
+  import { entriesStore } from '$lib/stores/entriesStore';
 
   let situation = '';
   let thought = '';
@@ -9,12 +8,13 @@
   let alternative = '';
 
   const addEntry = () => {
-    if (!situation || !thought) return; // garde-fou minimal
+    if (!situation || !thought) return;
     entriesStore.add({ situation, thought, emotion, behavior, alternative });
     situation = thought = emotion = behavior = alternative = '';
   };
 
-  $: entries = get(entriesStore);
+  // ⚡ Grâce à Svelte, $entriesStore est auto-réactif
+  $: entries = $entriesStore;
 </script>
 
 <h1>Pebbles 🪨</h1>
@@ -34,7 +34,7 @@
     <li>
       <strong>{entry.situation}</strong> → {entry.thought}  
       <br /> {entry.emotion} | {entry.behavior} | {entry.alternative}
-      <small>({new Date(entry.date).toLocaleString()})</small>
+      <small> ({new Date(entry.date).toLocaleString()})</small>
       <button on:click={() => entriesStore.remove(entry.id)}>🗑</button>
     </li>
   {/each}
