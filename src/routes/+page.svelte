@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { t } from '$lib';
   import { entriesStore } from '$lib/stores/entriesStore';
 
   let situation = '';
@@ -17,18 +18,18 @@
   $: entries = $entriesStore;
 </script>
 
-<h1>Pebbles 🪨</h1>
+<h1>{$t('home.title')}</h1>
 
 <form on:submit|preventDefault={addEntry}>
-  <input placeholder="Situation" bind:value={situation} />
-  <input placeholder="Pensée automatique" bind:value={thought} />
-  <input placeholder="Émotion" bind:value={emotion} />
-  <input placeholder="Comportement" bind:value={behavior} />
-  <input placeholder="Pensée alternative" bind:value={alternative} />
-  <button type="submit">Ajouter</button>
+  <input placeholder={$t('home.form.situation')} bind:value={situation} />
+  <input placeholder={$t('home.form.thought')} bind:value={thought} />
+  <input placeholder={$t('home.form.emotion')} bind:value={emotion} />
+  <input placeholder={$t('home.form.behavior')} bind:value={behavior} />
+  <input placeholder={$t('home.form.alternative')} bind:value={alternative} />
+  <button type="submit">{$t('home.form.submit')}</button>
 </form>
 
-<h2>Historique</h2>
+<h2>{$t('home.history.title')}</h2>
 <ul>
   {#each entries as entry (entry.id)}
     <li>

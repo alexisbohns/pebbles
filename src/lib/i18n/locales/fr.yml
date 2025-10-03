@@ -1,0 +1,13 @@
+common:
+  back: Retour
+home:
+  title: Pebbles 🪨
+  form:
+    situation: Situation
+    thought: Pensée automatique
+    emotion: Émotion
+    behavior: Comportement
+    alternative: Pensée alternative
+    submit: Ajouter
+  history:
+    title: Historique
