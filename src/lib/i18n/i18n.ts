@@ -17,7 +17,7 @@ for (const path in rawFiles) {
   const locale = path.split('/').pop()!.split('.')[0]
   try {
     catalogs[locale] = (yamlLoad(raw) as Dict) ?? {}
-  } catch (e) {
+  } catch {
     catalogs[locale] = {}
   }
 }
@@ -28,8 +28,14 @@ export const locale = writable<Locale>((('fr' in catalogs ? 'fr' : (Object.keys(
 
 export const dictionary: Readable<Dict> = derived(locale, ($l) => catalogs[$l] ?? {})
 
-function get(obj: any, path: string) {
-  return path.split('.').reduce((o, k) => (o && typeof o === 'object' ? (o as any)[k] : undefined), obj)
+function get(obj: unknown, path: string) {
+  return path.split('.').reduce<unknown>((current, key) => {
+    if (current && typeof current === 'object') {
+      return (current as Record<string, unknown>)[key]
+    }
+
+    return undefined
+  }, obj)
 }
 
 function format(str: string, params?: Record<string, unknown>) {
