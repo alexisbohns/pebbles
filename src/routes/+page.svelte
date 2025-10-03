@@ -14,7 +14,6 @@
 		situation = thought = emotion = behavior = alternative = '';
 	};
 
-	// ⚡ Grâce à Svelte, $entriesStore est auto-réactif
 	$: entries = $entriesStore;
 </script>
 
