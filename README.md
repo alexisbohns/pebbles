@@ -1,38 +1,39 @@
-# sv
+# Pebbles
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/alexisbohns/pebbles)
 
-## Creating a project
+Pebbles is a small experimental app inspired by **Beck’s cognitive columns** (CBT) and the work of James Clear (*Atomic Habits*) and Daniel Kahneman (*Thinking, Fast and Slow*).  
+The goal is to provide a simple, accessible tool to **identify automatic thoughts**, connect them to emotions and behaviors, and reframe them with more helpful alternatives.
 
-If you're seeing this, you've probably already done this step. Congrats!
+## 🚀 Current features
 
-```sh
-# create a new project in the current directory
-npx sv create
+- Add a situation, automatic thought, emotion, behavior, and alternative thought.
+- Local data persistence in the browser (**localStorage**, no account required).
+- Reactive history (entries update instantly).
+- Delete entries.
 
-# create a new project in my-app
-npx sv create my-app
-```
+## 🛠️ Tech stack
 
-## Developing
+- [SvelteKit](https://kit.svelte.dev/)
+- Local persistence via `localStorage`
+- Deployment with [Vercel](https://vercel.com/)
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## 📦 Setup & development
 
-```sh
+Clone the repo and install dependencies:
+
+```bash
+git clone https://github.com/alexisbohns/pebbles.git
+cd pebbles
+npm install
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+Then open http://localhost:5173.
 
-To create a production version of your app:
+## 🌱 Roadmap
 
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+- Improve the UI (Tailwind/Skeleton).
+- Add tags/themes to categorize entries.
+- Guided suggestions (cognitive biases, reframing).
+- Accounts and multi-device sync with Supabase.
