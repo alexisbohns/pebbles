@@ -34,7 +34,7 @@
 
 <style lang="stylus">
 	.question
-		padding 1.5rem
+		padding 1rem 0
 		display flex
 		flex-direction column
 		gap 0.5rem

@@ -73,6 +73,25 @@
 	{/each}
 </ul>
 
-<div class="page-header">
+<div class="page-footer">
+	<p>{$t('legal.mention')}</p>
+	<a
+		href={`https://${$t('legal.external_link').replace(/^https?:\/\//, '')}`}
+		target="_blank"
+		rel="noopener noreferrer"
+		aria-label={$t('legal.external_label')}
+		title={$t('legal.external_label')}>{$t('legal.external_label')}</a
+	>
 	<ThemeToggle />
 </div>
+
+<style lang="stylus">
+	.page-footer
+		display flex
+		flex-direction column
+		align-items start
+		gap .5rem
+
+		font-size .8rem
+		color var(--e05)
+</style>
