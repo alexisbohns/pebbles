@@ -14,4 +14,4 @@ Le code et l'identité visuelle de Pebbles demeurent la propriété de leurs aut
 
 Nous recommandons un accompagnement par des thérapeutes certifié·e·s. En France, consultez l'annuaire tenu par l'Association Française de Thérapie Comportementale et Cognitive (AFTCC).
 
-- [Accéder à l'annuaire de l'AFTCC](https://www.aftcc.org/annuaire)
+[Accéder à l'annuaire de l'AFTCC](https://www.aftcc.org/annuaire)

@@ -18,7 +18,7 @@
 {#each tokens as token, index (keyForToken(token, index))}
 	{#if token.type === 'text'}
 		{@const text = token as Tokens.Text}
-		{text.text}
+		{text.raw ?? text.text}
 	{:else if token.type === 'strong'}
 		{@const strong = token as Tokens.Strong}
 		<strong><svelte:self tokens={strong.tokens} /></strong>
