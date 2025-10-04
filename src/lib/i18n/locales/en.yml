@@ -9,30 +9,30 @@ form:
     name: Situation
     question: 'What is the situation?'
     description: 'The context, place, people involved: where, when, who, what, how, why? This is the opening and the disruptive element of my story.'
-    placeholder: 'I was...'
+    placeholder: 'I was '
   thought:
     name: Automatic thought
     question: 'What were my thoughts? What did I tell myself?'
     description: 'The sentences and inner voices we repeat to ourselves. It sometimes takes effort to put them into words, because over time they tend to sink into the unconscious. But everyone has them — you just need to dig a bit; it’s essential self-archaeology.'
-    placeholder: 'I told myself...'
+    placeholder: 'I told myself '
   emotion:
     name: Emotion
     question: 'What emotions and sensations did I feel?'
     description: 'Fear, stress, anger, shame, helplessness; but also stomach pain, tight throat, cold sweat, clenched jaw, hives — emotions often come with bodily sensations that are their symptoms. Paying attention to them increases self-awareness and emotional precision.'
-    placeholder: 'I felt...'
+    placeholder: 'I felt '
   behavior:
     name: Behavior
     question: 'What did I do? How did I react spontaneously? What happened next?'
     description: 'Did I flee or avoid? Attack or retaliate? Freeze or inhibit myself? Cry or scream? Break something or hit? Lie or accuse? Eat or throw up? Go for a run or binge-watch/play games? What was my attitude, my reflex to react, cope, or navigate through this situation?'
-    placeholder: 'So I...'
+    placeholder: 'So I '
   learning:
     name: Learning
     question: 'What does this situation teach me about myself?'
     description: 'What do my emotions, thoughts, and reactions reveal about me? What explains them? What are my mechanisms, my engine, my fuel, my triggers?'
-    placeholder: 'What this situation taught me about myself is that...'
+    placeholder: 'What this situation taught me about myself is that '
   alternative:
     name: Alternative thought
     question: 'What advice would I give myself to act better next time?'
     description: 'Be careful to look toward the future (progress), not the past (regret). If I find myself in a similar situation, what would be right and appropriate to think? To tell myself? To do in a constructive and suitable way?'
-    placeholder: 'Next time, I will...'
+    placeholder: 'Next time, I will '
   submit: Add

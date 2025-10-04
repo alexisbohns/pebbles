@@ -9,17 +9,55 @@
 
 	let hintId: string;
 	$: hintId = `${name}-hint`;
-</script>
 
-<label for={name}>
-	<h2>{$t(question)}</h2>
-	<p id={hintId}>{$t(description)}</p>
-</label>
-<input
-	id={name}
-	{name}
-	type="text"
-	aria-describedby={hintId}
-	placeholder={$t(placeholder)}
-	bind:value
-/>
+	function autoGrow(event: Event) {
+		const textarea = event.target as HTMLTextAreaElement;
+		textarea.style.height = 'auto';
+		textarea.style.height = textarea.scrollHeight + 'px';
+	}
+</script>
+<div class="question">
+	<label for={name}>
+		<h2 class="question-name">{$t(question)}</h2>
+		<p class="question-description" id={hintId}>{$t(description)}</p>
+	</label>
+	<textarea
+		id={name}
+		aria-describedby={hintId}
+		placeholder={$t(placeholder)}
+		rows=1
+		bind:value
+		on:input={autoGrow}
+	>{$t(placeholder)}</textarea>
+</div>
+<style lang="stylus">
+	.question
+		padding 2rem
+		display flex
+		flex-direction column
+		gap 1rem
+
+		&-name
+			font-size 1.2rem
+
+		&-description
+			font-size 0.8rem
+			font-weight 500
+			opacity 0.5
+		
+		textarea
+			width 100%
+			background transparent
+			border none
+			font-size 1rem
+			padding 0
+			font-family 'Alegreya'
+			position relative
+			resize none
+			overflow hidden
+
+			&:focus
+				border none
+				border-right 3px solid var(--mauve-light)
+				outline none
+</style>
