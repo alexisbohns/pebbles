@@ -37,22 +37,23 @@
 		padding 2rem
 		display flex
 		flex-direction column
-		gap 1rem
+		gap 0.5rem
+		opacity 0.5
 
 		&-name
 			font-size 1.2rem
-			opacity 0.5
 
 		&-description
 			font-size 0.8rem
-			font-weight 500
+			font-weight 400
 			max-height 0
 			opacity 0
 			overflow hidden
 			transition all 0.5s ease
 			margin-top 0.5rem
+			color var(--wood-primary)
 			
-		&:focus-within &-name
+		&:focus-within
 			opacity 1
 		&:focus-within &-description
 			max-height 200px
@@ -62,16 +63,20 @@
 			width 100%
 			background transparent
 			border none
-			font-size 1rem
-			padding 0.5rem 0.5rem 0.5rem 0
+			border-left 0 solid transparent
+			font-size 1.1rem
+			padding 0
+			padding-left 0
 			font-family 'Alegreya'
 			position relative
 			resize none
 			overflow hidden
 			caret-color var(--mauve-light)
+			transition all 0.25s ease
 
 			&:focus
 				border none
-				border-right 3px solid var(--mauve-light)
+				border-left 3px solid var(--mauve-light)
+				padding-left 0.5rem
 				outline none
 </style>
