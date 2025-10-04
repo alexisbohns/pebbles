@@ -5,9 +5,17 @@
 	export let tokens: Token[] = [];
 
 	const isInternalLink = (href?: string) => !!href && href.startsWith('/');
+
+	const keyForToken = (token: Token, index: number) => {
+		const raw = (token as { raw?: string }).raw;
+		if (typeof raw === 'string' && raw.trim().length > 0) {
+			return `${index}-${raw}`;
+		}
+		return `${token.type}-${index}`;
+	};
 </script>
 
-{#each tokens as token, index (token.raw ?? `${token.type}-${index}`)}
+{#each tokens as token, index (keyForToken(token, index))}
 	{#if token.type === 'text'}
 		{@const text = token as Tokens.Text}
 		{text.text}
