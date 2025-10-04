@@ -16,6 +16,7 @@
 		textarea.style.height = textarea.scrollHeight + 'px';
 	}
 </script>
+
 <div class="question">
 	<label for={name}>
 		<h2 class="question-name">{$t(question)}</h2>
@@ -25,11 +26,12 @@
 		id={name}
 		aria-describedby={hintId}
 		placeholder={$t(placeholder)}
-		rows=1
+		rows="1"
 		bind:value
 		on:input={autoGrow}
-	>{$t(placeholder)}</textarea>
+	></textarea>
 </div>
+
 <style lang="stylus">
 	.question
 		padding 2rem
