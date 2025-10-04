@@ -76,8 +76,9 @@
 <div class="page-footer">
 	<p>{$t('legal.mention')}</p>
 	<a
-		href={$t('legal.external_link')}
+		href={`https://${$t('legal.external_link').replace(/^https?:\/\//, '')}`}
 		target="_blank"
+		rel="noopener noreferrer"
 		aria-label={$t('legal.external_label')}
 		title={$t('legal.external_label')}>{$t('legal.external_label')}</a
 	>
