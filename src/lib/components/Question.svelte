@@ -20,8 +20,8 @@
 <div class="question">
 	<label for={name}>
 		<h2 class="question-name">{$t(question)}</h2>
-		<p class="question-description" id={hintId}>{$t(description)}</p>
 	</label>
+	<p class="question-description" id={hintId}>{$t(description)}</p>
 	<textarea
 		id={name}
 		aria-describedby={hintId}
@@ -45,7 +45,11 @@
 		&-description
 			font-size 0.8rem
 			font-weight 500
-			opacity 0.5
+			display none
+			transition all linear 2s
+			
+		&:focus-within &-description
+			display flex
 		
 		textarea
 			width 100%
