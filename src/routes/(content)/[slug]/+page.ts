@@ -1,10 +1,17 @@
 import { error } from '@sveltejs/kit';
-import { getLocalesFor, hasSlug, type PageSlug } from '$lib/content/catalog';
+import {
+	availablePages,
+	getLocalesFor,
+	hasSlug,
+	type PageSlug
+} from '$lib/content/catalog';
 import { Lexer } from 'marked';
 import type { Token } from 'marked';
-import type { PageLoad } from './$types';
+import type { EntryGenerator, PageLoad } from './$types';
 
 export const prerender = true;
+
+export const entries: EntryGenerator = () => availablePages.map((slug) => ({ slug }));
 
 export const load: PageLoad = async ({ params }) => {
 	const { slug } = params;
