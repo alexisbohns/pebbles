@@ -1,35 +1,3 @@
-@font-face
-  font-family 'Alegreya'
-  src url('fonts/Alegreya-Regular.woff2') format('woff2'),
-       url('fonts/Alegreya-Regular.woff') format('woff')
-  font-weight 400
-  font-style normal
-  font-display swap
-
-@font-face
-  font-family 'Alegreya'
-  src url('fonts/Alegreya-Italic.woff2') format('woff2'),
-       url('fonts/Alegreya-Italic.woff') format('woff')
-  font-weight 400
-  font-style italic
-  font-display swap
-
-@font-face
-  font-family 'Alegreya'
-  src url('fonts/Alegreya-Bold.woff2') format('woff2'),
-       url('fonts/Alegreya-Bold.woff') format('woff')
-  font-weight 700
-  font-style normal
-  font-display swap
-
-@font-face
-  font-family 'Alegreya'
-  src url('fonts/Alegreya-BoldItalic.woff2') format('woff2'),
-       url('fonts/Alegreya-BoldItalic.woff') format('woff')
-  font-weight 700
-  font-style italic
-  font-display swap
-
 .selectable
     -webkit-user-select text
     user-select text
@@ -44,6 +12,10 @@
     --pine-dark #283618
     --wood-dark #463f3a
     --wood-primary #8a817c
+    
+    --f-def "Sora", system-ui, sans-serif
+    --f-serif "Alegreya", "Athelas", serif
+    
     box-sizing border-box
     padding 0
     margin 0
@@ -53,7 +25,7 @@
     background-color var(--pink-light)
 
 body
-    font-family system-ui
+    font-family var(--f-def)
     background #f5ebe0
     color var(--wood-dark)
     -webkit-user-select none
