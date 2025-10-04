@@ -4,8 +4,6 @@ import { Lexer } from 'marked';
 import type { Token } from 'marked';
 import type { EntryGenerator, PageLoad } from './$types';
 
-export const prerender = true;
-
 export const entries: EntryGenerator = () => availablePages.map((slug) => ({ slug }));
 
 export const load: PageLoad = async ({ params }) => {

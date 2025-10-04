@@ -14,4 +14,4 @@ The Pebbles codebase and visual identity belong to their respective authors. You
 
 We recommend working with certified therapists. In France you can consult the directory maintained by the French Association for Cognitive and Behavioural Therapy (AFTCC).
 
-- [Access the AFTCC directory](https://www.aftcc.org/annuaire)
+[Access the AFTCC directory](https://www.aftcc.org/annuaire)

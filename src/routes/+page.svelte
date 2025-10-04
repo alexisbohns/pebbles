@@ -3,7 +3,10 @@
 	import { entriesStore } from '$lib/stores/entriesStore';
 	import Question from '$lib/components/Question.svelte';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
+	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+
+	const navigate = (path: `/${string}`) => goto(resolve(path));
 
 	let situation = '';
 	let thought = '';
@@ -76,9 +79,15 @@
 
 <div class="page-footer selectable">
 	<nav class="page-footer__links">
-		<a href={resolve('/legal')}>{$t('pages.legal.title')}</a>
-		<a href={resolve('/privacy')}>{$t('pages.privacy.title')}</a>
-		<a href={resolve('/about')}>{$t('pages.about.title')}</a>
+		<a href={resolve('/legal')} on:click|preventDefault={() => navigate('/legal')}
+			>{$t('pages.legal.title')}</a
+		>
+		<a href={resolve('/privacy')} on:click|preventDefault={() => navigate('/privacy')}
+			>{$t('pages.privacy.title')}</a
+		>
+		<a href={resolve('/about')} on:click|preventDefault={() => navigate('/about')}
+			>{$t('pages.about.title')}</a
+		>
 	</nav>
 	<p>{$t('legal.mention')}</p>
 	<a

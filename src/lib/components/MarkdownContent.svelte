@@ -3,9 +3,17 @@
 	import type { Token, Tokens } from 'marked';
 
 	export let tokens: Token[] = [];
+
+	const keyForToken = (token: Token, index: number) => {
+		const raw = (token as { raw?: string }).raw;
+		if (typeof raw === 'string' && raw.trim().length > 0) {
+			return `${index}-${raw}`;
+		}
+		return `${token.type}-${index}`;
+	};
 </script>
 
-{#each tokens as token, index (token.raw ?? `${token.type}-${index}`)}
+{#each tokens as token, index (keyForToken(token, index))}
 	{#if token.type === 'heading'}
 		{@const heading = token as Tokens.Heading}
 		{#if heading.depth === 1}
@@ -24,7 +32,7 @@
 		{@const list = token as Tokens.List}
 		{#if list.ordered}
 			<ol>
-				{#each list.items as item, itemIndex (item.raw ?? `${itemIndex}`)}
+				{#each list.items as item, itemIndex (keyForToken(item, itemIndex))}
 					{@const listItem = item as Tokens.ListItem}
 					<li>
 						<Inline tokens={listItem.tokens} />
@@ -33,7 +41,7 @@
 			</ol>
 		{:else}
 			<ul>
-				{#each list.items as item, itemIndex (item.raw ?? `${itemIndex}`)}
+				{#each list.items as item, itemIndex (keyForToken(item, itemIndex))}
 					{@const listItem = item as Tokens.ListItem}
 					<li>
 						<Inline tokens={listItem.tokens} />
