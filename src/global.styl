@@ -17,6 +17,7 @@
     --linen-light #f5ebe0
 
     --e00 var(--linen-light)
+    --e05 var(--wood-primary)
     --e10 var(--wood-dark)
 
     --a00 var(--pink-light)
@@ -48,7 +49,7 @@ body
     color var(--e10)
     -webkit-user-select none
     user-select none
-    padding 0
+    padding 1rem
     margin 0
     width 100%
     max-width 700px
@@ -56,3 +57,10 @@ body
 h1, h2, h3, h4, h5, h6, p, a
     margin 0
     padding 0
+
+a, a:visited
+    text-decoration none
+    color var(--a05)
+
+    &:hover
+        opacity .7
