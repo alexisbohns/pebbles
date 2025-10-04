@@ -73,7 +73,12 @@
 	{/each}
 </ul>
 
-<div class="page-footer">
+<div class="page-footer selectable">
+	<nav class="page-footer__links">
+		<a href="/legal">{$t('pages.legal.title')}</a>
+		<a href="/privacy">{$t('pages.privacy.title')}</a>
+		<a href="/about">{$t('pages.about.title')}</a>
+	</nav>
 	<p>{$t('legal.mention')}</p>
 	<a
 		href={`https://${$t('legal.external_link').replace(/^https?:\/\//, '')}`}
@@ -94,4 +99,15 @@
 
 		font-size .8rem
 		color var(--e05)
+
+	.page-footer__links
+		display flex
+		flex-wrap wrap
+		gap .75rem
+		font-family var(--f-serif)
+		font-size .9rem
+
+		:global(a)
+			text-decoration underline
+			color inherit
 </style>
