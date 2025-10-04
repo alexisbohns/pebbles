@@ -40,12 +40,17 @@
     --petrol-primary #475b63
     --mauve-primary #8b575c
     --mauve-light #c98986
+    --pink-light #fae1dd
     --pine-dark #283618
     --wood-dark #463f3a
     --wood-primary #8a817c
     box-sizing border-box
     padding 0
     margin 0
+
+::selection
+    color var(--mauve-primary)
+    background-color var(--pink-light)
 
 body
     font-family system-ui
@@ -55,6 +60,8 @@ body
     user-select none
     padding 0
     margin 0
+    width 100%
+    max-width 700px
 
 h1, h2, h3, h4, h5, h6, p, a
     margin 0

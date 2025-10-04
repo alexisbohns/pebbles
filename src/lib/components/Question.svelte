@@ -38,7 +38,7 @@
 		display flex
 		flex-direction column
 		gap 0.5rem
-		opacity 0.5
+		opacity 0.6
 
 		&-name
 			font-size 1.2rem
