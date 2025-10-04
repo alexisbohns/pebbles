@@ -34,14 +34,14 @@
 
 <style lang="stylus">
 	.question
-		padding 2rem
+		padding 1.5rem
 		display flex
 		flex-direction column
 		gap 0.5rem
 		opacity 0.6
 
 		&-name
-			font-size 1.2rem
+			font-size 1rem
 
 		&-description
 			font-size 0.8rem
@@ -67,12 +67,16 @@
 			font-size 1.1rem
 			padding 0
 			padding-left 0
-			font-family 'Alegreya'
+			font-family var(--f-serif)
 			position relative
 			resize none
 			overflow hidden
 			caret-color var(--mauve-light)
 			transition all 0.25s ease
+
+			&::placeholder
+				color var(--wood-light)
+				opacity 0.5
 
 			&:focus
 				border none
