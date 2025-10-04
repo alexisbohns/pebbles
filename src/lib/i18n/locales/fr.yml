@@ -2,12 +2,37 @@ common:
   back: Retour
 home:
   title: Pebbles 🪨
-  form:
-    situation: Situation
-    thought: Pensée automatique
-    emotion: Émotion
-    behavior: Comportement
-    alternative: Pensée alternative
-    submit: Ajouter
   history:
     title: Historique
+form:
+  situation:
+    name: Situation
+    question: 'Quelle est la situation ?'
+    description: 'Le contexte, lieu, personnes présentes : où, quand, qui, quoi, comment, pourquoi ? Ce sont l’incipit et l’élément perturbateur de mon histoire.'
+    placeholder: "J'étais en train de..."
+  thought:
+    name: Pensée automatique
+    question: 'Quelles ont été mes pensées ? Que me suis-je dit ?'
+    description: 'Les phrases et les petites voix qu’on se répète. Cela demande parfois un effort au début pour les formuler avec des mots, car avec le temps, elles tendent à s’enfouir dans l’inconscient. Mais tout le monde en a, faut faire un peu d’archéologie, c’est indispensable.'
+    placeholder: 'Je me suis alors dit...'
+  emotion:
+    name: Émotion
+    question: 'Quelles émotions et sensations ai-je ressenties ?'
+    description: 'Peur, stress, colère, honte, impuissance ; mais aussi mal au ventre, gorge serrée, sueur froide, mâchoire contractée, urticaire : les émotions sont souvent assorties de sensations qui en sont les symptômes, y être attentif augmente la finesse de sa conscience de soi.'
+    placeholder: 'Je me suis senti...'
+  behavior:
+    name: Comportement
+    question: 'Qu’ai-je fait ? Comment ai-je spontanément réagi ? Que s’est-il passé ensuite ?'
+    description: 'Fuir ou éviter, attaquer ou riposter, s’inhiber ou se pétrifier, pleurer ou crier, casser ou frapper, mentir ou accuser, manger ou vomir, aller courir ou binge watcher/gamer, quelle est mon attitude et quels ont été mes réflexes pour réagir, gérer et naviguer dans cette situation ?'
+    placeholder: "J'ai donc..."
+  learning:
+    name: Apprentissage
+    question: 'Qu’est-ce que cette situation m’apprend sur moi ?'
+    description: 'Qu’est-ce que mes émotions, mes pensées et mes réactions m’enseignent sur moi ? Qu’est-ce qui peut l’expliquer ? Quels sont ma mécanique, mon moteur, mon carburant, mes déclencheurs ?'
+    placeholder: "Ce que cette situation m'a appris sur moi c'est que..."
+  alternative:
+    name: Pensée alternative
+    question: 'Quels conseils je me donnerais pour agir mieux la prochaine fois ?'
+    description: 'Attention, il faut me tourner vers le futur (progrès) pas vers le passé (regret). Si je me retrouve dans une situation similaire, que sera-t-il juste et approprié de penser ? de me dire ? que sera-t-il constructif et approprié de faire ?'
+    placeholder: 'La prochaine fois, je ferai...'
+  submit: Ajouter
