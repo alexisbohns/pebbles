@@ -57,6 +57,7 @@
 			position relative
 			resize none
 			overflow hidden
+			caret-color var(--mauve-light)
 
 			&:focus
 				border none
