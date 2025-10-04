@@ -1,10 +1,5 @@
 import { error } from '@sveltejs/kit';
-import {
-	availablePages,
-	getLocalesFor,
-	hasSlug,
-	type PageSlug
-} from '$lib/content/catalog';
+import { availablePages, getLocalesFor, hasSlug, type PageSlug } from '$lib/content/catalog';
 import { Lexer } from 'marked';
 import type { Token } from 'marked';
 import type { EntryGenerator, PageLoad } from './$types';
