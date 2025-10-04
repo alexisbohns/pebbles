@@ -1,10 +1,13 @@
 <script lang="ts">
 	import { locale, t } from '$lib';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
+	import MarkdownContent from '$lib/components/MarkdownContent.svelte';
+	import { resolve } from '$app/paths';
+	import type { Token } from 'marked';
 
 	type PageData = {
 		slug: string;
-		rendered: Record<string, string>;
+		tokens: Record<string, Token[]>;
 	};
 
 	type LocalizedPageTitle = `pages.${string}.title`;
@@ -13,9 +16,9 @@
 
 	let fallbackLocale = 'en';
 
-	$: fallbackLocale = 'en' in data.rendered ? 'en' : Object.keys(data.rendered)[0];
+	$: fallbackLocale = 'en' in data.tokens ? 'en' : Object.keys(data.tokens)[0];
 	$: currentLocale = $locale;
-	$: html = data.rendered[currentLocale] ?? data.rendered[fallbackLocale];
+	$: tokens = data.tokens[currentLocale] ?? data.tokens[fallbackLocale];
 	$: titleKey = `pages.${data.slug}.title` satisfies LocalizedPageTitle;
 </script>
 
@@ -25,11 +28,11 @@
 
 <div class="page selectable">
 	<div class="page__header">
-		<a class="back" href="/">{$t('common.back')}</a>
+		<a class="back" href={resolve('/')}>{$t('common.back')}</a>
 		<ThemeToggle />
 	</div>
 	<div class="content">
-		{@html html}
+		<MarkdownContent {tokens} />
 	</div>
 </div>
 

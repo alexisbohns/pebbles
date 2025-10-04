@@ -1,5 +1,3 @@
-import { marked } from 'marked';
-
 const rawPages = import.meta.glob('./**/*.md', {
 	query: '?raw',
 	import: 'default',
@@ -26,10 +24,6 @@ export function getLocalesFor(slug: PageSlug) {
 
 export function hasSlug(slug: string): slug is PageSlug {
 	return slug in catalog;
-}
-
-export async function renderMarkdown(source: string) {
-	return marked.parse(source);
 }
 
 export const availablePages = Object.keys(catalog);

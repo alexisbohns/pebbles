@@ -3,6 +3,7 @@
 	import { entriesStore } from '$lib/stores/entriesStore';
 	import Question from '$lib/components/Question.svelte';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
+	import { resolve } from '$app/paths';
 
 	let situation = '';
 	let thought = '';
@@ -75,9 +76,9 @@
 
 <div class="page-footer selectable">
 	<nav class="page-footer__links">
-		<a href="/legal">{$t('pages.legal.title')}</a>
-		<a href="/privacy">{$t('pages.privacy.title')}</a>
-		<a href="/about">{$t('pages.about.title')}</a>
+		<a href={resolve('/legal')}>{$t('pages.legal.title')}</a>
+		<a href={resolve('/privacy')}>{$t('pages.privacy.title')}</a>
+		<a href={resolve('/about')}>{$t('pages.about.title')}</a>
 	</nav>
 	<p>{$t('legal.mention')}</p>
 	<a
