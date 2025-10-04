@@ -11,8 +11,10 @@
 	$: hintId = `${name}-hint`;
 </script>
 
-<label for={name}>{$t(question)}</label>
-<p id={hintId}>{$t(description)}</p>
+<label for={name}>
+	<h2>{$t(question)}</h2>
+	<p id={hintId}>{$t(description)}</p>
+</label>
 <input
 	id={name}
 	{name}
