@@ -2,6 +2,7 @@
 	import { t } from '$lib';
 	import { entriesStore } from '$lib/stores/entriesStore';
 	import Question from '$lib/components/Question.svelte';
+	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 
 	let situation = '';
 	let thought = '';
@@ -71,3 +72,7 @@
 		</li>
 	{/each}
 </ul>
+
+<div class="page-header">
+	<ThemeToggle />
+</div>
