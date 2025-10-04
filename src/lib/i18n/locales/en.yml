@@ -4,6 +4,13 @@ home:
   title: Pebbles 🪨
   history:
     title: History
+pages:
+  about:
+    title: About Pebbles
+  legal:
+    title: Legal Notice
+  privacy:
+    title: Privacy
 legal:
   mention: 'As I am not a clinical psychologist, none of my work has established clinical validity. Furthermore, none of it can claim to be a substitute for consulting a qualified clinical psychologist recognized by the French Association of Cognitive and Behavioral Therapy (AFTCC).'
   external_label: Access AFTCC directory
