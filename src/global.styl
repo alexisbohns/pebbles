@@ -10,9 +10,20 @@
     --mauve-light #c98986
     --pink-light #fae1dd
     --pine-dark #283618
+    --wood-darker #211E1C
     --wood-dark #463f3a
     --wood-primary #8a817c
-    
+    --wood-light #d9cbc3
+    --linen-light #f5ebe0
+
+    --e00 var(--linen-light)
+    --e10 var(--wood-dark)
+
+    --a00 var(--pink-light)
+    --a05 var(--mauve-light)
+    --a10 var(--mauve-primary)
+
+
     --f-def "Sora", system-ui, sans-serif
     --f-serif "Alegreya", "Athelas", serif
     
@@ -20,14 +31,21 @@
     padding 0
     margin 0
 
+:root[data-theme='dark']
+    --e00 var(--wood-darker)
+    --e10 var(--linen-light)
+
+    --a10 var(--pink-light)
+    --a00 var(--mauve-primary)
+
 ::selection
-    color var(--mauve-primary)
-    background-color var(--pink-light)
+    color var(--a10)
+    background-color var(--a00)
 
 body
     font-family var(--f-def)
-    background #f5ebe0
-    color var(--wood-dark)
+    background var(--e00)
+    color var(--e10)
     -webkit-user-select none
     user-select none
     padding 0

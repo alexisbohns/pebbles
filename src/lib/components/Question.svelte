@@ -51,13 +51,12 @@
 			overflow hidden
 			transition all 0.5s ease
 			margin-top 0.5rem
-			color var(--wood-primary)
 			
 		&:focus-within
 			opacity 1
 		&:focus-within &-description
 			max-height 200px
-			opacity 1
+			opacity 0.6
 		
 		textarea
 			width 100%
@@ -68,19 +67,20 @@
 			padding 0
 			padding-left 0
 			font-family var(--f-serif)
+			color var(--e10)
 			position relative
 			resize none
 			overflow hidden
-			caret-color var(--mauve-light)
+			caret-color var(--a05)
 			transition all 0.25s ease
 
 			&::placeholder
-				color var(--wood-light)
-				opacity 0.5
+				color var(--e10)
+				opacity 0.3
 
 			&:focus
 				border none
-				border-left 3px solid var(--mauve-light)
+				border-left 3px solid var(--a05)
 				padding-left 0.5rem
 				outline none
 </style>

@@ -10,6 +10,44 @@
 			href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400..900;1,400..900&family=Seaweed+Script&family=Sora:wght@100..800&display=swap"
 			rel="stylesheet"
 		/>
+		<script>
+			(function () {
+				const storageKey = 'pebbles-theme';
+				const root = document.documentElement;
+
+				function applyTheme(theme) {
+					root.dataset.theme = theme;
+					root.classList.toggle('dark', theme === 'dark');
+				}
+
+				try {
+					const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+
+					function getPreferredTheme() {
+						const stored = localStorage.getItem(storageKey);
+						if (stored === 'dark' || stored === 'light') return stored;
+						return prefersDark.matches ? 'dark' : 'light';
+					}
+
+					function updateTheme() {
+						applyTheme(getPreferredTheme());
+					}
+
+					// Initial apply
+					updateTheme();
+
+					// Listen for system changes (always)
+					prefersDark.addEventListener('change', () => {
+						// Only update automatically if user hasn’t manually chosen a theme
+						if (!localStorage.getItem(storageKey)) {
+							updateTheme();
+						}
+					});
+				} catch (error) {
+					console.error('Theme init error:', error);
+				}
+			})();
+		</script>
 	</head>
 	<body data-sveltekit-preload-data="hover">
 		<div style="display: contents">%sveltekit.body%</div>
