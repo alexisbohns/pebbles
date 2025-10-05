@@ -17,6 +17,18 @@ pages:
     title: Profil
   logout:
     title: Déconnexion
+  settings:
+    title: Paramètres
+    account:
+      title: Compte
+      provider: 'Fournisseur de connexion : {provider}'
+    security:
+      title: Sécurité
+      empty: Aucun journal d'activité disponible.
+      entry: '{date} à {time} - {event}'
+      login: Connexion
+      logout: Déconnexion
+      unknown_action: Activité inconnue
 legal:
   mention: 'N’étant pas psychologue clinicien, aucun de mes travaux n’a de validité clinique établie. De plus, aucun ne saurait prétendre à pouvoir se substituer à la consultation d’un·e psychologue clinicien·ne diplômé·e et reconnu·e par l’Association Française de Thérapie Comportementale et Cognitive (AFTCC).'
   external_label: "Accéder à l'annuaire de l'AFTCC"

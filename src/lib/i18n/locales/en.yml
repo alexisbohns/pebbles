@@ -17,6 +17,18 @@ pages:
     title: Profile
   logout:
     title: Logout
+  settings:
+    title: Settings
+    account:
+      title: Account
+      provider: 'Sign-in provider: {provider}'
+    security:
+      title: Security
+      empty: No audit logs available.
+      entry: '{date} at {time} - {event}'
+      login: Login
+      logout: Logout
+      unknown_action: Unknown activity
 legal:
   mention: 'As I am not a clinical psychologist, none of my work has established clinical validity. Furthermore, none of it can claim to be a substitute for consulting a qualified clinical psychologist recognized by the French Association of Cognitive and Behavioral Therapy (AFTCC).'
   external_label: Access AFTCC directory
