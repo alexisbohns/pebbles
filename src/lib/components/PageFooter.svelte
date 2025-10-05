@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import { t } from '$lib';
@@ -7,30 +6,25 @@
 
 	let { user = null } = $props<{ user: User | null }>();
 
-	const navigate = (path: `/${string}`) => goto(resolve(path));
-	const handleNavigate = (event: MouseEvent, path: `/${string}`) => {
-		event.preventDefault();
-		navigate(path);
-	};
 	const isAuthenticated = $derived(Boolean(user));
 	const authPath = $derived((user ? '/logout' : '/login') as `/${string}`);
 </script>
 
 <div class="page-footer selectable">
 	<nav class="page-footer__links">
-		<a href={resolve(authPath)} onclick={(event) => handleNavigate(event, authPath)}>
+		<a href={resolve(authPath)}>
 			{isAuthenticated ? $t('pages.logout.title') : $t('pages.login.title')}
 		</a>
-		<a href={resolve('/profile')} onclick={(event) => handleNavigate(event, '/profile')}>
+		<a href={resolve('/profile')}>
 			{$t('pages.profile.title')}
 		</a>
-		<a href={resolve('/legal')} onclick={(event) => handleNavigate(event, '/legal')}>
+		<a href={resolve('/legal')}>
 			{$t('pages.legal.title')}
 		</a>
-		<a href={resolve('/privacy')} onclick={(event) => handleNavigate(event, '/privacy')}>
+		<a href={resolve('/privacy')}>
 			{$t('pages.privacy.title')}
 		</a>
-		<a href={resolve('/about')} onclick={(event) => handleNavigate(event, '/about')}>
+		<a href={resolve('/about')}>
 			{$t('pages.about.title')}
 		</a>
 	</nav>
