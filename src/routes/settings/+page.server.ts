@@ -19,6 +19,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 	const timestampKeys = ['created_at', 'timestamp'];
 	const eventKeys = ['event', 'action', 'type'];
+	const eventKeyPrefix = 'pages.settings.security.';
 	const dateFormatter = new Intl.DateTimeFormat(undefined, {
 		day: 'numeric',
 		month: 'short',
@@ -29,12 +30,22 @@ export const load: PageServerLoad = async ({ locals }) => {
 		minute: '2-digit'
 	});
 
+	const toEventKey = (value: string | null): string | null => {
+		if (!value) return null;
+		const slug = value
+			.trim()
+			.toLowerCase()
+			.replace(/[^a-z0-9]+/g, '_')
+			.replace(/^_+|_+$/g, '');
+		return slug.length > 0 ? `${eventKeyPrefix}${slug}` : null;
+	};
+
 	const normalizeLogs = (
 		entries: unknown[]
-	): Array<{ date: string; time: string; event: string | null }> => {
+	): Array<{ date: string; time: string; event: string | null; eventKey: string | null }> => {
 		return entries.map((entry) => {
 			if (!entry || typeof entry !== 'object') {
-				return { date: '—', time: '—', event: null };
+				return { date: '—', time: '—', event: null, eventKey: null };
 			}
 
 			const record = entry as Record<string, unknown>;
@@ -62,7 +73,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 			return {
 				date: timestamp ? dateFormatter.format(timestamp) : '—',
 				time: timestamp ? timeFormatter.format(timestamp) : '—',
-				event
+				event,
+				eventKey: toEventKey(event)
 			};
 		});
 	};
