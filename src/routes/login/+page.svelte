@@ -1,6 +1,9 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
+	import { resolve } from '$app/paths';
 	import { page } from '$app/stores';
 	import { supabase } from '$lib/supabaseClient';
+	import { get } from 'svelte/store';
 
 	let signingIn = false;
 	let errorMessage = '';
@@ -12,8 +15,10 @@
 		signingIn = true;
 		errorMessage = '';
 
-		const redirectTo =
-			typeof window === 'undefined' ? null : `${window.location.origin}/auth/callback`;
+		const currentPage = get(page);
+		const redirectTo = browser
+			? new URL(resolve('/auth/callback'), currentPage.url).toString()
+			: null;
 
 		const { error } = await supabase.auth.signInWithOAuth({
 			provider: 'google',
