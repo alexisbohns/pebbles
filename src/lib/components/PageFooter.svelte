@@ -3,25 +3,34 @@
 	import { resolve } from '$app/paths';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import { t } from '$lib';
+	import type { User } from '@supabase/supabase-js';
+
+	let { user = null } = $props<{ user: User | null }>();
 
 	const navigate = (path: `/${string}`) => goto(resolve(path));
+	const handleNavigate = (event: MouseEvent, path: `/${string}`) => {
+		event.preventDefault();
+		navigate(path);
+	};
+	const isAuthenticated = $derived(Boolean(user));
+	const authPath = $derived((user ? '/logout' : '/login') as `/${string}`);
 </script>
 
 <div class="page-footer selectable">
 	<nav class="page-footer__links">
-		<a href={resolve('/login')} on:click|preventDefault={() => navigate('/login')}>
-			{$t('pages.login.title')}
+		<a href={resolve(authPath)} onclick={(event) => handleNavigate(event, authPath)}>
+			{isAuthenticated ? $t('pages.logout.title') : $t('pages.login.title')}
 		</a>
-		<a href={resolve('/profile')} on:click|preventDefault={() => navigate('/profile')}>
+		<a href={resolve('/profile')} onclick={(event) => handleNavigate(event, '/profile')}>
 			{$t('pages.profile.title')}
 		</a>
-		<a href={resolve('/legal')} on:click|preventDefault={() => navigate('/legal')}>
+		<a href={resolve('/legal')} onclick={(event) => handleNavigate(event, '/legal')}>
 			{$t('pages.legal.title')}
 		</a>
-		<a href={resolve('/privacy')} on:click|preventDefault={() => navigate('/privacy')}>
+		<a href={resolve('/privacy')} onclick={(event) => handleNavigate(event, '/privacy')}>
 			{$t('pages.privacy.title')}
 		</a>
-		<a href={resolve('/about')} on:click|preventDefault={() => navigate('/about')}>
+		<a href={resolve('/about')} onclick={(event) => handleNavigate(event, '/about')}>
 			{$t('pages.about.title')}
 		</a>
 	</nav>

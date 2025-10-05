@@ -15,6 +15,8 @@ pages:
     title: Connexion
   profile:
     title: Profil
+  logout:
+    title: Déconnexion
 legal:
   mention: 'N’étant pas psychologue clinicien, aucun de mes travaux n’a de validité clinique établie. De plus, aucun ne saurait prétendre à pouvoir se substituer à la consultation d’un·e psychologue clinicien·ne diplômé·e et reconnu·e par l’Association Française de Thérapie Comportementale et Cognitive (AFTCC).'
   external_label: "Accéder à l'annuaire de l'AFTCC"

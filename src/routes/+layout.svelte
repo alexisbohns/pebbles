@@ -3,7 +3,7 @@
 	import PageFooter from '$lib/components/PageFooter.svelte';
 	import '../global.styl';
 
-	let { children } = $props();
+	let { children, data } = $props();
 
 	import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
 
@@ -16,4 +16,4 @@
 
 {@render children?.()}
 
-<PageFooter />
+<PageFooter user={data?.user ?? null} />
