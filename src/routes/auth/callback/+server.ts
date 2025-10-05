@@ -19,5 +19,5 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 		throw redirect(303, `/login?error=${encodeURIComponent(error.message)}`);
 	}
 
-	throw redirect(303, '/dashboard');
+	throw redirect(303, '/home');
 };

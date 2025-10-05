@@ -2,7 +2,7 @@
 	let { data } = $props();
 </script>
 
-<h1>Dashboard</h1>
+<h1>Home</h1>
 
 {#if data.user}
 	<p>Signed in as {data.user.email}</p>
