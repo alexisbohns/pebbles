@@ -79,6 +79,12 @@
 
 <div class="page-footer selectable">
 	<nav class="page-footer__links">
+		<a href={resolve('/login')} on:click|preventDefault={() => navigate('/login')}>
+			{$t('pages.login.title')}
+		</a>
+		<a href={resolve('/profile')} on:click|preventDefault={() => navigate('/profile')}>
+			{$t('pages.profile.title')}
+		</a>
 		<a href={resolve('/legal')} on:click|preventDefault={() => navigate('/legal')}
 			>{$t('pages.legal.title')}</a
 		>

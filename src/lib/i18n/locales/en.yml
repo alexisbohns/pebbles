@@ -11,6 +11,10 @@ pages:
     title: Legal Notice
   privacy:
     title: Privacy
+  login:
+    title: Login
+  profile:
+    title: Profile
 legal:
   mention: 'As I am not a clinical psychologist, none of my work has established clinical validity. Furthermore, none of it can claim to be a substitute for consulting a qualified clinical psychologist recognized by the French Association of Cognitive and Behavioral Therapy (AFTCC).'
   external_label: Access AFTCC directory
