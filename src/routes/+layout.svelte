@@ -1,5 +1,6 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
+	import PageFooter from '$lib/components/PageFooter.svelte';
 	import '../global.styl';
 
 	let { children } = $props();
@@ -14,3 +15,5 @@
 </svelte:head>
 
 {@render children?.()}
+
+<PageFooter />
