@@ -38,6 +38,7 @@
 		"vite": "^7.1.7"
 	},
 	"dependencies": {
+		"@supabase/ssr": "^0.7.0",
 		"@vercel/speed-insights": "^1.2.0",
 		"js-yaml": "^4.1.0",
 		"marked": "^12.0.2"
