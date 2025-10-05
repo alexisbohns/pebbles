@@ -12,6 +12,12 @@ declare global {
 		// interface Locals {}
 		interface PageData {
 			user: User | null;
+			profile?: {
+				full_name: string | null;
+				avatar_url: string | null;
+				role: string | null;
+				created_at: string | null;
+			} | null;
 		}
 		// interface PageState {}
 		// interface Platform {}

@@ -1,8 +1,9 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
+	import PageFooter from '$lib/components/PageFooter.svelte';
 	import '../global.styl';
 
-	let { children } = $props();
+	let { children, data } = $props();
 
 	import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
 
@@ -14,3 +15,5 @@
 </svelte:head>
 
 {@render children?.()}
+
+<PageFooter user={data?.user ?? null} />
