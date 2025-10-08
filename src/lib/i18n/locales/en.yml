@@ -66,3 +66,42 @@ form:
     description: 'Be careful to look toward the future (progress), not the past (regret). If I find myself in a similar situation, what would be right and appropriate to think? To tell myself? To do in a constructive and suitable way?'
     placeholder: 'Next time, I will '
   submit: Add
+emotions:
+  06f7f887-144f-4fa3-9aa7-213af15c9062: overwhelmed
+  27b21533-b83f-4cfe-8fa3-330f3987dcbb: indifferent
+  2d9d541c-0555-4c1d-b348-cb5c8db1ea09: disgusted
+  375f9a0a-1341-42da-bb95-b3a3c07b91f4: sad
+  3bca59c6-544a-4379-a685-d95cf79da2e5: satisfied
+  4420857c-d3dd-451e-9be8-0dae2a7c2c94: relieved
+  45779eab-f6dd-44c9-88ed-a8d0b072782f: calm
+  4fadd12b-3fcf-42f4-941a-b4770981cf39: amused
+  506fc4f0-7410-4b8d-b973-08c60bd71648: angry
+  5ad47ebb-eb54-4d40-982d-536e84f8026a: ashamed
+  60000482-1494-4eb3-824d-de715ebccebf: drained
+  6b34b623-7a68-499c-8062-089f69c265fe: disappointed
+  6ccebbb1-4d16-47fe-ae9a-effd88f45016: brave
+  70c8dc15-344e-4395-837f-76de46da4bd8: hopeless
+  738ff1dd-ee7b-4e25-b5b8-2e58a18a2597: embarrassed
+  762b92f2-150b-44b3-af8d-04e22694b61e: grateful
+  7923423a-f9d5-4266-a7e6-1c9ce4a53898: anxious
+  82035af3-aa05-42db-b521-d6e773c00ffd: stressed
+  838bd319-90e8-481b-9271-7984ec452eec: passionate
+  84678d4e-7c4d-418c-8713-9be5c5276056: surprised
+  887ade6f-3620-4dbc-a441-80870d845139: proud
+  895613ff-ce8f-41dd-aa5c-5131411204a1: peaceful
+  8d640035-0c4f-4a2a-853c-564a52df3946: discouraged
+  93e28d52-e072-4690-adf3-a2374d1b35ca: content
+  9f9002e4-6ab1-4a66-b672-399229fa2cb7: worried
+  9fea79fe-5fcf-4fba-8ee9-e4b0c0c40f7a: annoyed
+  ba9429d5-44a5-416c-904e-4529d7f45d41: guilty
+  c2e9e79b-e043-49a5-98e8-654424791b9c: hopeful
+  ccd74e90-7b5f-4313-ac9e-f88f3f3d2b90: joyful
+  ccfd145c-58a9-4f52-aa15-94fe7e7cbbec: jealous
+  d9e7bac0-a8c7-4bd6-b5f1-968ae95ffbc4: excited
+  e19107ce-d7cd-4363-9b63-1a4b164ba060: confident
+  e205b9bb-a307-4257-8e5b-ff464ece2c6a: frustrated
+  ecca80cc-afcc-4829-b3c5-deb692baa430: irritated
+  f30a73a9-762a-43d9-b058-e1fd1d46a129: lonely
+  f3c95444-0631-4ef6-9d75-0a2331ad6336: amazed
+  f5a25f63-9276-4f9b-bf68-95c85e0f454b: scared
+  f701c735-bffe-4610-9d7d-c247ee0b723d: happy
