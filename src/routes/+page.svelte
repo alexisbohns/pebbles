@@ -11,11 +11,8 @@
 	};
 </script>
 
-<h1>{$t('home.title')}</h1>
-
+<h1>{$t('home.history.title')}</h1>
 <button type="button" on:click={goToCreate}>{$t('form.create') ?? 'Create'}</button>
-
-<h2>{$t('home.history.title')}</h2>
 <ul>
 	{#each entries as entry (entry.id)}
 		<li>

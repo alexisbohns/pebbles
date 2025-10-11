@@ -8,31 +8,24 @@
 	export let user: User | null = null;
 </script>
 
-<header
-	style="
-		position: sticky;
-		top: 0;
-		z-index: 20;
-		background: var(--e00);
-		padding: 0.75rem 0;
-		margin-bottom: 1.5rem;
-	"
->
-	<div
-		style="
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			gap: 1rem;
-		"
+<header>
+	<a
+		href={resolve('/')}
+		aria-label={$t('home.title')}
+		style="display: inline-flex; align-items: center;"
 	>
-		<a
-			href={resolve('/')}
-			aria-label={$t('home.title')}
-			style="display: inline-flex; align-items: center;"
-		>
-			<Logo alt={$t('home.title')} size="sm" />
-		</a>
-		<UserSession {user} />
-	</div>
+		<Logo alt={$t('home.title')} size="sm" />
+	</a>
+	<UserSession {user} />
 </header>
+
+<style lang="stylus">
+	header
+		position sticky
+		top 0
+		z-index 20
+		display flex
+		align-items center
+		justify-content space-between
+		gap 1rem
+</style>

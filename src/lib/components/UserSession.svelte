@@ -2,6 +2,7 @@
 	import { resolve } from '$app/paths';
 	import { t } from '$lib';
 	import type { User } from '@supabase/supabase-js';
+	import placeholderAvatar from '$lib/assets/placeholder.png';
 
 	type IdentityData = {
 		avatar_url?: string | null;
@@ -13,10 +14,6 @@
 
 	const loginHref = resolve('/login');
 	const profileHref = resolve('/profile');
-
-	const getInitial = (value: string | null | undefined) => {
-		return value?.trim()?.charAt(0)?.toUpperCase() ?? 'P';
-	};
 
 	const getIdentityAvatar = (currentUser: User | null): string | null => {
 		const identities = currentUser?.identities ?? [];
@@ -34,12 +31,6 @@
 		}
 
 		return null;
-	};
-
-	const generateFallbackAvatar = (initial: string) => {
-		const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="32" fill="#d9cbc3"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Sora, system-ui, sans-serif" font-size="28" fill="#211E1C">${initial}</text></svg>`;
-
-		return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 	};
 
 	const readUserMetadata = () => (user?.user_metadata ?? {}) as Record<string, unknown>;
@@ -71,10 +62,7 @@
 			(metadata['image'] as string | undefined) ??
 			null;
 
-		const fallbackInitial = getInitial(displayName);
-		const fallbackAvatar = generateFallbackAvatar(fallbackInitial);
-
-		avatarUrl = metadataAvatar ?? getIdentityAvatar(user) ?? fallbackAvatar;
+		avatarUrl = metadataAvatar ?? getIdentityAvatar(user) ?? placeholderAvatar;
 	}
 </script>
 
@@ -83,8 +71,8 @@
 		<img
 			src={avatarUrl}
 			alt={displayName ? `${displayName}'s avatar` : 'Profile avatar'}
-			width="44"
-			height="44"
+			width="32"
+			height="32"
 			loading="lazy"
 		/>
 	</a>
