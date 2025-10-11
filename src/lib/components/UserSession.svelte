@@ -73,7 +73,6 @@
 			alt={displayName ? `${displayName}'s avatar` : 'Profile avatar'}
 			width="32"
 			height="32"
-			loading="lazy"
 		/>
 	</a>
 {:else}
