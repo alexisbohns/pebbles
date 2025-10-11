@@ -64,6 +64,17 @@
 
 		avatarUrl = metadataAvatar ?? getIdentityAvatar(user) ?? placeholderAvatar;
 	}
+
+	const handleAvatarError = (event: Event) => {
+		const target = event.currentTarget as HTMLImageElement | null;
+
+		if (!target || target.dataset.fallbackApplied === 'true') {
+			return;
+		}
+
+		target.dataset.fallbackApplied = 'true';
+		target.src = placeholderAvatar;
+	};
 </script>
 
 {#if isAuthenticated}
@@ -73,6 +84,8 @@
 			alt={displayName ? `${displayName}'s avatar` : 'Profile avatar'}
 			width="32"
 			height="32"
+			loading="lazy"
+			onerror={handleAvatarError}
 		/>
 	</a>
 {:else}
