@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
+	import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 	import IntensityGauge from './IntensityGauge.svelte';
 	import type { MappingItem, MappingValue } from './types';
 
@@ -10,19 +11,19 @@
 
 	const dispatch = createEventDispatcher<{ change: MappingValue[] }>();
 	let focusedIndex = 0;
-	let allValues = new Map<string, number>();
-	let visibleValues = new Map<string, number>();
-	let visibleIds = new Set<string>();
+	let allValues = new SvelteMap<string, number>();
+	let visibleValues = new SvelteMap<string, number>();
+	let visibleIds = new SvelteSet<string>();
 	let lastInitialValues: MappingValue[] = initialValues;
 
 	$: if (initialValues !== lastInitialValues) {
-		allValues = new Map(initialValues.map(({ id, value }) => [id, value]));
+		allValues = new SvelteMap(initialValues.map(({ id, value }) => [id, value]));
 		lastInitialValues = initialValues;
 	}
 
 	$: {
-		visibleIds = new Set(items.map((item) => item.id));
-		const nextVisible = new Map<string, number>();
+		visibleIds = new SvelteSet(items.map((item) => item.id));
+		const nextVisible = new SvelteMap<string, number>();
 		for (const id of visibleIds) {
 			const existing = allValues.get(id);
 			if (existing !== undefined) {
@@ -52,12 +53,12 @@
 	}
 
 	function setValue(id: string, value: number) {
-		const nextAll = new Map(allValues);
+		const nextAll = new SvelteMap(allValues);
 		nextAll.set(id, value);
 		allValues = nextAll;
 
 		if (visibleIds.has(id)) {
-			const nextVisible = new Map(visibleValues);
+			const nextVisible = new SvelteMap(visibleValues);
 			nextVisible.set(id, value);
 			visibleValues = nextVisible;
 		}
@@ -112,7 +113,7 @@
 </script>
 
 <div class="flex flex-col gap-2" role="group" aria-label={containerLabel}>
-	{#each items as item, i}
+	{#each items as item, i (item.id)}
 		<IntensityGauge
 			label={item.label}
 			value={visibleValues.get(item.id) ?? 0}

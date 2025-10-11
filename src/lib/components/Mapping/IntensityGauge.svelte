@@ -86,18 +86,18 @@
 >
 	<span class="w-24 text-sm font-medium">{label}</span>
 	<div class="flex gap-1">
-		{#each Array(max + 1).fill(0) as _, lvl}
+		{#each Array.from({ length: max + 1 }, (_, level) => level) as level (level)}
 			<button
 				type="button"
 				class="w-4 h-4 rounded-full transition-colors"
-				class:bg-blue-500={lvl <= clampedValue}
-				class:bg-gray-200={lvl > clampedValue}
-				aria-pressed={lvl === clampedValue}
-				aria-label={`Set intensity to ${lvl}`}
+				class:bg-blue-500={level <= clampedValue}
+				class:bg-gray-200={level > clampedValue}
+				aria-pressed={level === clampedValue}
+				aria-label={`Set intensity to ${level}`}
 				tabindex="-1"
 				on:click={() => {
 					dispatch('focus', { index });
-					dispatch('change', { index, value: lvl });
+					dispatch('change', { index, value: level });
 				}}
 			></button>
 		{/each}

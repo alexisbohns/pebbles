@@ -1,17 +1,18 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
+	import { SvelteSet } from 'svelte/reactivity';
 	import type { MappingItem, MappingValue } from './types';
 
 	export let items: MappingItem[] = [];
 	export let initialValues: MappingValue[] = [];
 
 	const dispatch = createEventDispatcher<{ change: MappingValue[] }>();
-	let selected = new Set<string>();
+	let selected = new SvelteSet<string>();
 
 	$: {
-		const allowedIds = new Set(items.map((item) => item.id));
+		const allowedIds = new SvelteSet(items.map((item) => item.id));
 		const ids = initialValues.filter((value) => allowedIds.has(value.id)).map((value) => value.id);
-		selected = new Set(ids);
+		selected = new SvelteSet(ids);
 	}
 
 	function emitChange() {
@@ -24,7 +25,7 @@
 	}
 
 	function toggle(id: string) {
-		const next = new Set(selected);
+		const next = new SvelteSet(selected);
 		if (next.has(id)) {
 			next.delete(id);
 		} else {
@@ -36,7 +37,7 @@
 </script>
 
 <div class="flex flex-wrap gap-2">
-	{#each items as item}
+	{#each items as item (item.id)}
 		<button
 			type="button"
 			class="px-3 py-1 rounded-full border transition"
