@@ -1,4 +1,6 @@
 <script lang="ts">
+	import MappingComponent from '$lib/components/Mapping/MappingComponent.svelte';
+	import type { MappingValue } from '$lib/components/Mapping/types';
 	import type { PageData } from './$types';
 
 	type MoodKind = 'dailyMood' | 'momentaryEmotion';
@@ -16,12 +18,45 @@
 	let date = '';
 	let time = '';
 	let valence = '0';
-	let selectedEmotions: string[] = [];
-	let selectedAssociations: string[] = [];
+	let emotionValues: MappingValue[] = [];
+	let associationValues: MappingValue[] = [];
+	let emotionValenceFilter: number | null = null;
+	let emotionSelectionIds: string[] = [];
+	let associationSelectionIds: string[] = [];
+	let emotionIntensityValues: MappingValue[] = [];
+	let associationIntensityValues: MappingValue[] = [];
 
 	$: if (kind !== 'momentaryEmotion' && time !== '') {
 		time = '';
 	}
+
+	$: emotionValenceFilter = deriveValenceFilter(valence);
+	$: emotionSelectionIds = emotionValues
+		.filter((value) => value.scale_type === 'selection')
+		.map((value) => value.id);
+	$: associationSelectionIds = associationValues
+		.filter((value) => value.scale_type === 'selection')
+		.map((value) => value.id);
+	$: emotionIntensityValues = emotionValues.filter((value) => value.scale_type === 'intensity');
+	$: associationIntensityValues = associationValues.filter(
+		(value) => value.scale_type === 'intensity'
+	);
+
+	function deriveValenceFilter(input: string): number | null {
+		const parsed = Number.parseInt(input, 10);
+		if (Number.isNaN(parsed)) return null;
+		if (parsed < 0) return -1;
+		if (parsed === 0) return 0;
+		return 1;
+	}
+
+	const handleEmotionChange = (values: MappingValue[]) => {
+		emotionValues = values;
+	};
+
+	const handleAssociationChange = (values: MappingValue[]) => {
+		associationValues = values;
+	};
 
 	const handleSubmit = (event: SubmitEvent) => {
 		event.preventDefault();
@@ -62,38 +97,49 @@
 		</select>
 	</div>
 
-	<fieldset class="form-field">
-		<legend>Emotions</legend>
+	<div class="form-field">
 		{#if data.emotions.length === 0}
 			<p>No emotions available.</p>
 		{:else}
-			{#each data.emotions as emotion (emotion.id)}
-				<label>
-					<input type="checkbox" name="emotions" value={emotion.id} bind:group={selectedEmotions} />
-					<span>{emotion.label}</span>
-				</label>
-			{/each}
+			<MappingComponent
+				title="Emotions"
+				items={data.emotions}
+				initialValues={emotionValues}
+				valenceFilter={emotionValenceFilter}
+				enableFilter={true}
+				onChange={handleEmotionChange}
+			/>
 		{/if}
-	</fieldset>
+	</div>
 
-	<fieldset class="form-field">
-		<legend>Associations</legend>
+	{#each emotionSelectionIds as id (id)}
+		<input type="hidden" name="emotions" value={id} />
+	{/each}
+
+	{#each emotionIntensityValues as entry (entry.id)}
+		<input type="hidden" name="emotionIntensities" value={`${entry.id}:${entry.value}`} />
+	{/each}
+
+	<div class="form-field">
 		{#if data.associations.length === 0}
 			<p>No associations available.</p>
 		{:else}
-			{#each data.associations as association (association.id)}
-				<label>
-					<input
-						type="checkbox"
-						name="associations"
-						value={association.id}
-						bind:group={selectedAssociations}
-					/>
-					<span>{association.label}</span>
-				</label>
-			{/each}
+			<MappingComponent
+				title="Associations"
+				items={data.associations}
+				initialValues={associationValues}
+				onChange={handleAssociationChange}
+			/>
 		{/if}
-	</fieldset>
+	</div>
+
+	{#each associationSelectionIds as id (id)}
+		<input type="hidden" name="associations" value={id} />
+	{/each}
+
+	{#each associationIntensityValues as entry (entry.id)}
+		<input type="hidden" name="associationIntensities" value={`${entry.id}:${entry.value}`} />
+	{/each}
 
 	<button type="submit">Save mood</button>
 </form>
