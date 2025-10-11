@@ -1,12 +1,13 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { t } from '$lib';
 	import { entriesStore } from '$lib/stores/entriesStore';
-	import { goto } from '$app/navigation';
 
 	$: entries = $entriesStore;
 
 	const goToCreate = () => {
-		goto('/create');
+		goto(resolve('/create'));
 	};
 </script>
 
