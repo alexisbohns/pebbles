@@ -82,10 +82,11 @@
 		<img
 			src={avatarUrl}
 			alt={displayName ? `${displayName}'s avatar` : 'Profile avatar'}
-			width="32"
-			height="32"
+			width="24"
+			height="24"
 			loading="lazy"
 			onerror={handleAvatarError}
+			class="avatar"
 		/>
 	</a>
 {:else}
@@ -98,4 +99,7 @@
 	a.login
 		font-size 0.8rem
 		color var(--e10)
+	
+	.avatar
+		border-radius 10rem
 </style>
