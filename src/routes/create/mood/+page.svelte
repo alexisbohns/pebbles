@@ -1,82 +1,78 @@
 <script lang="ts">
 	import MappingComponent from '$lib/components/Mapping/MappingComponent.svelte';
-	import type { MappingValue } from '$lib/components/Mapping/types';
+	import type {
+		MappingIntensityValue,
+		MappingSelectionValue,
+		MappingValue
+	} from '$lib/components/Mapping/types';
 	import { SvelteMap } from 'svelte/reactivity';
 	import type { PageData } from './$types';
 
-	type MoodKind = 'dailyMood' | 'momentaryEmotion';
+	type EventKind = 'moment' | 'day';
 	type EmotionPayload = {
 		emotion_id: string;
-		scale_type: MappingValue['scale_type'];
-		value: number;
+		valence?: number | null;
 	};
 	type AssociationPayload = {
 		association_id: string;
-		scale_type: MappingValue['scale_type'];
-		value: number;
+		valence?: number | null;
 	};
 	type RpcArgs = {
-		p_profile_id: string;
-		p_kind: string;
-		p_valence: string;
+		p_kind: EventKind;
+		p_valence: number;
 		p_occurrence_date: string;
 		p_occurrence_time: string | null;
+		p_name: string;
+		p_description: string;
 		p_emotions: EmotionPayload[];
 		p_associations: AssociationPayload[];
 	};
 
 	export let data: PageData;
 
-	const kindOptions: Array<{ value: MoodKind; label: string }> = [
-		{ value: 'dailyMood', label: 'Daily Mood' },
-		{ value: 'momentaryEmotion', label: 'Momentary Emotion' }
+	const kindOptions: Array<{ value: EventKind; label: string }> = [
+		{ value: 'moment', label: 'Moment' },
+		{ value: 'day', label: 'Day' }
 	];
 
 	const valenceOptions = ['-3', '-2', '-1', '0', '1', '2', '3'] as const;
 	type ValenceOption = (typeof valenceOptions)[number];
-	const valenceScale: Record<ValenceOption, string> = {
-		'-3': 'veryUnpleasant',
-		'-2': 'unpleasant',
-		'-1': 'slightlyUnpleasant',
-		'0': 'neutral',
-		'1': 'slightlyPleasant',
-		'2': 'pleasant',
-		'3': 'veryPleasant'
-	};
 
-	let kind: MoodKind = 'dailyMood';
+	let kind: EventKind = 'day';
 	let date = '';
 	let time = '';
 	let valence: ValenceOption = '0';
 	let emotionValues: MappingValue[] = [];
 	let associationValues: MappingValue[] = [];
 	let emotionValenceFilter: number | null = null;
+	let emotionSelectionValues: MappingSelectionValue[] = [];
+	let associationSelectionValues: MappingSelectionValue[] = [];
 	let emotionSelectionIds: string[] = [];
 	let associationSelectionIds: string[] = [];
-	let emotionIntensityValues: MappingValue[] = [];
-	let associationIntensityValues: MappingValue[] = [];
+	let emotionIntensityValues: MappingIntensityValue[] = [];
+	let associationIntensityValues: MappingIntensityValue[] = [];
 	let submissionPreview: string | null = null;
 	let submitError: string | null = null;
 	let submitSuccessId: string | null = null;
 	let isSubmitting = false;
-	const PROFILE_PLACEHOLDER = 'PROFILE_ID_FROM_SESSION';
 	const INDENT = '  ';
 
-	$: if (kind !== 'momentaryEmotion' && time !== '') {
+	$: if (kind !== 'moment' && time !== '') {
 		time = '';
 	}
 
 	$: emotionValenceFilter = deriveValenceFilter(valence);
-	$: emotionSelectionIds = emotionValues
-		.filter((value) => value.scale_type === 'selection')
-		.map((value) => value.id);
-	$: associationSelectionIds = associationValues
-		.filter((value) => value.scale_type === 'selection')
-		.map((value) => value.id);
-	$: emotionIntensityValues = emotionValues.filter((value) => value.scale_type === 'intensity');
-	$: associationIntensityValues = associationValues.filter(
-		(value) => value.scale_type === 'intensity'
-	);
+	const isSelectionValue = (value: MappingValue): value is MappingSelectionValue =>
+		value.kind === 'selection';
+	const isIntensityValue = (value: MappingValue): value is MappingIntensityValue =>
+		value.kind === 'intensity';
+
+	$: emotionSelectionValues = emotionValues.filter(isSelectionValue);
+	$: associationSelectionValues = associationValues.filter(isSelectionValue);
+	$: emotionSelectionIds = emotionSelectionValues.map((value) => value.id);
+	$: associationSelectionIds = associationSelectionValues.map((value) => value.id);
+	$: emotionIntensityValues = emotionValues.filter(isIntensityValue);
+	$: associationIntensityValues = associationValues.filter(isIntensityValue);
 
 	function deriveValenceFilter(input: string): number | null {
 		const parsed = Number.parseInt(input, 10);
@@ -103,18 +99,18 @@
 			submissionPreview = null;
 			return;
 		}
-		if (kind === 'momentaryEmotion' && !time) {
-			submitError = 'Time is required for momentary emotions.';
+		if (kind === 'moment' && !time) {
+			submitError = 'Time is required for moments.';
 			submissionPreview = null;
 			return;
 		}
 		const rpcArgs = buildRpcArgs();
 		const formattedArgs = indentLines(formatLiteral(rpcArgs), 1);
-		const snippetBase = ["await supabase.rpc('upsert_mood_full',", formattedArgs, ');'];
+		const snippetBase = ["await supabase.rpc('upsert_event_full',", formattedArgs, ');'];
 		submissionPreview = snippetBase.join('\n');
 		isSubmitting = true;
 		try {
-			const response = await fetch('/api/moods', {
+			const response = await fetch('/api/events', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -124,7 +120,7 @@
 			});
 
 			if (!response.ok) {
-				let message = `Failed to save mood (status ${response.status})`;
+				let message = `Failed to save event (status ${response.status})`;
 				try {
 					const problem = await response.json();
 					if (problem?.message) {
@@ -137,14 +133,14 @@
 			}
 
 			const payload: { id?: string } = await response.json();
-			const moodId = payload?.id ?? null;
-			submitSuccessId = moodId;
+			const eventId = payload?.id ?? null;
+			submitSuccessId = eventId;
 			submissionPreview = [
 				...snippetBase,
-				moodId ? `// → mood id: '${moodId}'` : '// → mood saved'
+				eventId ? `// → event id: '${eventId}'` : '// → event saved'
 			].join('\n');
 		} catch (err) {
-			const message = err instanceof Error ? err.message : 'Unexpected error while saving mood';
+			const message = err instanceof Error ? err.message : 'Unexpected error while saving event';
 			submitError = message;
 			submissionPreview = [...snippetBase, `// ! error: ${message}`].join('\n');
 		} finally {
@@ -161,33 +157,30 @@
 	}
 
 	function buildEmotionPayload(values: MappingValue[]): EmotionPayload[] {
-		return dedupeValues(values)
-			.filter((value) => value.scale_type !== 'intensity' || value.value > 0)
-			.map(({ id, scale_type, value }) => ({
-				emotion_id: id,
-				scale_type,
-				value
-			}));
+		return dedupeValues(values).map((entry) =>
+			entry.kind === 'intensity'
+				? { emotion_id: entry.id, valence: entry.value }
+				: { emotion_id: entry.id }
+		);
 	}
 
 	function buildAssociationPayload(values: MappingValue[]): AssociationPayload[] {
-		return dedupeValues(values)
-			.filter((value) => value.scale_type !== 'intensity' || value.value > 0)
-			.map(({ id, scale_type, value }) => ({
-				association_id: id,
-				scale_type,
-				value
-			}));
+		return dedupeValues(values).map((entry) =>
+			entry.kind === 'intensity'
+				? { association_id: entry.id, valence: entry.value }
+				: { association_id: entry.id }
+		);
 	}
 
 	function buildRpcArgs(): RpcArgs {
-		const profileId = data.profileId ?? PROFILE_PLACEHOLDER;
+		const parsedValence = Number.parseInt(valence, 10);
 		return {
-			p_profile_id: profileId,
 			p_kind: kind,
-			p_valence: valenceScale[valence] ?? valence,
+			p_valence: Number.isNaN(parsedValence) ? 0 : parsedValence,
 			p_occurrence_date: date,
-			p_occurrence_time: kind === 'momentaryEmotion' ? time || null : null,
+			p_occurrence_time: kind === 'moment' ? time || null : null,
+			p_name: '',
+			p_description: '',
 			p_emotions: buildEmotionPayload(emotionValues),
 			p_associations: buildAssociationPayload(associationValues)
 		};
@@ -235,9 +228,9 @@
 	}
 </script>
 
-<h1>Mood</h1>
+<h1>Event</h1>
 
-<form on:submit={handleSubmit} class="mood-form" aria-label="Create mood">
+<form on:submit={handleSubmit} class="mood-form" aria-label="Create event">
 	<div class="form-field">
 		<label for="kind">Kind</label>
 		<select id="kind" name="kind" bind:value={kind}>
@@ -252,7 +245,7 @@
 		<input id="date" name="date" type="date" bind:value={date} required />
 	</div>
 
-	{#if kind === 'momentaryEmotion'}
+	{#if kind === 'moment'}
 		<div class="form-field">
 			<label for="time">Time</label>
 			<input id="time" name="time" type="time" bind:value={time} required />
@@ -316,7 +309,7 @@
 		{#if isSubmitting}
 			Saving…
 		{:else}
-			Save mood
+			Save event
 		{/if}
 	</button>
 
@@ -324,7 +317,7 @@
 		<p class="text-sm text-red-600 mt-2" role="alert">{submitError}</p>
 	{:else if submitSuccessId}
 		<p class="text-sm text-emerald-600 mt-2" role="status">
-			Mood saved successfully (id: {submitSuccessId}).
+			Event saved successfully (id: {submitSuccessId}).
 		</p>
 	{/if}
 </form>

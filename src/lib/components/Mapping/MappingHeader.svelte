@@ -75,6 +75,6 @@
 
 {#if mode === 'intensity'}
 	<p class="mt-2 text-xs text-gray-500">
-		Astuce clavier : ↑/↓ pour changer de jauge, ←/→ pour ajuster, Backspace pour réinitialiser.
+		Astuce clavier&nbsp;: Tab pour naviguer, ↑/↓ pour ajuster, Suppr pour effacer.
 	</p>
 {/if}
