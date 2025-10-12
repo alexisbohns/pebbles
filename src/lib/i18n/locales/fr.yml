@@ -31,7 +31,7 @@ pages:
       user_signedup: Création du compte
       unknown_action: Activité inconnue
 legal:
-  mention: 'N’étant pas psychologue clinicien, aucun de mes travaux n’a de validité clinique établie. De plus, aucun ne saurait prétendre à pouvoir se substituer à la consultation d’un·e psychologue clinicien·ne diplômé·e et reconnu·e par l’Association Française de Thérapie Comportementale et Cognitive (AFTCC).'
+  mention: "Pebblestones est un projet libre, ce n'est pas un dispositif médical agréé."
   external_label: "Accéder à l'annuaire de l'AFTCC"
   external_link: 'https://www.aftcc.org/annuaire'
 form:
@@ -66,6 +66,7 @@ form:
     description: 'Attention, il faut me tourner vers le futur (progrès) pas vers le passé (regret). Si je me retrouve dans une situation similaire, que sera-t-il juste et approprié de penser ? de me dire ? que sera-t-il constructif et approprié de faire ?'
     placeholder: 'La prochaine fois, je ferai '
   submit: Ajouter
+  create: Nouvelle entrée
 emotions:
   06f7f887-144f-4fa3-9aa7-213af15c9062: accablement
   27b21533-b83f-4cfe-8fa3-330f3987dcbb: indifférence

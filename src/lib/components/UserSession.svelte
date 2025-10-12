@@ -82,14 +82,24 @@
 		<img
 			src={avatarUrl}
 			alt={displayName ? `${displayName}'s avatar` : 'Profile avatar'}
-			width="32"
-			height="32"
+			width="24"
+			height="24"
 			loading="lazy"
 			onerror={handleAvatarError}
+			class="avatar"
 		/>
 	</a>
 {:else}
-	<a href={loginHref} title={$t('pages.login.title')}>
+	<a href={loginHref} title={$t('pages.login.title')} class="login">
 		{$t('pages.login.title')}
 	</a>
 {/if}
+
+<style lang="stylus">
+	a.login
+		font-size 0.8rem
+		color var(--e10)
+	
+	.avatar
+		border-radius 10rem
+</style>

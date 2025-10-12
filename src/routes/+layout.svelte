@@ -20,3 +20,13 @@
 <main>{@render children?.()}</main>
 
 <PageFooter user={data?.user ?? null} />
+
+<style lang="stylus">
+	main
+		display flex
+		flex-direction column
+		width 100%
+		max-width 500px
+		align-self center
+		padding 2rem 0
+</style>

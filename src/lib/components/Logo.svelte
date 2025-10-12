@@ -1,5 +1,5 @@
 <script lang="ts">
-	import faviconSvg from '$lib/assets/favicon.svg?raw';
+	import logoSvg from '$lib/assets/pebblestones_logo.svg?raw';
 	import nameSvg from '$lib/assets/pebblestones_name.svg?raw';
 
 	type LogoSize = 'sm' | 'md' | 'lg';
@@ -25,7 +25,7 @@
 			.replace('height="122"', 'height="100%"')
 			.replace('<svg ', '<svg aria-hidden="true" focusable="false" role="presentation" ');
 
-	const faviconMarkup = normalizedSvg(faviconSvg);
+	const faviconMarkup = normalizedSvg(logoSvg);
 	const nameMarkup = normalizedSvg(nameSvg);
 
 	let height = SIZE_MAP[size] ?? SIZE_MAP.md;
@@ -39,14 +39,14 @@
 {#if showLogo}
 	<span class="logo" role="img" aria-label={alt}>
 		{#if icon}
-			<span class="logo__icon" style={`height:${height};width:${height};`}>
+			<span class="logo-icon" style={`height:${height};width:${height};`}>
 				<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 				{@html faviconMarkup}
 			</span>
 		{/if}
 
 		{#if name}
-			<span class="logo__name" style={`height:${height};width:${nameWidth};`}>
+			<span class="logo-name" style={`height:${height};width:calc(${nameWidth}*0.5);`}>
 				<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 				{@html nameMarkup}
 			</span>
@@ -58,16 +58,16 @@
 	.logo {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.5rem;
+		gap: 0.25rem;
 	}
 
-	.logo__icon,
-	.logo__name {
+	.logo-icon,
+	.logo-name {
 		display: inline-flex;
 	}
 
-	.logo__icon :global(svg),
-	.logo__name :global(svg) {
+	.logo-icon :global(svg),
+	.logo-name :global(svg) {
 		width: 100%;
 		height: 100%;
 		display: block;
