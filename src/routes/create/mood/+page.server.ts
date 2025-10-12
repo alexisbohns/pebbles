@@ -121,6 +121,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	}
 
 	return {
+		profileId: user.id,
 		emotions: normalizeEmotionRows(rawEmotions, 'emotion'),
 		associations: normalizeLookupRows(rawAssociations, 'association')
 	};

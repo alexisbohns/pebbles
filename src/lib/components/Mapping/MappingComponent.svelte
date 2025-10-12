@@ -2,6 +2,7 @@
 	import MappingHeader from './MappingHeader.svelte';
 	import SelectView from './SelectView.svelte';
 	import IntensityView from './IntensityView.svelte';
+	import { SvelteMap } from 'svelte/reactivity';
 	import type { MappingItem, MappingValue } from './types';
 
 	export let title: string;
@@ -15,16 +16,24 @@
 	let showAll = !enableFilter || valenceFilter === null;
 	let manualShowAll: boolean | null = null;
 	let lastValenceFilter: number | null = valenceFilter;
+	let entryMap = new SvelteMap<string, MappingValue>();
 	let selectionValues: MappingValue[] = [];
 	let intensityValues: MappingValue[] = [];
 	let lastInitialValues: MappingValue[] = initialValues;
 	let visibleItems: MappingItem[] = items;
 
 	$: if (initialValues !== lastInitialValues) {
-		selectionValues = initialValues.filter((value) => value.scale_type === 'selection');
-		intensityValues = initialValues.filter((value) => value.scale_type === 'intensity');
+		entryMap = new SvelteMap(initialValues.map((value) => [value.id, value]));
 		lastInitialValues = initialValues;
 	}
+
+	$: selectionValues = Array.from(entryMap.values()).filter(
+		(value) => value.scale_type === 'selection'
+	);
+
+	$: intensityValues = Array.from(entryMap.values()).filter(
+		(value) => value.scale_type === 'intensity'
+	);
 
 	$: {
 		if (enableFilter) {
@@ -61,29 +70,49 @@
 	}
 
 	function emitChange() {
-		onChange([...selectionValues, ...intensityValues]);
+		onChange(Array.from(entryMap.values()));
 	}
 
 	function handleSelectChange(values: MappingValue[]) {
+		const map = new SvelteMap(entryMap);
+		const incomingIds = new Set(values.map((value) => value.id));
 		const visibleIds = new Set(visibleItems.map((item) => item.id));
-		const preserved = selectionValues.filter((value) => !visibleIds.has(value.id));
-		const next: MappingValue[] = [...preserved];
 
-		for (const value of values) {
-			const existingIndex = next.findIndex((entry) => entry.id === value.id);
-			if (existingIndex !== -1) {
-				next[existingIndex] = value;
-			} else {
-				next.push(value);
+		for (const [id, entry] of map) {
+			if (entry.scale_type === 'selection' && visibleIds.has(id) && !incomingIds.has(id)) {
+				map.delete(id);
 			}
 		}
 
-		selectionValues = next;
+		for (const value of values) {
+			map.set(value.id, {
+				...value,
+				scale_type: 'selection'
+			});
+		}
+
+		entryMap = map;
 		emitChange();
 	}
 
 	function handleIntensityChange(values: MappingValue[]) {
-		intensityValues = values;
+		const map = new SvelteMap(entryMap);
+		const incomingIds = new Set(values.map((value) => value.id));
+
+		for (const [id, entry] of map) {
+			if (entry.scale_type === 'intensity' && !incomingIds.has(id)) {
+				map.delete(id);
+			}
+		}
+
+		for (const value of values) {
+			map.set(value.id, {
+				...value,
+				scale_type: 'intensity'
+			});
+		}
+
+		entryMap = map;
 		emitChange();
 	}
 

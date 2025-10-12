@@ -4,6 +4,23 @@
 	import type { PageData } from './$types';
 
 	type MoodKind = 'dailyMood' | 'momentaryEmotion';
+	type EmotionPayload = {
+		emotion_id: string;
+		scale_type: MappingValue['scale_type'];
+		value: number;
+	};
+	type AssociationPayload = {
+		association_id: string;
+		scale_type: MappingValue['scale_type'];
+		value: number;
+	};
+	type RpcArgs = {
+		p_profile_id: string;
+		p_kind: string;
+		p_valence: string;
+		p_emotions: EmotionPayload[];
+		p_associations: AssociationPayload[];
+	};
 
 	export let data: PageData;
 
@@ -13,11 +30,21 @@
 	];
 
 	const valenceOptions = ['-3', '-2', '-1', '0', '1', '2', '3'] as const;
+	type ValenceOption = (typeof valenceOptions)[number];
+	const valenceScale: Record<ValenceOption, string> = {
+		'-3': 'veryUnpleasant',
+		'-2': 'unpleasant',
+		'-1': 'slightlyUnpleasant',
+		'0': 'neutral',
+		'1': 'slightlyPleasant',
+		'2': 'pleasant',
+		'3': 'veryPleasant'
+	};
 
 	let kind: MoodKind = 'dailyMood';
 	let date = '';
 	let time = '';
-	let valence = '0';
+	let valence: ValenceOption = '0';
 	let emotionValues: MappingValue[] = [];
 	let associationValues: MappingValue[] = [];
 	let emotionValenceFilter: number | null = null;
@@ -25,6 +52,9 @@
 	let associationSelectionIds: string[] = [];
 	let emotionIntensityValues: MappingValue[] = [];
 	let associationIntensityValues: MappingValue[] = [];
+	let submissionPreview: string | null = null;
+	const PROFILE_PLACEHOLDER = 'PROFILE_ID_FROM_SESSION';
+	const INDENT = '  ';
 
 	$: if (kind !== 'momentaryEmotion' && time !== '') {
 		time = '';
@@ -60,8 +90,78 @@
 
 	const handleSubmit = (event: SubmitEvent) => {
 		event.preventDefault();
-		// Submission wiring will be handled in a follow-up iteration.
+		const rpcArgs = buildRpcArgs();
+		const formattedArgs = indentLines(formatLiteral(rpcArgs), 1);
+		submissionPreview = ["await supabase.rpc('upsert_mood_full',", formattedArgs, ');'].join('\n');
 	};
+
+	function buildEmotionPayload(values: MappingValue[]): EmotionPayload[] {
+		return values.map(({ id, scale_type, value }) => ({
+			emotion_id: id,
+			scale_type,
+			value
+		}));
+	}
+
+	function buildAssociationPayload(values: MappingValue[]): AssociationPayload[] {
+		return values.map(({ id, scale_type, value }) => ({
+			association_id: id,
+			scale_type,
+			value
+		}));
+	}
+
+	function buildRpcArgs(): RpcArgs {
+		const profileId = data.profileId ?? PROFILE_PLACEHOLDER;
+		return {
+			p_profile_id: profileId,
+			p_kind: kind,
+			p_valence: valenceScale[valence] ?? valence,
+			p_emotions: buildEmotionPayload(emotionValues),
+			p_associations: buildAssociationPayload(associationValues)
+		};
+	}
+
+	function formatLiteral(value: unknown, depth = 0): string {
+		if (Array.isArray(value)) {
+			if (value.length === 0) return '[]';
+			const entries = value
+				.map((item) => `${INDENT.repeat(depth + 1)}${formatLiteral(item, depth + 1)}`)
+				.join(',\n');
+			return `[\n${entries}\n${INDENT.repeat(depth)}]`;
+		}
+
+		if (value && typeof value === 'object') {
+			const entries = Object.entries(value as Record<string, unknown>);
+			if (entries.length === 0) return '{}';
+			const lines = entries
+				.map(([key, val]) => `${INDENT.repeat(depth + 1)}${key}: ${formatLiteral(val, depth + 1)}`)
+				.join(',\n');
+			return `{\n${lines}\n${INDENT.repeat(depth)}}`;
+		}
+
+		if (typeof value === 'string') {
+			return `'${value.replace(/'/g, "\\'")}'`;
+		}
+
+		if (value === null) {
+			return 'null';
+		}
+
+		if (value === undefined) {
+			return 'undefined';
+		}
+
+		return String(value);
+	}
+
+	function indentLines(text: string, depth: number): string {
+		const prefix = INDENT.repeat(depth);
+		return text
+			.split('\n')
+			.map((line) => `${prefix}${line}`)
+			.join('\n');
+	}
 </script>
 
 <h1>Mood</h1>
@@ -143,3 +243,10 @@
 
 	<button type="submit">Save mood</button>
 </form>
+
+{#if submissionPreview}
+	<section class="mood-preview" aria-live="polite">
+		<h2>RPC payload preview</h2>
+		<pre><code class="language-ts">{submissionPreview}</code></pre>
+	</section>
+{/if}
