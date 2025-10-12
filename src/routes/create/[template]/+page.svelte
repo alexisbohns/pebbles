@@ -2,7 +2,9 @@
 	import MappingComponent from '$lib/components/Mapping/MappingComponent.svelte';
 	import Question from '$lib/components/Question.svelte';
 	import type { MappingItem, MappingValue } from '$lib/components/Mapping/types';
+	import { t } from '$lib';
 	import { SvelteMap } from 'svelte/reactivity';
+	import { get } from 'svelte/store';
 	import type { PageData } from './$types';
 
 	type PropertyItem = {
@@ -130,7 +132,7 @@
 
 	let submissionPreview: string | null = null;
 	let submitError: string | null = null;
-	let submitSuccessId: string | null = null;
+	let submitSuccessMessage: string | null = null;
 	let isSubmitting = false;
 	const INDENT = '  ';
 
@@ -153,6 +155,26 @@
 	function formatPropertyLabel(property: string): string {
 		if (!property) return '';
 		return property.replace(/[_-]+/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
+	}
+
+	const propertyLabelKey = (key: string) => `create.template.fields.${key}`;
+
+	function resolvePropertyLabel(key: string): string {
+		const translate = get(t);
+		const labelKey = propertyLabelKey(key);
+		const translated = translate(labelKey);
+		return translated === labelKey ? formatPropertyLabel(key) : translated;
+	}
+
+	function resolveQuestionLabel(id: string, fallbackIndex: number, fallbackLabel: string): string {
+		const translate = get(t);
+		const nameKey = `question.${id}.name`;
+		const translated = translate(nameKey);
+		if (translated !== nameKey) {
+			return translated;
+		}
+
+		return fallbackLabel || `Question ${fallbackIndex + 1}`;
 	}
 
 	function buildFieldNameFromId(id: string, fallbackIndex: number): string {
@@ -306,11 +328,14 @@
 	}
 
 	function validateForm(): string | null {
+		const translate = get(t);
+
 		for (const item of propertyItems) {
 			if (!item.mandatory) continue;
 			const value = (propertyValues[item.key] ?? '').trim();
 			if (value.length === 0) {
-				return `${formatPropertyLabel(item.key)} is required.`;
+				const label = resolvePropertyLabel(item.key);
+				return translate('create.template.error.field_required', { field: label });
 			}
 		}
 
@@ -320,19 +345,22 @@
 			const value = (questionValues[item.id] ?? '').trim();
 			if (value.length === 0) {
 				const meta = resolveQuestionMeta(item.id, index);
-				return `Please answer "${meta.label}".`;
+				const label = resolveQuestionLabel(item.id, index, meta.label);
+				return translate('create.template.error.field_required', { field: label });
 			}
 		}
 
 		const rpcArgs = buildRpcArgs();
 		if (!rpcArgs.p_occurrence_date) {
-			return 'Date is required.';
+			const label = resolvePropertyLabel('date');
+			return translate('create.template.error.field_required', { field: label });
 		}
 
 		if (eventKind === 'moment') {
 			const timeItem = propertyItems.find((item) => item.key === 'time');
 			if (timeItem?.mandatory && !rpcArgs.p_occurrence_time) {
-				return 'Time is required for this template.';
+				const label = resolvePropertyLabel('time');
+				return translate('create.template.error.field_required', { field: label });
 			}
 		}
 
@@ -342,7 +370,7 @@
 	async function handleSubmit(event: SubmitEvent) {
 		event.preventDefault();
 		submitError = null;
-		submitSuccessId = null;
+		submitSuccessMessage = null;
 
 		const validationError = validateForm();
 		if (validationError) {
@@ -358,6 +386,8 @@
 
 		isSubmitting = true;
 
+		const translate = get(t);
+
 		try {
 			const response = await fetch('/api/events', {
 				method: 'POST',
@@ -369,7 +399,7 @@
 			});
 
 			if (!response.ok) {
-				let message = `Failed to save event (status ${response.status})`;
+				let message = translate('create.template.error.save_status', { status: response.status });
 				try {
 					const problem = await response.json();
 					if (problem?.message) {
@@ -383,13 +413,20 @@
 
 			const payload: { id?: string | null } = await response.json();
 			const eventId = payload?.id ?? null;
-			submitSuccessId = eventId;
+			const successKey = eventId
+				? 'create.template.success.with_id'
+				: 'create.template.success.default';
+			submitSuccessMessage = eventId
+				? translate(successKey, { id: eventId })
+				: translate(successKey);
+
 			submissionPreview = [
 				...snippetBase,
 				eventId ? `// → event id: '${eventId}'` : '// → event saved'
 			].join('\n');
 		} catch (err) {
-			const message = err instanceof Error ? err.message : 'Unexpected error while saving event';
+			const fallbackMessage = translate('create.template.error.unexpected');
+			const message = err instanceof Error && err.message ? err.message : fallbackMessage;
 			submitError = message;
 			submissionPreview = [...snippetBase, `// ! error: ${message}`].join('\n');
 		} finally {
@@ -402,10 +439,11 @@
 
 <form class="template-form" on:submit|preventDefault={handleSubmit}>
 	{#if propertyItems.length > 0}
-		<section class="form-section" aria-label="Event details">
+		<section class="form-section" aria-label={$t('create.template.section.details')}>
 			{#each propertyItems as item (item.key)}
+				{@const label = resolvePropertyLabel(item.key)}
 				<div class="form-field">
-					<label for={`property-${item.key}`}>{formatPropertyLabel(item.key)}</label>
+					<label for={`property-${item.key}`}>{label}</label>
 					{#if item.key === 'valence'}
 						<select
 							id={`property-${item.key}`}
@@ -436,13 +474,13 @@
 	{/if}
 
 	{#if hasEmotionMapping}
-		<section class="form-section" aria-label="Emotions">
-			<h2>Emotions</h2>
+		<section class="form-section" aria-label={$t('create.template.section.emotions')}>
+			<h2>{$t('create.template.section.emotions')}</h2>
 			{#if emotions.length === 0}
-				<p>No emotions available.</p>
+				<p>{$t('create.template.empty.emotions')}</p>
 			{:else}
 				<MappingComponent
-					title="Emotions"
+					title={$t('create.template.section.emotions')}
 					items={emotionItems}
 					initialValues={emotionValues}
 					valenceFilter={emotionValenceFilter}
@@ -454,13 +492,13 @@
 	{/if}
 
 	{#if hasAssociationMapping}
-		<section class="form-section" aria-label="Associations">
-			<h2>Associations</h2>
+		<section class="form-section" aria-label={$t('create.template.section.associations')}>
+			<h2>{$t('create.template.section.associations')}</h2>
 			{#if associations.length === 0}
-				<p>No associations available.</p>
+				<p>{$t('create.template.empty.associations')}</p>
 			{:else}
 				<MappingComponent
-					title="Associations"
+					title={$t('create.template.section.associations')}
 					items={associationItems}
 					initialValues={associationValues}
 					onChange={handleAssociationChange}
@@ -470,8 +508,8 @@
 	{/if}
 
 	{#if questionItems.length > 0}
-		<section class="form-section" aria-label="Questions">
-			<h2>Questions</h2>
+		<section class="form-section" aria-label={$t('create.template.section.questions')}>
+			<h2>{$t('create.template.section.questions')}</h2>
 			{#each questionItems as item, index (item.id)}
 				{@const meta = resolveQuestionMeta(item.id, index)}
 				<Question
@@ -488,24 +526,22 @@
 
 	<button type="submit" disabled={isSubmitting}>
 		{#if isSubmitting}
-			Saving…
+			{$t('create.template.button.saving')}
 		{:else}
-			Save event
+			{$t('create.template.button.save')}
 		{/if}
 	</button>
 
 	{#if submitError}
 		<p class="form-message error" role="alert">{submitError}</p>
-	{:else if submitSuccessId}
-		<p class="form-message success" role="status">
-			Event saved successfully{submitSuccessId ? ` (id: ${submitSuccessId})` : ''}.
-		</p>
+	{:else if submitSuccessMessage}
+		<p class="form-message success" role="status">{submitSuccessMessage}</p>
 	{/if}
 </form>
 
 {#if submissionPreview}
 	<section class="template-preview" aria-live="polite">
-		<h2>RPC payload preview</h2>
+		<h2>{$t('create.template.preview.title')}</h2>
 		<pre><code class="language-ts">{submissionPreview}</code></pre>
 	</section>
 {/if}

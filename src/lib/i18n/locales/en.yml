@@ -65,6 +65,36 @@ question:
     question: 'What advice would I give myself to act better next time?'
     description: 'Be careful to look toward the future (progress), not the past (regret). If I find myself in a similar situation, what would be right and appropriate to think? To tell myself? To do in a constructive and suitable way?'
     placeholder: 'Next time, I will '
+create:
+  title: 'Create an entry'
+  template:
+    section:
+      details: 'Event details'
+      emotions: Emotions
+      associations: Associations
+      questions: Questions
+    empty:
+      emotions: 'No emotions available.'
+      associations: 'No associations available.'
+    button:
+      saving: 'Saving…'
+      save: 'Save event'
+    success:
+      default: 'Event saved successfully.'
+      with_id: 'Event saved successfully (id: {id}).'
+    preview:
+      title: 'RPC payload preview'
+    fields:
+      date: Date
+      time: Time
+      valence: Valence
+      name: Name
+      description: Description
+    error:
+      field_required: '"{field}" is required.'
+      save_status: 'Failed to save event (status {status})'
+      unexpected: 'Unexpected error while saving event'
+form:
   submit: Add
   create: New entry
 emotions:

@@ -65,6 +65,36 @@ question:
     question: 'Quels conseils je me donnerais pour agir mieux la prochaine fois ?'
     description: 'Attention, il faut me tourner vers le futur (progrès) pas vers le passé (regret). Si je me retrouve dans une situation similaire, que sera-t-il juste et approprié de penser ? de me dire ? que sera-t-il constructif et approprié de faire ?'
     placeholder: 'La prochaine fois, je ferai '
+create:
+  title: 'Créer une entrée'
+  template:
+    section:
+      details: "Détails de l'événement"
+      emotions: Émotions
+      associations: Associations
+      questions: Questions
+    empty:
+      emotions: 'Aucune émotion disponible.'
+      associations: 'Aucune association disponible.'
+    button:
+      saving: 'Enregistrement…'
+      save: "Enregistrer l'événement"
+    success:
+      default: 'Événement enregistré.'
+      with_id: 'Événement enregistré (id : {id}).'
+    preview:
+      title: 'Aperçu de la requête RPC'
+    fields:
+      date: Date
+      time: Heure
+      valence: Valence
+      name: Nom
+      description: Description
+    error:
+      field_required: '"{field}" est requis.'
+      save_status: 'Impossible d’enregistrer l’événement (statut {status})'
+      unexpected: 'Erreur inattendue lors de l’enregistrement'
+form:
   submit: Ajouter
   create: Nouvelle entrée
 emotions:
