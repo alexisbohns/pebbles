@@ -11,12 +11,10 @@
 </script>
 
 <div class="page-footer selectable">
-	<nav class="page-footer__links">
+	<p>{$t('legal.mention')}</p>
+	<nav class="page-footer-links">
 		<a href={resolve(authPath)}>
 			{isAuthenticated ? $t('pages.logout.title') : $t('pages.login.title')}
-		</a>
-		<a href={resolve('/profile')}>
-			{$t('pages.profile.title')}
 		</a>
 		<a href={resolve('/legal')}>
 			{$t('pages.legal.title')}
@@ -28,14 +26,6 @@
 			{$t('pages.about.title')}
 		</a>
 	</nav>
-	<p>{$t('legal.mention')}</p>
-	<a
-		href={`https://${$t('legal.external_link').replace(/^https?:\/\//, '')}`}
-		target="_blank"
-		rel="noopener noreferrer"
-		aria-label={$t('legal.external_label')}
-		title={$t('legal.external_label')}>{$t('legal.external_label')}</a
-	>
 	<ThemeToggle />
 </div>
 
@@ -44,19 +34,17 @@
 		display flex
 		flex-direction column
 		align-items start
-		gap .5rem
+		gap .25rem
 
 		font-size .8rem
 		color var(--e05)
 
-	.page-footer__links
-		display flex
-		flex-wrap wrap
-		gap .75rem
-		font-family var(--f-serif)
-		font-size .9rem
+		&-links
+			display flex
+			flex-wrap wrap
+			gap .75rem
 
-		:global(a)
-			text-decoration underline
-			color inherit
+			a
+				color var(--e10)
+				opacity 0.3
 </style>

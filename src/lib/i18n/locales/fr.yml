@@ -31,7 +31,7 @@ pages:
       user_signedup: Création du compte
       unknown_action: Activité inconnue
 legal:
-  mention: 'N’étant pas psychologue clinicien, aucun de mes travaux n’a de validité clinique établie. De plus, aucun ne saurait prétendre à pouvoir se substituer à la consultation d’un·e psychologue clinicien·ne diplômé·e et reconnu·e par l’Association Française de Thérapie Comportementale et Cognitive (AFTCC).'
+  mention: "Pebblestones est un projet libre, ce n'est pas un dispositif médical agréé."
   external_label: "Accéder à l'annuaire de l'AFTCC"
   external_link: 'https://www.aftcc.org/annuaire'
 form:

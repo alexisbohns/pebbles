@@ -31,7 +31,7 @@ pages:
       user_signedup: Account creation
       unknown_action: Unknown activity
 legal:
-  mention: 'As I am not a clinical psychologist, none of my work has established clinical validity. Furthermore, none of it can claim to be a substitute for consulting a qualified clinical psychologist recognized by the French Association of Cognitive and Behavioral Therapy (AFTCC).'
+  mention: 'Pebblestones is an open project, it is not a medical device.'
   external_label: Access AFTCC directory
   external_link: 'https://www.aftcc.org/annuaire'
 form:

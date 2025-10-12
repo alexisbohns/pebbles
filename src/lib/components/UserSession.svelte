@@ -89,7 +89,13 @@
 		/>
 	</a>
 {:else}
-	<a href={loginHref} title={$t('pages.login.title')}>
+	<a href={loginHref} title={$t('pages.login.title')} class="login">
 		{$t('pages.login.title')}
 	</a>
 {/if}
+
+<style lang="stylus">
+	a.login
+		font-size 0.8rem
+		color var(--e10)
+</style>

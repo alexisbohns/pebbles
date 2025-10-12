@@ -32,6 +32,10 @@
     padding 0
     margin 0
 
+    --trans all ease 0.2s
+    --trans-m all ease 0.5s
+    --trans-l all ease 1s
+
 :root[data-theme='dark']
     --e00 black
     --e10 white
@@ -46,6 +50,7 @@
 body
     font-family var(--f-def)
     background var(--e00)
+    transition var(--trans-l)
     color var(--e10)
     -webkit-user-select none
     user-select none
@@ -53,13 +58,6 @@ body
     margin 0
     display flex
     flex-direction column
-
-main
-    display flex
-    flex-direction column
-    width 100%
-    max-width 500px
-    align-self center
 
 h1, h2, h3, h4, h5, h6, p, a
     margin 0

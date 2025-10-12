@@ -9,11 +9,7 @@
 </script>
 
 <header>
-	<a
-		href={resolve('/')}
-		aria-label={$t('home.title')}
-		style="display: inline-flex; align-items: center;"
-	>
+	<a href={resolve('/')} aria-label={$t('home.title')}>
 		<Logo alt={$t('home.title')} size="sm" />
 	</a>
 	<UserSession {user} />
