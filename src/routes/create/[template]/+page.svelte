@@ -1,27 +1,19 @@
 <script lang="ts">
 	import MappingComponent from '$lib/components/Mapping/MappingComponent.svelte';
 	import Question from '$lib/components/Question.svelte';
-	import type { MappingValue } from '$lib/components/Mapping/types';
+	import type { MappingItem, MappingValue } from '$lib/components/Mapping/types';
 	import { SvelteMap } from 'svelte/reactivity';
 	import type { PageData } from './$types';
 
 	type PropertyItem = {
-		type: 'property';
-		property: string;
-		mandatory?: boolean;
-		default?: unknown;
+		key: string;
+		mandatory: boolean;
+		defaultValue?: unknown;
 	};
 
 	type QuestionItem = {
-		type: 'question';
-		entity_id: string;
-		mandatory?: boolean;
-	};
-
-	type ModelItem = {
-		type: 'model';
-		model: string;
-		mandatory?: boolean;
+		id: string;
+		mandatory: boolean;
 	};
 
 	type TemplateQuestionMeta = {
@@ -35,50 +27,81 @@
 	export let data: PageData;
 
 	const { config, emotions, associations, questions } = data;
-	const templateItems = Array.isArray(config.template) ? config.template : [];
+	const rawTemplateItems = (Array.isArray(config.template) ? config.template : []) as Array<
+		Record<string, unknown> | null | undefined
+	>;
 
-	const propertyItems = templateItems.filter(
-		(item): item is PropertyItem =>
-			item &&
-			(item as { type?: string }).type === 'property' &&
-			typeof (item as { property?: unknown }).property === 'string'
-	);
+	const propertyItems: PropertyItem[] = [];
+	const questionItems: QuestionItem[] = [];
+	let hasEmotionMapping = false;
+	let hasAssociationMapping = false;
 
-	const questionItems = templateItems.filter(
-		(item): item is QuestionItem =>
-			item &&
-			(item as { type?: string }).type === 'question' &&
-			typeof (item as { entity_id?: unknown }).entity_id === 'string'
-	);
+	for (const rawItem of rawTemplateItems) {
+		if (!rawItem || typeof rawItem !== 'object') continue;
+		const record = rawItem as Record<string, unknown>;
+		const type = typeof record.type === 'string' ? record.type : null;
 
-	const hasEmotionMapping = templateItems.some(
-		(item): item is ModelItem =>
-			item && (item as { type?: string }).type === 'model' && (item as { model?: string }).model === 'emotion_mapping'
-	);
+		if (type === 'property' && typeof record.property === 'string') {
+			propertyItems.push({
+				key: record.property,
+				mandatory: typeof record.mandatory === 'boolean' ? record.mandatory : false,
+				defaultValue: record.default
+			});
+			continue;
+		}
 
-	const hasAssociationMapping = templateItems.some(
-		(item): item is ModelItem =>
-			item && (item as { type?: string }).type === 'model' && (item as { model?: string }).model === 'association_mapping'
-	);
+		if (type === 'question' && typeof record.entity_id === 'string') {
+			questionItems.push({
+				id: record.entity_id,
+				mandatory: typeof record.mandatory === 'boolean' ? record.mandatory : false
+			});
+			continue;
+		}
+
+		if (type === 'model' && typeof record.model === 'string') {
+			if (record.model === 'emotion_mapping') {
+				hasEmotionMapping = true;
+			} else if (record.model === 'association_mapping') {
+				hasAssociationMapping = true;
+			}
+		}
+	}
+
+	const emotionItems: MappingItem[] = emotions.map(({ id, label, valence }) => ({
+		id,
+		label,
+		valence: typeof valence === 'number' ? valence : undefined
+	}));
+
+	const associationItems: MappingItem[] = associations.map(({ id, label }) => ({
+		id,
+		label
+	}));
 
 	const modelDefaults = (config.model_properties ?? {}) as Record<string, unknown>;
 
-	const initialPropertyValues = propertyItems.reduce((acc, item) => {
-		const key = item.property;
-		const candidate =
-			item.default ??
-			(Object.prototype.hasOwnProperty.call(modelDefaults, key) ? modelDefaults[key] : undefined);
+	const initialPropertyValues = propertyItems.reduce(
+		(acc, item) => {
+			const key = item.key;
+			const candidate =
+				item.defaultValue ??
+				(Object.prototype.hasOwnProperty.call(modelDefaults, key) ? modelDefaults[key] : undefined);
 
-		if (candidate === undefined || candidate === null) {
-			acc[key] = '';
-		} else {
-			acc[key] = String(candidate);
-		}
+			if (candidate === undefined || candidate === null) {
+				acc[key] = '';
+			} else {
+				acc[key] = String(candidate);
+			}
 
-		return acc;
-	}, {} as Record<string, string>);
+			return acc;
+		},
+		{} as Record<string, string>
+	);
 
-	if (propertyItems.some((item) => item.property === 'valence') && !('valence' in initialPropertyValues)) {
+	if (
+		propertyItems.some((item) => item.key === 'valence') &&
+		!('valence' in initialPropertyValues)
+	) {
 		const candidate = modelDefaults.valence;
 		initialPropertyValues.valence =
 			candidate === undefined || candidate === null ? '0' : String(candidate);
@@ -87,15 +110,15 @@
 	let propertyValues: Record<string, string> = { ...initialPropertyValues };
 
 	for (const item of propertyItems) {
-		if (!(item.property in propertyValues)) {
-			propertyValues[item.property] = '';
+		if (!(item.key in propertyValues)) {
+			propertyValues[item.key] = '';
 		}
 	}
 
-	const initialQuestionValues = questionItems.reduce((acc, item) => {
-		acc[item.entity_id] = '';
+	const initialQuestionValues = questionItems.reduce<Record<string, string>>((acc, item) => {
+		acc[item.id] = '';
 		return acc;
-	}, {} as Record<string, string>);
+	}, {});
 
 	let questionValues: Record<string, string> = { ...initialQuestionValues };
 
@@ -103,7 +126,7 @@
 	let associationValues: MappingValue[] = [];
 
 	const valenceOptions = ['-3', '-2', '-1', '0', '1', '2', '3'] as const;
-	const valenceFieldPresent = propertyItems.some((item) => item.property === 'valence');
+	const valenceFieldPresent = propertyItems.some((item) => item.key === 'valence');
 
 	let submissionPreview: string | null = null;
 	let submitError: string | null = null;
@@ -129,9 +152,7 @@
 
 	function formatPropertyLabel(property: string): string {
 		if (!property) return '';
-		return property
-			.replace(/[_-]+/g, ' ')
-			.replace(/\b\w/g, (char) => char.toUpperCase());
+		return property.replace(/[_-]+/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
 	}
 
 	function buildFieldNameFromId(id: string, fallbackIndex: number): string {
@@ -223,12 +244,9 @@
 	function buildRpcArgs() {
 		const dateValue = (propertyValues.date ?? '').trim();
 		const timeValue = (propertyValues.time ?? '').trim();
-		const nameDefault =
-			typeof modelDefaults.name === 'string' ? modelDefaults.name.trim() : '';
+		const nameDefault = typeof modelDefaults.name === 'string' ? modelDefaults.name.trim() : '';
 		const descriptionDefault =
-			typeof modelDefaults.description === 'string'
-				? modelDefaults.description.trim()
-				: '';
+			typeof modelDefaults.description === 'string' ? modelDefaults.description.trim() : '';
 
 		const nameValue = (propertyValues.name ?? nameDefault).trim();
 		const descriptionValue = (propertyValues.description ?? descriptionDefault).trim();
@@ -237,7 +255,7 @@
 			p_kind: eventKind,
 			p_valence: parseValence(propertyValues.valence),
 			p_occurrence_date: dateValue,
-			p_occurrence_time: eventKind === 'moment' ? (timeValue || null) : null,
+			p_occurrence_time: eventKind === 'moment' ? timeValue || null : null,
 			p_name: nameValue,
 			p_description: descriptionValue,
 			p_emotions: buildEmotionPayload(emotionValues),
@@ -290,18 +308,18 @@
 	function validateForm(): string | null {
 		for (const item of propertyItems) {
 			if (!item.mandatory) continue;
-			const value = (propertyValues[item.property] ?? '').trim();
+			const value = (propertyValues[item.key] ?? '').trim();
 			if (value.length === 0) {
-				return `${formatPropertyLabel(item.property)} is required.`;
+				return `${formatPropertyLabel(item.key)} is required.`;
 			}
 		}
 
 		for (let index = 0; index < questionItems.length; index += 1) {
 			const item = questionItems[index];
 			if (!item.mandatory) continue;
-			const value = (questionValues[item.entity_id] ?? '').trim();
+			const value = (questionValues[item.id] ?? '').trim();
 			if (value.length === 0) {
-				const meta = resolveQuestionMeta(item.entity_id, index);
+				const meta = resolveQuestionMeta(item.id, index);
 				return `Please answer "${meta.label}".`;
 			}
 		}
@@ -312,7 +330,7 @@
 		}
 
 		if (eventKind === 'moment') {
-			const timeItem = propertyItems.find((item) => item.property === 'time');
+			const timeItem = propertyItems.find((item) => item.key === 'time');
 			if (timeItem?.mandatory && !rpcArgs.p_occurrence_time) {
 				return 'Time is required for this template.';
 			}
@@ -385,33 +403,31 @@
 <form class="template-form" on:submit|preventDefault={handleSubmit}>
 	{#if propertyItems.length > 0}
 		<section class="form-section" aria-label="Event details">
-			{#each propertyItems as item (item.property)}
+			{#each propertyItems as item (item.key)}
 				<div class="form-field">
-					<label for={`property-${item.property}`}>{formatPropertyLabel(item.property)}</label>
-					{#if item.property === 'valence'}
+					<label for={`property-${item.key}`}>{formatPropertyLabel(item.key)}</label>
+					{#if item.key === 'valence'}
 						<select
-							id={`property-${item.property}`}
-							bind:value={propertyValues[item.property]}
-							required={item.mandatory ?? false}
+							id={`property-${item.key}`}
+							bind:value={propertyValues[item.key]}
+							required={item.mandatory}
 						>
-							{#each valenceOptions as option}
+							{#each valenceOptions as option (option)}
 								<option value={option}>{option}</option>
 							{/each}
 						</select>
 					{:else}
 						<input
-							id={`property-${item.property}`}
-							type={
-								item.property === 'date'
-									? 'date'
-									: item.property === 'time'
-										? 'time'
-										: item.property === 'valence'
-											? 'number'
-											: 'text'
-							}
-							bind:value={propertyValues[item.property]}
-							required={item.mandatory ?? false}
+							id={`property-${item.key}`}
+							type={item.key === 'date'
+								? 'date'
+								: item.key === 'time'
+									? 'time'
+									: item.key === 'valence'
+										? 'number'
+										: 'text'}
+							bind:value={propertyValues[item.key]}
+							required={item.mandatory}
 						/>
 					{/if}
 				</div>
@@ -427,7 +443,7 @@
 			{:else}
 				<MappingComponent
 					title="Emotions"
-					items={emotions}
+					items={emotionItems}
 					initialValues={emotionValues}
 					valenceFilter={emotionValenceFilter}
 					enableFilter={valenceFieldPresent}
@@ -445,7 +461,7 @@
 			{:else}
 				<MappingComponent
 					title="Associations"
-					items={associations}
+					items={associationItems}
 					initialValues={associationValues}
 					onChange={handleAssociationChange}
 				/>
@@ -456,15 +472,15 @@
 	{#if questionItems.length > 0}
 		<section class="form-section" aria-label="Questions">
 			<h2>Questions</h2>
-			{#each questionItems as item, index (item.entity_id)}
-				{@const meta = resolveQuestionMeta(item.entity_id, index)}
+			{#each questionItems as item, index (item.id)}
+				{@const meta = resolveQuestionMeta(item.id, index)}
 				<Question
 					name={meta.fieldName}
 					question={`question.${meta.id}.question`}
 					description={`question.${meta.id}.description`}
 					placeholder={`question.${meta.id}.placeholder`}
-					bind:value={questionValues[item.entity_id]}
-					required={item.mandatory ?? false}
+					bind:value={questionValues[item.id]}
+					required={item.mandatory}
 				/>
 			{/each}
 		</section>

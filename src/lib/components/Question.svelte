@@ -23,16 +23,16 @@
 		<h2 class="question-name">{$t(question)}</h2>
 		<p class="question-description" id={hintId}>{$t(description)}</p>
 	</label>
-		<textarea
-			id={name}
-			aria-describedby={hintId}
-			placeholder={$t(placeholder)}
-			rows="1"
-			bind:value
-			on:input={autoGrow}
-			{required}
-		></textarea>
-	</div>
+	<textarea
+		id={name}
+		aria-describedby={hintId}
+		placeholder={$t(placeholder)}
+		rows="1"
+		bind:value
+		on:input={autoGrow}
+		{required}
+	></textarea>
+</div>
 
 <style lang="stylus">
 	.question

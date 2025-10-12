@@ -152,7 +152,11 @@ const sanitizeFieldName = (value: string, fallback: string): string => {
 	return fallback;
 };
 
-const resolveQuestionId = (record: Record<string, unknown>, fallbackPrefix: string, index: number) => {
+const resolveQuestionId = (
+	record: Record<string, unknown>,
+	fallbackPrefix: string,
+	index: number
+) => {
 	for (const key of QUESTION_ID_KEYS) {
 		const value = record[key];
 		if (typeof value === 'string' && value.trim().length > 0) {
@@ -190,7 +194,9 @@ const normalizeQuestionRows = (
 				? sanitizeFieldName(rawName, fallbackFieldName(index))
 				: fallbackFieldName(index);
 		const label =
-			pickString(record, QUESTION_TITLE_KEYS) ?? pickString(record, LABEL_KEYS) ?? `${fallbackPrefix} ${index + 1}`;
+			pickString(record, QUESTION_TITLE_KEYS) ??
+			pickString(record, LABEL_KEYS) ??
+			`${fallbackPrefix} ${index + 1}`;
 		const description = pickString(record, QUESTION_DESCRIPTION_KEYS);
 		const placeholder = pickString(record, QUESTION_PLACEHOLDER_KEYS);
 
@@ -220,7 +226,9 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 		throw error(404, 'Template not found');
 	}
 
-	const templateItems = (Array.isArray(config.template) ? config.template : []) as RawTemplateItem[];
+	const templateItems = (
+		Array.isArray(config.template) ? config.template : []
+	) as RawTemplateItem[];
 
 	const needsEmotions = templateItems.some(
 		(item) => item.type === 'model' && item.model === 'emotion_mapping'
@@ -275,21 +283,21 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 
 	const questionsById: Record<string, TemplateQuestion> = {};
 
-		questionIds.forEach((id, index) => {
-			const question = questionIndex.get(id);
-			if (question) {
-				questionsById[id] = question;
-				return;
-			}
+	questionIds.forEach((id, index) => {
+		const question = questionIndex.get(id);
+		if (question) {
+			questionsById[id] = question;
+			return;
+		}
 
-			questionsById[id] = {
-				id,
-				fieldName: fallbackFieldName(index),
-				label: `Question ${id}`,
-				description: null,
-				placeholder: null
-			};
-		});
+		questionsById[id] = {
+			id,
+			fieldName: fallbackFieldName(index),
+			label: `Question ${id}`,
+			description: null,
+			placeholder: null
+		};
+	});
 
 	return {
 		profileId: user.id,
