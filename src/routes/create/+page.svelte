@@ -1,32 +1,19 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { t } from '$lib';
 
-	type CreateRoute =
-		| '/create/analyse'
-		| '/create/moment'
-		| '/create/decision'
-		| '/create/mood'
-		| '/create/achievement'
-		| '/create/gratitude'
-		| '/create/thought';
-
-	const createLinks = [
-		{ href: '/create/analyse', label: 'Analyse' },
-		{ href: '/create/moment', label: 'Moment' },
-		{ href: '/create/decision', label: 'Decision' },
-		{ href: '/create/mood', label: 'Mood' },
-		{ href: '/create/achievement', label: 'Achievement' },
-		{ href: '/create/gratitude', label: 'Gratitude' },
-		{ href: '/create/thought', label: 'Thought' }
-	] as const satisfies ReadonlyArray<{ href: CreateRoute; label: string }>;
+	export let data;
+	const templates = data.templates;
 </script>
 
-<h1>Create</h1>
+<h1>{$t('create.title')}</h1>
 
-<ul>
-	{#each createLinks as link (link.href)}
+<ul class="template-list">
+	{#each templates as template (template.name)}
 		<li>
-			<a href={resolve(link.href)}>{link.label}</a>
+			<a href={resolve(`/create/${template.name}`)}>
+				{template.label}
+			</a>
 		</li>
 	{/each}
 </ul>

@@ -34,37 +34,67 @@ legal:
   mention: "Pebblestones est un projet libre, ce n'est pas un dispositif médical agréé."
   external_label: "Accéder à l'annuaire de l'AFTCC"
   external_link: 'https://www.aftcc.org/annuaire'
-form:
-  situation:
+question:
+  35c9a214-86f6-421f-91ea-477b4e1f4a30:
     name: Situation
     question: 'Quelle est la situation ?'
     description: 'Le contexte, lieu, personnes présentes : où, quand, qui, quoi, comment, pourquoi ? Ce sont l’incipit et l’élément perturbateur de mon histoire.'
     placeholder: "J'étais en train de "
-  thought:
+  8babc7ea-a97c-4cc7-86db-a174b2a466cb:
     name: Pensée automatique
     question: 'Quelles ont été mes pensées ? Que me suis-je dit ?'
     description: 'Les phrases et les petites voix qu’on se répète. Cela demande parfois un effort au début pour les formuler avec des mots, car avec le temps, elles tendent à s’enfouir dans l’inconscient. Mais tout le monde en a, faut faire un peu d’archéologie, c’est indispensable.'
     placeholder: 'Je me suis alors dit '
-  emotion:
+  89409c54-1ced-4a93-8d66-c6af831ae242:
     name: Émotion
     question: 'Quelles émotions et sensations ai-je ressenties ?'
     description: 'Peur, stress, colère, honte, impuissance ; mais aussi mal au ventre, gorge serrée, sueur froide, mâchoire contractée, urticaire : les émotions sont souvent assorties de sensations qui en sont les symptômes, y être attentif augmente la finesse de sa conscience de soi.'
     placeholder: 'Je me suis senti '
-  behavior:
+  a9cdf1aa-8167-4aaa-98b6-ee43f31eb5f3:
     name: Comportement
     question: 'Qu’ai-je fait ? Comment ai-je spontanément réagi ? Que s’est-il passé ensuite ?'
     description: 'Fuir ou éviter, attaquer ou riposter, s’inhiber ou se pétrifier, pleurer ou crier, casser ou frapper, mentir ou accuser, manger ou vomir, aller courir ou binge watcher/gamer, quelle est mon attitude et quels ont été mes réflexes pour réagir, gérer et naviguer dans cette situation ?'
     placeholder: "J'ai donc "
-  learning:
+  2964284d-f9a4-4a7d-8bb8-550e6462215a:
     name: Apprentissage
     question: 'Qu’est-ce que cette situation m’apprend sur moi ?'
     description: 'Qu’est-ce que mes émotions, mes pensées et mes réactions m’enseignent sur moi ? Qu’est-ce qui peut l’expliquer ? Quels sont ma mécanique, mon moteur, mon carburant, mes déclencheurs ?'
     placeholder: "Ce que cette situation m'a appris sur moi c'est que "
-  alternative:
+  f02d6c5b-50f0-4c69-b9c7-44ad92c00627:
     name: Pensée alternative
     question: 'Quels conseils je me donnerais pour agir mieux la prochaine fois ?'
     description: 'Attention, il faut me tourner vers le futur (progrès) pas vers le passé (regret). Si je me retrouve dans une situation similaire, que sera-t-il juste et approprié de penser ? de me dire ? que sera-t-il constructif et approprié de faire ?'
     placeholder: 'La prochaine fois, je ferai '
+create:
+  title: 'Créer une entrée'
+  template:
+    section:
+      details: "Détails de l'événement"
+      emotions: Émotions
+      associations: Associations
+      questions: Questions
+    empty:
+      emotions: 'Aucune émotion disponible.'
+      associations: 'Aucune association disponible.'
+    button:
+      saving: 'Enregistrement…'
+      save: "Enregistrer l'événement"
+    success:
+      default: 'Événement enregistré.'
+      with_id: 'Événement enregistré (id : {id}).'
+    preview:
+      title: 'Aperçu de la requête RPC'
+    fields:
+      date: Date
+      time: Heure
+      valence: Valence
+      name: Nom
+      description: Description
+    error:
+      field_required: '"{field}" est requis.'
+      save_status: 'Impossible d’enregistrer l’événement (statut {status})'
+      unexpected: 'Erreur inattendue lors de l’enregistrement'
+form:
   submit: Ajouter
   create: Nouvelle entrée
 emotions:

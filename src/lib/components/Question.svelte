@@ -6,6 +6,7 @@
 	export let description: string;
 	export let placeholder: string;
 	export let value: string = '';
+	export let required = false;
 
 	let hintId: string;
 	$: hintId = `${name}-hint`;
@@ -29,6 +30,7 @@
 		rows="1"
 		bind:value
 		on:input={autoGrow}
+		{required}
 	></textarea>
 </div>
 
