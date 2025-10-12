@@ -1,6 +1,7 @@
 <script lang="ts">
 	import MappingComponent from '$lib/components/Mapping/MappingComponent.svelte';
 	import type { MappingValue } from '$lib/components/Mapping/types';
+	import { SvelteMap } from 'svelte/reactivity';
 	import type { PageData } from './$types';
 
 	type MoodKind = 'dailyMood' | 'momentaryEmotion';
@@ -18,6 +19,8 @@
 		p_profile_id: string;
 		p_kind: string;
 		p_valence: string;
+		p_occurrence_date: string;
+		p_occurrence_time: string | null;
 		p_emotions: EmotionPayload[];
 		p_associations: AssociationPayload[];
 	};
@@ -53,6 +56,9 @@
 	let emotionIntensityValues: MappingValue[] = [];
 	let associationIntensityValues: MappingValue[] = [];
 	let submissionPreview: string | null = null;
+	let submitError: string | null = null;
+	let submitSuccessId: string | null = null;
+	let isSubmitting = false;
 	const PROFILE_PLACEHOLDER = 'PROFILE_ID_FROM_SESSION';
 	const INDENT = '  ';
 
@@ -88,27 +94,90 @@
 		associationValues = values;
 	};
 
-	const handleSubmit = (event: SubmitEvent) => {
+	const handleSubmit = async (event: SubmitEvent) => {
 		event.preventDefault();
+		submitError = null;
+		submitSuccessId = null;
+		if (!date) {
+			submitError = 'Date is required.';
+			submissionPreview = null;
+			return;
+		}
+		if (kind === 'momentaryEmotion' && !time) {
+			submitError = 'Time is required for momentary emotions.';
+			submissionPreview = null;
+			return;
+		}
 		const rpcArgs = buildRpcArgs();
 		const formattedArgs = indentLines(formatLiteral(rpcArgs), 1);
-		submissionPreview = ["await supabase.rpc('upsert_mood_full',", formattedArgs, ');'].join('\n');
+		const snippetBase = ["await supabase.rpc('upsert_mood_full',", formattedArgs, ');'];
+		submissionPreview = snippetBase.join('\n');
+		isSubmitting = true;
+		try {
+			const response = await fetch('/api/moods', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Accept: 'application/json'
+				},
+				body: JSON.stringify(rpcArgs)
+			});
+
+			if (!response.ok) {
+				let message = `Failed to save mood (status ${response.status})`;
+				try {
+					const problem = await response.json();
+					if (problem?.message) {
+						message = problem.message;
+					}
+				} catch {
+					// ignore JSON parsing failures
+				}
+				throw new Error(message);
+			}
+
+			const payload: { id?: string } = await response.json();
+			const moodId = payload?.id ?? null;
+			submitSuccessId = moodId;
+			submissionPreview = [
+				...snippetBase,
+				moodId ? `// → mood id: '${moodId}'` : '// → mood saved'
+			].join('\n');
+		} catch (err) {
+			const message = err instanceof Error ? err.message : 'Unexpected error while saving mood';
+			submitError = message;
+			submissionPreview = [...snippetBase, `// ! error: ${message}`].join('\n');
+		} finally {
+			isSubmitting = false;
+		}
 	};
 
+	function dedupeValues(values: MappingValue[]): MappingValue[] {
+		const map = new SvelteMap<string, MappingValue>();
+		for (const value of values) {
+			map.set(value.id, value);
+		}
+		return Array.from(map.values());
+	}
+
 	function buildEmotionPayload(values: MappingValue[]): EmotionPayload[] {
-		return values.map(({ id, scale_type, value }) => ({
-			emotion_id: id,
-			scale_type,
-			value
-		}));
+		return dedupeValues(values)
+			.filter((value) => value.scale_type !== 'intensity' || value.value > 0)
+			.map(({ id, scale_type, value }) => ({
+				emotion_id: id,
+				scale_type,
+				value
+			}));
 	}
 
 	function buildAssociationPayload(values: MappingValue[]): AssociationPayload[] {
-		return values.map(({ id, scale_type, value }) => ({
-			association_id: id,
-			scale_type,
-			value
-		}));
+		return dedupeValues(values)
+			.filter((value) => value.scale_type !== 'intensity' || value.value > 0)
+			.map(({ id, scale_type, value }) => ({
+				association_id: id,
+				scale_type,
+				value
+			}));
 	}
 
 	function buildRpcArgs(): RpcArgs {
@@ -117,6 +186,8 @@
 			p_profile_id: profileId,
 			p_kind: kind,
 			p_valence: valenceScale[valence] ?? valence,
+			p_occurrence_date: date,
+			p_occurrence_time: kind === 'momentaryEmotion' ? time || null : null,
 			p_emotions: buildEmotionPayload(emotionValues),
 			p_associations: buildAssociationPayload(associationValues)
 		};
@@ -241,7 +312,21 @@
 		<input type="hidden" name="associationIntensities" value={`${entry.id}:${entry.value}`} />
 	{/each}
 
-	<button type="submit">Save mood</button>
+	<button type="submit" disabled={isSubmitting}>
+		{#if isSubmitting}
+			Saving…
+		{:else}
+			Save mood
+		{/if}
+	</button>
+
+	{#if submitError}
+		<p class="text-sm text-red-600 mt-2" role="alert">{submitError}</p>
+	{:else if submitSuccessId}
+		<p class="text-sm text-emerald-600 mt-2" role="status">
+			Mood saved successfully (id: {submitSuccessId}).
+		</p>
+	{/if}
 </form>
 
 {#if submissionPreview}
