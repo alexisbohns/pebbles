@@ -11,6 +11,11 @@ type AssociationPayload = {
 	valence?: number;
 };
 
+type ResponsePayload = {
+	question_id: string;
+	value: string;
+};
+
 type UpsertEventPayload = {
 	p_profile_id: string;
 	p_kind: string;
@@ -21,6 +26,7 @@ type UpsertEventPayload = {
 	p_description?: string;
 	p_emotions?: EmotionPayload[];
 	p_associations?: AssociationPayload[];
+	p_responses?: ResponsePayload[];
 };
 
 const clampValence = (value: number): number => {
@@ -129,6 +135,27 @@ const normalizeAssociationCollection = (
 	return Array.from(map.values());
 };
 
+const normalizeResponseCollection = (items: ResponsePayload[] | undefined): ResponsePayload[] => {
+	if (!Array.isArray(items)) return [];
+	const map = new Map<string, ResponsePayload>();
+
+	for (const item of items) {
+		if (!item || typeof item !== 'object') continue;
+		const questionId = String((item as ResponsePayload).question_id ?? '').trim();
+		if (!questionId) continue;
+
+		const normalizedValue = normalizeText((item as ResponsePayload).value);
+		if (normalizedValue.length === 0) continue;
+
+		map.set(questionId, {
+			question_id: questionId,
+			value: normalizedValue
+		});
+	}
+
+	return Array.from(map.values());
+};
+
 export const POST: RequestHandler = async ({ request, locals }) => {
 	const { supabase, user } = locals;
 
@@ -167,7 +194,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		p_name: normalizeText(payload.p_name),
 		p_description: normalizeText(payload.p_description),
 		p_emotions: normalizeEmotionCollection(payload.p_emotions),
-		p_associations: normalizeAssociationCollection(payload.p_associations)
+		p_associations: normalizeAssociationCollection(payload.p_associations),
+		p_responses: normalizeResponseCollection(payload.p_responses)
 	};
 
 	const { data, error } = await supabase.rpc('upsert_event_full', rpcArgs);

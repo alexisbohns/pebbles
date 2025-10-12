@@ -1,0 +1,36 @@
+{
+  "name": "mood_basic",
+  "label": "Mood (basique)",
+  "model": "events",
+  "model_properties": {
+    "kind": "moment"
+  },
+  "template": [
+    {
+      "type": "property",
+      "property": "date",
+      "mandatory": true
+    },
+    {
+      "type": "property",
+      "property": "time",
+      "mandatory": true
+    },
+    {
+      "type": "model",
+      "model": "emotion_mapping",
+      "mandatory": false
+    },
+    {
+      "type": "model",
+      "model": "association_mapping",
+      "mandatory": false
+    },
+    {
+      "type": "property",
+      "property": "valence",
+      "mandatory": true,
+      "default": 0
+    }
+  ]
+}

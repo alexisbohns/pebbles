@@ -34,33 +34,33 @@ legal:
   mention: 'Pebblestones is an open project, it is not a medical device.'
   external_label: Access AFTCC directory
   external_link: 'https://www.aftcc.org/annuaire'
-form:
-  situation:
+question:
+  35c9a214-86f6-421f-91ea-477b4e1f4a30:
     name: Situation
     question: 'What is the situation?'
     description: 'The context, place, people involved: where, when, who, what, how, why? This is the opening and the disruptive element of my story.'
     placeholder: 'I was '
-  thought:
+  8babc7ea-a97c-4cc7-86db-a174b2a466cb:
     name: Automatic thought
     question: 'What were my thoughts? What did I tell myself?'
     description: 'The sentences and inner voices we repeat to ourselves. It sometimes takes effort to put them into words, because over time they tend to sink into the unconscious. But everyone has them — you just need to dig a bit; it’s essential self-archaeology.'
     placeholder: 'I told myself '
-  emotion:
+  89409c54-1ced-4a93-8d66-c6af831ae242:
     name: Emotion
     question: 'What emotions and sensations did I feel?'
     description: 'Fear, stress, anger, shame, helplessness; but also stomach pain, tight throat, cold sweat, clenched jaw, hives — emotions often come with bodily sensations that are their symptoms. Paying attention to them increases self-awareness and emotional precision.'
     placeholder: 'I felt '
-  behavior:
+  a9cdf1aa-8167-4aaa-98b6-ee43f31eb5f3:
     name: Behavior
     question: 'What did I do? How did I react spontaneously? What happened next?'
     description: 'Did I flee or avoid? Attack or retaliate? Freeze or inhibit myself? Cry or scream? Break something or hit? Lie or accuse? Eat or throw up? Go for a run or binge-watch/play games? What was my attitude, my reflex to react, cope, or navigate through this situation?'
     placeholder: 'So I '
-  learning:
+  2964284d-f9a4-4a7d-8bb8-550e6462215a:
     name: Learning
     question: 'What does this situation teach me about myself?'
     description: 'What do my emotions, thoughts, and reactions reveal about me? What explains them? What are my mechanisms, my engine, my fuel, my triggers?'
     placeholder: 'What this situation taught me about myself is that '
-  alternative:
+  f02d6c5b-50f0-4c69-b9c7-44ad92c00627:
     name: Alternative thought
     question: 'What advice would I give myself to act better next time?'
     description: 'Be careful to look toward the future (progress), not the past (regret). If I find myself in a similar situation, what would be right and appropriate to think? To tell myself? To do in a constructive and suitable way?'

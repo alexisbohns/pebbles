@@ -1,0 +1,66 @@
+{
+  "name": "moment_basic",
+  "label": "Moment (basique)",
+  "model": "events",
+  "model_properties": {
+    "kind": "moment"
+  },
+  "template": [
+    {
+      "type": "property",
+      "property": "date",
+      "mandatory": true
+    },
+    {
+      "type": "property",
+      "property": "time",
+      "mandatory": true
+    },
+    {
+      "type": "question",
+      "entity_id": "35c9a214-86f6-421f-91ea-477b4e1f4a30",
+      "mandatory": false
+    },
+    {
+      "type": "model",
+      "model": "emotion_mapping",
+      "mandatory": false
+    },
+    {
+      "type": "model",
+      "model": "association_mapping",
+      "mandatory": false
+    },
+    {
+      "type": "property",
+      "property": "valence",
+      "mandatory": true,
+      "default": 0
+    },
+    {
+      "type": "question",
+      "entity_id": "89409c54-1ced-4a93-8d66-c6af831ae242",
+      "mandatory": false
+    },
+    {
+      "type": "question",
+      "entity_id": "8babc7ea-a97c-4cc7-86db-a174b2a466cb",
+      "mandatory": false
+    },
+    {
+      "type": "question",
+      "entity_id": "a9cdf1aa-8167-4aaa-98b6-ee43f31eb5f3",
+      "mandatory": false
+    },
+    {
+      "type": "question",
+      "entity_id": "2964284d-f9a4-4a7d-8bb8-550e6462215a",
+      "mandatory": false
+    },
+    {
+      "type": "question",
+      "entity_id": "f02d6c5b-50f0-4c69-b9c7-44ad92c00627",
+      "mandatory": false
+    }
+  ]
+}

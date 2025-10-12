@@ -6,6 +6,7 @@
 	export let description: string;
 	export let placeholder: string;
 	export let value: string = '';
+	export let required = false;
 
 	let hintId: string;
 	$: hintId = `${name}-hint`;
@@ -22,15 +23,16 @@
 		<h2 class="question-name">{$t(question)}</h2>
 		<p class="question-description" id={hintId}>{$t(description)}</p>
 	</label>
-	<textarea
-		id={name}
-		aria-describedby={hintId}
-		placeholder={$t(placeholder)}
-		rows="1"
-		bind:value
-		on:input={autoGrow}
-	></textarea>
-</div>
+		<textarea
+			id={name}
+			aria-describedby={hintId}
+			placeholder={$t(placeholder)}
+			rows="1"
+			bind:value
+			on:input={autoGrow}
+			{required}
+		></textarea>
+	</div>
 
 <style lang="stylus">
 	.question
