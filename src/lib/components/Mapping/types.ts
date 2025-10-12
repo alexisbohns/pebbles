@@ -1,5 +1,3 @@
-export type ScaleType = 'selection' | 'intensity' | 'impact';
-
 export interface MappingItem {
 	id: string;
 	label: string;
@@ -7,8 +5,15 @@ export interface MappingItem {
 	icon?: string;
 }
 
-export interface MappingValue {
+export interface MappingSelectionValue {
 	id: string;
-	scale_type: ScaleType;
+	kind: 'selection';
+}
+
+export interface MappingIntensityValue {
+	id: string;
+	kind: 'intensity';
 	value: number;
 }
+
+export type MappingValue = MappingSelectionValue | MappingIntensityValue;

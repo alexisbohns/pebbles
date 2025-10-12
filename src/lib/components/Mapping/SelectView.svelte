@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import { SvelteSet } from 'svelte/reactivity';
-	import type { MappingItem, MappingValue } from './types';
+	import type { MappingItem, MappingSelectionValue } from './types';
 
 	export let items: MappingItem[] = [];
-	export let initialValues: MappingValue[] = [];
+	export let initialValues: MappingSelectionValue[] = [];
 
-	const dispatch = createEventDispatcher<{ change: MappingValue[] }>();
+	const dispatch = createEventDispatcher<{ change: MappingSelectionValue[] }>();
 	let selected = new SvelteSet<string>();
 
 	$: {
@@ -16,10 +16,9 @@
 	}
 
 	function emitChange() {
-		const values: MappingValue[] = Array.from(selected).map((id) => ({
+		const values: MappingSelectionValue[] = Array.from(selected).map((id) => ({
 			id,
-			scale_type: 'selection',
-			value: 1
+			kind: 'selection'
 		}));
 		dispatch('change', values);
 	}
