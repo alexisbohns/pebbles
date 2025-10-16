@@ -1,26 +1,14 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { resolve } from '$app/paths';
-	import { t } from '$lib';
-	import { entriesStore } from '$lib/stores/entriesStore';
+	import EventTimeline from '$lib/components/EventTimeline.svelte';
+	import LandingContent from '$lib/components/LandingContent.svelte';
+	import type { PageData } from './$types';
 
-	$: entries = $entriesStore;
-
-	const goToCreate = () => {
-		goto(resolve('/create'));
-	};
+	let { data }: { data: PageData } = $props();
+	const events = data.events ?? [];
 </script>
 
-<h1>{$t('home.history.title')}</h1>
-<button type="button" on:click={goToCreate}>{$t('form.create') ?? 'Create'}</button>
-<ul>
-	{#each entries as entry (entry.id)}
-		<li>
-			<strong>{entry.situation}</strong> → {entry.thought}
-			<br />
-			{entry.emotion} | {entry.behavior} | {entry.alternative}
-			<small> ({new Date(entry.date).toLocaleString()})</small>
-			<button on:click={() => entriesStore.remove(entry.id)}>🗑</button>
-		</li>
-	{/each}
-</ul>
+{#if data.user}
+	<EventTimeline {events} />
+{:else}
+	<LandingContent />
+{/if}
