@@ -103,6 +103,7 @@ form:
 timeline:
   title: Your events
   empty: No events to display yet.
+  create: Create event
   item:
     valence: 'Valence: {value}'
     fallback_title: 'Event {id}'
