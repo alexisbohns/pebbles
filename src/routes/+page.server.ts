@@ -15,7 +15,6 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
 		const response = await fetch('/api/events');
 
 		if (response.status === 401) {
-			// User lost authentication, treat as unauthenticated state.
 			return { events: [] };
 		}
 

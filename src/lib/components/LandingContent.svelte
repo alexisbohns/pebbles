@@ -1,7 +1,10 @@
 <script lang="ts">
-	export let title = 'Pebbles';
-	export let description =
-		'Capture meaningful events, track emotions, and reflect on your personal growth.';
+	import { t } from '$lib';
+
+	let { titleKey = 'landing.title', descriptionKey = 'landing.description' } = $props();
+
+	const title = $derived.by(() => $t(titleKey));
+	const description = $derived.by(() => $t(descriptionKey));
 </script>
 
 <section>

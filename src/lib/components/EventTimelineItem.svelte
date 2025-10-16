@@ -1,26 +1,36 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { EventSummary } from '$lib/types/events';
+	import { t } from '$lib';
 
 	let { event }: { event: EventSummary } = $props();
 
-	const link = resolve('/events/[id]', { id: event.id });
-	const title =
-		typeof event.name === 'string' && event.name.trim().length > 0
-			? event.name.trim()
-			: typeof event.kind === 'string' && event.kind.trim().length > 0
-				? event.kind.trim()
-				: `Event ${event.id.slice(0, 8)}`;
-	const occurrenceDate =
-		typeof event.occurrence_date === 'string' && event.occurrence_date.trim().length > 0
-			? event.occurrence_date
-			: null;
-	const valence =
-		typeof event.valence === 'number' && Number.isFinite(event.valence) ? event.valence : null;
+	const fallbackTitle = $derived.by(() =>
+		$t('timeline.item.fallback_title', { id: (event?.id ?? '').slice(0, 8) })
+	);
+	const title = $derived.by(() => {
+		const name = typeof event?.name === 'string' ? event.name.trim() : '';
+		if (name.length > 0) return name;
+
+		const kind = typeof event?.kind === 'string' ? event.kind.trim() : '';
+		if (kind.length > 0) return kind;
+
+		return fallbackTitle;
+	});
+	const occurrenceDate = $derived.by(() => {
+		const value = typeof event?.occurrence_date === 'string' ? event.occurrence_date.trim() : '';
+		return value.length > 0 ? value : null;
+	});
+	const valence = $derived.by(() =>
+		typeof event?.valence === 'number' && Number.isFinite(event.valence) ? event.valence : null
+	);
+	const valenceLabel = $derived.by(() =>
+		valence !== null ? $t('timeline.item.valence', { value: valence }) : null
+	);
 </script>
 
 <article>
-	<a href={link}>
+	<a href={resolve('/events/[id]', { id: event?.id ?? '' })}>
 		<h3>{title}</h3>
 		{#if occurrenceDate || valence !== null}
 			<p>
@@ -31,7 +41,7 @@
 					<span> · </span>
 				{/if}
 				{#if valence !== null}
-					<span>Valence: {valence}</span>
+					<span>{valenceLabel}</span>
 				{/if}
 			</p>
 		{/if}

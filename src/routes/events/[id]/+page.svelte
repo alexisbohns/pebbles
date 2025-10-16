@@ -1,19 +1,26 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { t } from '$lib';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 	const event = data.event;
-	const title =
-		typeof event?.name === 'string' && event.name.trim().length > 0
-			? event.name.trim()
-			: typeof event?.kind === 'string' && event.kind
-				? `${event.kind} event`
-				: 'Event details';
+
+	const kindLabel = $derived.by(() => {
+		const kind = typeof event?.kind === 'string' ? event.kind.trim() : '';
+		return kind.length > 0 ? $t('events.detail.kind_title', { kind }) : null;
+	});
+	const title = $derived.by(() => {
+		const name = typeof event?.name === 'string' ? event.name.trim() : '';
+		if (name.length > 0) return name;
+
+		return kindLabel ?? $t('events.detail.title_fallback');
+	});
+	const backLabel = $derived($t('events.detail.back_to_list'));
 </script>
 
 <nav>
-	<a href={resolve('/')}>Back to events</a>
+	<a href={resolve('/')}>{backLabel}</a>
 </nav>
 
 <section>
