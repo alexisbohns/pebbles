@@ -3,30 +3,24 @@
     user-select text
 
 :root
-    --green-primary #729b79
-    --green-light #bacdb0
-    --petrol-primary #475b63
     --mauve-primary #8b575c
     --mauve-light #c98986
     --pink-light #fae1dd
     --pine-dark #283618
-    --wood-darker #211E1C
-    --wood-dark #463f3a
-    --wood-primary #8a817c
-    --wood-light #d9cbc3
-    --linen-light #f5ebe0
 
-    --e00 white
+
+    --e00 #f1efea
     --e05 grey
-    --e10 black
+    --e10 #333c4b
 
     --a00 var(--pink-light)
-    --a05 var(--mauve-light)
+    --a05 #8FC0A9
     --a10 var(--mauve-primary)
 
 
     --f-def "Sora", system-ui, sans-serif
     --f-serif "Alegreya", "Athelas", serif
+    --f-head "Finger Paint", serif
     
     box-sizing border-box
     padding 0
@@ -37,11 +31,8 @@
     --trans-l all ease 1s
 
 :root[data-theme='dark']
-    --e00 black
-    --e10 white
-
-    --a10 var(--pink-light)
-    --a00 var(--mauve-primary)
+    --e00 #0F131A
+    --e10 #EDE7D9
 
 ::selection
     color var(--a10)
@@ -65,6 +56,7 @@ h1, h2, h3, h4, h5, h6, p, a
 
 h1
     font-size 1.5rem
+    font-family var(--f-head)
 
 a, a:visited
     text-decoration none
