@@ -1,5 +1,8 @@
 common:
   back: Retour
+landing:
+  title: Pebbles
+  description: 'Capturez vos événements marquants, suivez vos émotions et réfléchissez à votre évolution personnelle.'
 home:
   title: Pebbles 🪨
   history:
@@ -97,6 +100,18 @@ create:
 form:
   submit: Ajouter
   create: Nouvelle entrée
+timeline:
+  title: Vos événements
+  empty: Aucun événement à afficher pour le moment.
+  create: Créer un événement
+  item:
+    valence: 'Valence: {value}'
+    fallback_title: 'Événement {id}'
+events:
+  detail:
+    back_to_list: Retour aux événements
+    kind_title: 'Événement {kind}'
+    title_fallback: "Détails de l'événement"
 emotions:
   06f7f887-144f-4fa3-9aa7-213af15c9062: accablement
   27b21533-b83f-4cfe-8fa3-330f3987dcbb: indifférence

@@ -1,4 +1,4 @@
-import { json } from '@sveltejs/kit';
+import { json, error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 type EmotionPayload = {
@@ -206,4 +206,34 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 	}
 
 	return json({ id: data ?? null });
+};
+
+export const GET: RequestHandler = async ({ url, locals }) => {
+	const { supabase, user } = locals;
+
+	if (!supabase || !user) {
+		throw error(401, 'Authentication required');
+	}
+
+	const limitParam = url.searchParams.get('limit');
+	const offsetParam = url.searchParams.get('offset');
+	const parsedLimit = limitParam === null ? 50 : Number(limitParam);
+	const parsedOffset = offsetParam === null ? 0 : Number(offsetParam);
+
+	const filters = {
+		kind: url.searchParams.get('kind'),
+		from: url.searchParams.get('from'),
+		to: url.searchParams.get('to'),
+		limit: Number.isFinite(parsedLimit) ? parsedLimit : 50,
+		offset: Number.isFinite(parsedOffset) ? parsedOffset : 0
+	};
+
+	const { data, error: err } = await supabase.rpc('get_events', { filters });
+
+	if (err) {
+		console.error('get_events failed', err);
+		throw error(500, err.message);
+	}
+
+	return json(data);
 };
