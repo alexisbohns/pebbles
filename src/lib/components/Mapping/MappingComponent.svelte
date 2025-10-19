@@ -17,6 +17,7 @@
 	export let initialValues: MappingValue[] = [];
 	export let enableFilter = false;
 	export let onChange: (values: MappingValue[]) => void = () => {};
+	export let translationNamespace: string | null = null;
 
 	let showAll = !enableFilter || valenceFilter === null;
 	let manualShowAll: boolean | null = null;
@@ -145,6 +146,7 @@
 		<SelectView
 			items={visibleItems}
 			initialValues={selectionValues}
+			{translationNamespace}
 			on:change={(event: CustomEvent<MappingSelectionValue[]>) => handleSelectChange(event.detail)}
 		/>
 	{:else}
@@ -152,6 +154,7 @@
 			items={visibleItems}
 			initialValues={intensityValues}
 			containerLabel={`${title} intensity controls`}
+			{translationNamespace}
 			on:change={(event: CustomEvent<MappingIntensityValue[]>) =>
 				handleIntensityChange(event.detail)}
 		/>

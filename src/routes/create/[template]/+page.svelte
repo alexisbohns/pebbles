@@ -536,6 +536,7 @@
 					initialValues={emotionValues}
 					valenceFilter={emotionValenceFilter}
 					enableFilter={valenceFieldPresent}
+					translationNamespace="emotions"
 					onChange={handleEmotionChange}
 				/>
 			{/if}
@@ -557,6 +558,7 @@
 					title={$t('create.template.section.associations')}
 					items={associationItems}
 					initialValues={associationValues}
+					translationNamespace="associations"
 					onChange={handleAssociationChange}
 				/>
 			{/if}

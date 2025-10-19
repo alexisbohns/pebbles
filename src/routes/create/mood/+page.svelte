@@ -296,6 +296,7 @@
 				initialValues={emotionValues}
 				valenceFilter={emotionValenceFilter}
 				enableFilter={true}
+				translationNamespace="emotions"
 				onChange={handleEmotionChange}
 			/>
 		{/if}
@@ -317,6 +318,7 @@
 				title="Associations"
 				items={data.associations}
 				initialValues={associationValues}
+				translationNamespace="associations"
 				onChange={handleAssociationChange}
 			/>
 		{/if}
