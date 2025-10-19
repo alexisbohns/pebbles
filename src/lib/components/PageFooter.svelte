@@ -6,9 +6,6 @@
 	import ModeToggle from '$lib/components/ModeToggle.svelte';
 
 	let { user = null } = $props<{ user: User | null }>();
-
-	const isAuthenticated = $derived(Boolean(user));
-	const authPath = $derived((user ? '/logout' : '/login') as `/${string}`);
 </script>
 
 <div class="page-footer selectable">
