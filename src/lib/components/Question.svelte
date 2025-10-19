@@ -65,24 +65,14 @@
 			background transparent
 			border none
 			border-left 0 solid transparent
-			font-size 1.1rem
 			padding 0
 			padding-left 0
-			font-family var(--f-serif)
-			color var(--e10)
 			position relative
 			resize none
 			overflow hidden
-			caret-color var(--a05)
 			transition all 0.25s ease
-
-			&::placeholder
-				color var(--e10)
-				opacity 0.3
 
 			&:focus
 				border none
-				border-left 3px solid var(--a05)
-				padding-left 0.5rem
 				outline none
 </style>
