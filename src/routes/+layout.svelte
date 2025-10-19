@@ -3,7 +3,7 @@
 	import PageFooter from '$lib/components/PageFooter.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import '../global.styl';
-	import '../app.postcss';
+	import '../app.css';
 
 	let { children, data } = $props();
 
