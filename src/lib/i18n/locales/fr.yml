@@ -103,6 +103,15 @@ create:
       field_required: '"{field}" est requis.'
       save_status: 'Impossible d’enregistrer l’événement (statut {status})'
       unexpected: 'Erreur inattendue lors de l’enregistrement'
+  step:
+    back_to_templates: 'Retour aux modèles'
+    progress: 'Étape {current} sur {total}'
+    unsupported: "Cette étape n'est pas disponible."
+    previous: Précédent
+    first_hint: 'Commencez par renseigner les informations de base.'
+    save: 'Enregistrer'
+    finish: Terminer
+    next: Suivant
 form:
   submit: Ajouter
   create: Nouvelle entrée

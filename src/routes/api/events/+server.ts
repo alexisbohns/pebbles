@@ -1,17 +1,28 @@
 import { json, error } from '@sveltejs/kit';
+import {
+	clampValence,
+	normalizeAssociationCollection,
+	normalizeEmotionCollection,
+	normalizeEventValence,
+	normalizeKind,
+	normalizeOptionalValence,
+	normalizeResponseCollection,
+	normalizeText,
+	normalizeTime
+} from '$lib/server/event-normalize';
 import type { RequestHandler } from './$types';
 
-type EmotionPayload = {
+export type EmotionPayload = {
 	emotion_id: string;
 	valence?: number;
 };
 
-type AssociationPayload = {
+export type AssociationPayload = {
 	association_id: string;
 	valence?: number;
 };
 
-type ResponsePayload = {
+export type ResponsePayload = {
 	question_id: string;
 	value: string;
 };
@@ -27,133 +38,6 @@ type UpsertEventPayload = {
 	p_emotions?: EmotionPayload[];
 	p_associations?: AssociationPayload[];
 	p_responses?: ResponsePayload[];
-};
-
-const clampValence = (value: number): number => {
-	if (!Number.isFinite(value)) return 0;
-	return Math.max(-3, Math.min(3, Math.round(value)));
-};
-
-const normalizeEventValence = (value: unknown): number => {
-	if (typeof value === 'number') {
-		return clampValence(value);
-	}
-
-	if (typeof value === 'string') {
-		const parsed = Number.parseInt(value, 10);
-		if (!Number.isNaN(parsed)) {
-			return clampValence(parsed);
-		}
-	}
-
-	return 0;
-};
-
-const normalizeOptionalValence = (value: unknown): number | undefined => {
-	if (value === null || value === undefined) return undefined;
-	if (typeof value === 'number') {
-		return clampValence(value);
-	}
-	if (typeof value === 'string' && value.trim() !== '') {
-		const parsed = Number.parseInt(value, 10);
-		if (!Number.isNaN(parsed)) {
-			return clampValence(parsed);
-		}
-	}
-	return undefined;
-};
-
-const normalizeText = (value: unknown): string => {
-	if (typeof value !== 'string') return '';
-	return value.trim();
-};
-
-const normalizeKind = (value: unknown): string => {
-	if (value === 'moment' || value === 'day') {
-		return value;
-	}
-	return typeof value === 'string' && value.trim().length > 0 ? value.trim() : 'day';
-};
-
-const normalizeTime = (value: unknown): string | null => {
-	if (value === null || value === undefined || value === '') {
-		return null;
-	}
-	if (typeof value === 'string') {
-		return value;
-	}
-	return null;
-};
-
-const normalizeEmotionCollection = (items: EmotionPayload[] | undefined): EmotionPayload[] => {
-	if (!Array.isArray(items)) return [];
-	const map = new Map<string, EmotionPayload>();
-
-	for (const item of items) {
-		if (!item || typeof item !== 'object') continue;
-		const emotionId = String((item as EmotionPayload).emotion_id ?? '').trim();
-		if (!emotionId) continue;
-
-		const normalized: EmotionPayload = {
-			emotion_id: emotionId
-		};
-
-		const valence = normalizeOptionalValence((item as EmotionPayload).valence);
-		if (valence !== undefined) {
-			normalized.valence = valence;
-		}
-
-		map.set(emotionId, normalized);
-	}
-
-	return Array.from(map.values());
-};
-
-const normalizeAssociationCollection = (
-	items: AssociationPayload[] | undefined
-): AssociationPayload[] => {
-	if (!Array.isArray(items)) return [];
-	const map = new Map<string, AssociationPayload>();
-
-	for (const item of items) {
-		if (!item || typeof item !== 'object') continue;
-		const associationId = String((item as AssociationPayload).association_id ?? '').trim();
-		if (!associationId) continue;
-
-		const normalized: AssociationPayload = {
-			association_id: associationId
-		};
-
-		const valence = normalizeOptionalValence((item as AssociationPayload).valence);
-		if (valence !== undefined) {
-			normalized.valence = valence;
-		}
-
-		map.set(associationId, normalized);
-	}
-
-	return Array.from(map.values());
-};
-
-const normalizeResponseCollection = (items: ResponsePayload[] | undefined): ResponsePayload[] => {
-	if (!Array.isArray(items)) return [];
-	const map = new Map<string, ResponsePayload>();
-
-	for (const item of items) {
-		if (!item || typeof item !== 'object') continue;
-		const questionId = String((item as ResponsePayload).question_id ?? '').trim();
-		if (!questionId) continue;
-
-		const normalizedValue = normalizeText((item as ResponsePayload).value);
-		if (normalizedValue.length === 0) continue;
-
-		map.set(questionId, {
-			question_id: questionId,
-			value: normalizedValue
-		});
-	}
-
-	return Array.from(map.values());
 };
 
 export const POST: RequestHandler = async ({ request, locals }) => {

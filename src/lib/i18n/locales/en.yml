@@ -103,6 +103,15 @@ create:
       field_required: '"{field}" is required.'
       save_status: 'Failed to save event (status {status})'
       unexpected: 'Unexpected error while saving event'
+  step:
+    back_to_templates: 'Back to templates'
+    progress: 'Step {current} of {total}'
+    unsupported: 'This step is not available.'
+    previous: Previous
+    first_hint: 'Start by filling in the basics.'
+    save: 'Save progress'
+    finish: 'Finish'
+    next: Next
 form:
   submit: Add
   create: New entry
