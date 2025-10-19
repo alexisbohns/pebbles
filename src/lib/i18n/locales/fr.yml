@@ -118,6 +118,8 @@ events:
     back_to_list: Retour aux événements
     kind_title: 'Événement {kind}'
     title_fallback: "Détails de l'événement"
+    previous_event: Événement précédent
+    next_event: Événement suivant
     sections:
       details: Détails
       emotions: Émotions

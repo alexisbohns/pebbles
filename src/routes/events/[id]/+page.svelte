@@ -2,6 +2,10 @@
 	import { resolve } from '$app/paths';
 	import { locale, t } from '$lib';
 	import type { PageData } from './$types';
+	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
+	import ArrowRight from '@lucide/svelte/icons/arrow-right';
+	import { Button } from '$lib/components/ui/button';
+	import { blur } from 'svelte/transition';
 
 	type RawEmotion = {
 		emotion_id?: string | null;
@@ -19,7 +23,15 @@
 	};
 
 	let { data }: { data: PageData } = $props();
-	const event = data.event;
+	const event = $derived.by(() => data.event);
+	const previousEventId = $derived.by(() => {
+		const value = typeof data?.previousEventId === 'string' ? data.previousEventId.trim() : '';
+		return value.length > 0 ? value : null;
+	});
+	const nextEventId = $derived.by(() => {
+		const value = typeof data?.nextEventId === 'string' ? data.nextEventId.trim() : '';
+		return value.length > 0 ? value : null;
+	});
 
 	const parseValence = (value: unknown): number | null => {
 		if (typeof value === 'number' && Number.isFinite(value)) return value;
@@ -100,7 +112,15 @@
 		return kindLabel ?? $t('events.detail.title_fallback');
 	});
 	const backLabel = $derived($t('events.detail.back_to_list'));
+	const previousLabel = $derived($t('events.detail.previous_event'));
+	const nextLabel = $derived($t('events.detail.next_event'));
 	const currentLocale = $derived($locale);
+	const previousHref = $derived.by(() =>
+		previousEventId ? resolve('/events/[id]', { id: previousEventId }) : null
+	);
+	const nextHref = $derived.by(() =>
+		nextEventId ? resolve('/events/[id]', { id: nextEventId }) : null
+	);
 	const occurrenceDate = $derived.by(() => formatDateOnly(event?.occurrence_date, currentLocale));
 	const occurrenceTime = $derived.by(() => formatTimeOnly(event?.occurrence_time, currentLocale));
 	const createdAt = $derived.by(() => formatDateTime(event?.created_at, currentLocale));
@@ -183,104 +203,131 @@
 	});
 </script>
 
-<nav class="mb-6">
+<nav class="mb-6 flex justify-between items-center" transition:blur>
 	<a class="text-sm text-primary hover:underline" href={resolve('/')}>{backLabel}</a>
-</nav>
-
-<section class="space-y-8">
-	<header class="space-y-2">
-		<h1 class="text-3xl font-semibold tracking-tight">{title}</h1>
-		{#if kindLabel}
-			<p class="text-sm text-muted-foreground">{kindLabel}</p>
-		{/if}
-		{#if description}
-			<p class="text-base text-muted-foreground">{description}</p>
-		{/if}
-	</header>
-
-	<div class="space-y-4">
-		<h2 class="text-lg font-semibold">{$t('events.detail.sections.details')}</h2>
-		<dl class="grid gap-4 sm:grid-cols-2">
-			<div class="rounded-lg border border-border bg-background/50 p-4">
-				<dt class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-					{$t('events.detail.fields.occurrence_date')}
-				</dt>
-				<dd class="mt-1 text-base font-medium">{occurrenceDate ?? emptyValue}</dd>
-			</div>
-			<div class="rounded-lg border border-border bg-background/50 p-4">
-				<dt class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-					{$t('events.detail.fields.occurrence_time')}
-				</dt>
-				<dd class="mt-1 text-base font-medium">{occurrenceTime ?? emptyValue}</dd>
-			</div>
-			<div class="rounded-lg border border-border bg-background/50 p-4">
-				<dt class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-					{$t('events.detail.fields.created_at')}
-				</dt>
-				<dd class="mt-1 text-base font-medium">{createdAt ?? emptyValue}</dd>
-			</div>
-			<div class="rounded-lg border border-border bg-background/50 p-4">
-				<dt class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-					{$t('events.detail.fields.updated_at')}
-				</dt>
-				<dd class="mt-1 text-base font-medium">{updatedAt ?? emptyValue}</dd>
-			</div>
-			<div class="rounded-lg border border-border bg-background/50 p-4 sm:col-span-2 md:col-span-1">
-				<dt class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-					{$t('events.detail.fields.valence')}
-				</dt>
-				<dd class="mt-1 text-base font-medium">{valence ?? emptyValue}</dd>
-			</div>
-		</dl>
+	<div class="flex gap-2">
+		<Button
+			variant="secondary"
+			size="icon"
+			class="size-8"
+			href={previousHref ?? undefined}
+			disabled={!previousHref}
+			aria-label={previousLabel}
+		>
+			<ArrowLeft />
+		</Button>
+		<Button
+			variant="secondary"
+			size="icon"
+			class="size-8"
+			href={nextHref ?? undefined}
+			disabled={!nextHref}
+			aria-label={nextLabel}
+		>
+			<ArrowRight />
+		</Button>
 	</div>
+</nav>
+<article transition:blur>
+	{#key title}
+		<section class="space-y-8" transition:blur>
+			<header class="space-y-2" transition:blur>
+				<h1 class="text-3xl font-semibold tracking-tight">{title}</h1>
+				{#if kindLabel}
+					<p class="text-sm text-muted-foreground">{kindLabel}</p>
+				{/if}
+				{#if description}
+					<p class="text-base text-muted-foreground">{description}</p>
+				{/if}
+			</header>
 
-	{#if emotions.length > 0}
-		<div class="space-y-4">
-			<h2 class="text-lg font-semibold">{$t('events.detail.sections.emotions')}</h2>
-			<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-				{#each emotions as emotion (emotion.id)}
-					<div
-						class="flex flex-col items-center justify-between rounded-lg border border-border bg-background/50 px-4 py-3"
-					>
-						<span class="text-sm">{emotion.label}</span>
-						<span class="text-lg text-muted-foreground">
-							{emotion.valence ?? emptyValue}
-						</span>
+			<div class="space-y-4">
+				<h2 class="text-lg font-semibold">{$t('events.detail.sections.details')}</h2>
+				<dl class="grid gap-4 sm:grid-cols-2">
+					<div class="rounded-lg border border-border bg-background/50 p-4">
+						<dt class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+							{$t('events.detail.fields.occurrence_date')}
+						</dt>
+						<dd class="mt-1 text-base font-medium">{occurrenceDate ?? emptyValue}</dd>
 					</div>
-				{/each}
-			</div>
-		</div>
-	{/if}
-
-	{#if associations.length > 0}
-		<div class="space-y-4">
-			<h2 class="text-lg font-semibold">{$t('events.detail.sections.associations')}</h2>
-			<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-				{#each associations as association (association.id)}
-					<div
-						class="flex flex-col items-center justify-between rounded-lg border border-border bg-background/50 px-4 py-3"
-					>
-						<span class="text-sm">{association.label}</span>
-						<span class="text-lg text-muted-foreground">
-							{association.valence ?? emptyValue}
-						</span>
+					<div class="rounded-lg border border-border bg-background/50 p-4">
+						<dt class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+							{$t('events.detail.fields.occurrence_time')}
+						</dt>
+						<dd class="mt-1 text-base font-medium">{occurrenceTime ?? emptyValue}</dd>
 					</div>
-				{/each}
+					<div class="rounded-lg border border-border bg-background/50 p-4">
+						<dt class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+							{$t('events.detail.fields.created_at')}
+						</dt>
+						<dd class="mt-1 text-base font-medium">{createdAt ?? emptyValue}</dd>
+					</div>
+					<div class="rounded-lg border border-border bg-background/50 p-4">
+						<dt class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+							{$t('events.detail.fields.updated_at')}
+						</dt>
+						<dd class="mt-1 text-base font-medium">{updatedAt ?? emptyValue}</dd>
+					</div>
+					<div
+						class="rounded-lg border border-border bg-background/50 p-4 sm:col-span-2 md:col-span-1"
+					>
+						<dt class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+							{$t('events.detail.fields.valence')}
+						</dt>
+						<dd class="mt-1 text-base font-medium">{valence ?? emptyValue}</dd>
+					</div>
+				</dl>
 			</div>
-		</div>
-	{/if}
 
-	{#if responses.length > 0}
-		<div class="space-y-4">
-			<h2 class="text-lg font-semibold">{$t('events.detail.sections.responses')}</h2>
-			<ul class="space-y-3">
-				{#each responses as response (response.id)}
-					<li class="rounded-lg border border-border bg-background/50 px-4 py-3">
-						<p class="text-sm font-semibold text-muted-foreground">{response.label}</p>
-						<p class="mt-1 whitespace-pre-wrap text-base">{response.value}</p>
-					</li>
-				{/each}
-			</ul>
-		</div>
-	{/if}
-</section>
+			{#if emotions.length > 0}
+				<div class="space-y-4">
+					<h2 class="text-lg font-semibold">{$t('events.detail.sections.emotions')}</h2>
+					<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+						{#each emotions as emotion (emotion.id)}
+							<div
+								class="flex flex-col items-center justify-between rounded-lg border border-border bg-background/50 px-4 py-3"
+							>
+								<span class="text-sm">{emotion.label}</span>
+								<span class="text-lg text-muted-foreground">
+									{emotion.valence ?? emptyValue}
+								</span>
+							</div>
+						{/each}
+					</div>
+				</div>
+			{/if}
+
+			{#if associations.length > 0}
+				<div class="space-y-4">
+					<h2 class="text-lg font-semibold">{$t('events.detail.sections.associations')}</h2>
+					<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+						{#each associations as association (association.id)}
+							<div
+								class="flex flex-col items-center justify-between rounded-lg border border-border bg-background/50 px-4 py-3"
+							>
+								<span class="text-sm">{association.label}</span>
+								<span class="text-lg text-muted-foreground">
+									{association.valence ?? emptyValue}
+								</span>
+							</div>
+						{/each}
+					</div>
+				</div>
+			{/if}
+
+			{#if responses.length > 0}
+				<div class="space-y-4">
+					<h2 class="text-lg font-semibold">{$t('events.detail.sections.responses')}</h2>
+					<ul class="space-y-3">
+						{#each responses as response (response.id)}
+							<li class="rounded-lg border border-border bg-background/50 px-4 py-3">
+								<p class="text-sm font-semibold text-muted-foreground">{response.label}</p>
+								<p class="mt-1 whitespace-pre-wrap text-base">{response.value}</p>
+							</li>
+						{/each}
+					</ul>
+				</div>
+			{/if}
+		</section>
+	{/key}
+</article>
