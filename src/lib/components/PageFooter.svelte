@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import { t } from '$lib';
 	import type { User } from '@supabase/supabase-js';
+	import { ModeWatcher } from 'mode-watcher';
+	import ModeToggle from '$lib/components/ModeToggle.svelte';
 
 	let { user = null } = $props<{ user: User | null }>();
 
@@ -26,7 +27,8 @@
 			{$t('pages.about.title')}
 		</a>
 	</nav>
-	<ThemeToggle />
+	<ModeWatcher />
+	<ModeToggle />
 </div>
 
 <style lang="stylus">
