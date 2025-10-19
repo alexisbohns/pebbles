@@ -23,6 +23,15 @@
 
 	let { data }: { data: PageData } = $props();
 	const event = data.event;
+	const previousEventId = $derived.by(() => {
+		const value =
+			typeof data?.previousEventId === 'string' ? data.previousEventId.trim() : '';
+		return value.length > 0 ? value : null;
+	});
+	const nextEventId = $derived.by(() => {
+		const value = typeof data?.nextEventId === 'string' ? data.nextEventId.trim() : '';
+		return value.length > 0 ? value : null;
+	});
 
 	const parseValence = (value: unknown): number | null => {
 		if (typeof value === 'number' && Number.isFinite(value)) return value;
@@ -103,7 +112,15 @@
 		return kindLabel ?? $t('events.detail.title_fallback');
 	});
 	const backLabel = $derived($t('events.detail.back_to_list'));
+	const previousLabel = $derived($t('events.detail.previous_event'));
+	const nextLabel = $derived($t('events.detail.next_event'));
 	const currentLocale = $derived($locale);
+	const previousHref = $derived.by(() =>
+		previousEventId ? resolve('/events/[id]', { id: previousEventId }) : null
+	);
+	const nextHref = $derived.by(() =>
+		nextEventId ? resolve('/events/[id]', { id: nextEventId }) : null
+	);
 	const occurrenceDate = $derived.by(() => formatDateOnly(event?.occurrence_date, currentLocale));
 	const occurrenceTime = $derived.by(() => formatTimeOnly(event?.occurrence_time, currentLocale));
 	const createdAt = $derived.by(() => formatDateTime(event?.created_at, currentLocale));
@@ -188,11 +205,25 @@
 
 <nav class="mb-6 flex justify-between items-center">
 	<a class="text-sm text-primary hover:underline" href={resolve('/')}>{backLabel}</a>
-	<div>
-		<Button variant="secondary" size="icon" class="size-8">
+	<div class="flex gap-2">
+		<Button
+			variant="secondary"
+			size="icon"
+			class="size-8"
+			href={previousHref ?? undefined}
+			disabled={!previousHref}
+			aria-label={previousLabel}
+		>
 			<ArrowLeft />
 		</Button>
-		<Button variant="secondary" size="icon" class="size-8">
+		<Button
+			variant="secondary"
+			size="icon"
+			class="size-8"
+			href={nextHref ?? undefined}
+			disabled={!nextHref}
+			aria-label={nextLabel}
+		>
 			<ArrowRight />
 		</Button>
 	</div>
