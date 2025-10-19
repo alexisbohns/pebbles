@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { t } from '$lib';
-	import type { User } from '@supabase/supabase-js';
 	import { ModeWatcher } from 'mode-watcher';
 	import ModeToggle from '$lib/components/ModeToggle.svelte';
 </script>
