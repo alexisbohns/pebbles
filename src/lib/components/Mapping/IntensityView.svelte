@@ -124,16 +124,16 @@
 				</div>
 			</div>
 			<div class="flex justify-end pt-2">
-			<Button
-				type="button"
-				variant="ghost"
-				size="sm"
-				class="text-muted-foreground"
-				disabled={value === null}
-				onclick={() => handleReset(item.id)}
-			>
-				Reset
-			</Button>
+				<Button
+					type="button"
+					variant="ghost"
+					size="sm"
+					class="text-muted-foreground"
+					disabled={value === null}
+					onclick={() => handleReset(item.id)}
+				>
+					Reset
+				</Button>
 			</div>
 		</section>
 	{/each}

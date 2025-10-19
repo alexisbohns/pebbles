@@ -1,10 +1,10 @@
 {
-  "dependencies": {
-    "shadcn-svelte": "^1.0.8"
-  },
-  "_npx": {
-    "packages": [
-      "shadcn-svelte@latest"
-    ]
-  }
+	"dependencies": {
+		"shadcn-svelte": "^1.0.8"
+	},
+	"_npx": {
+		"packages": [
+			"shadcn-svelte@latest"
+		]
+	}
 }

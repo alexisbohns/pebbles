@@ -32,17 +32,17 @@
 		placeholder: string | null;
 	};
 
-let { data }: { data: PageData } = $props();
+	let { data }: { data: PageData } = $props();
 
 	const { config, emotions, associations, questions } = data;
 	const rawTemplateItems = (Array.isArray(config.template) ? config.template : []) as Array<
 		Record<string, unknown> | null | undefined
 	>;
 
-const propertyItems: PropertyItem[] = [];
-const questionItems: QuestionItem[] = [];
-let hasEmotionMapping = $state(false);
-let hasAssociationMapping = $state(false);
+	const propertyItems: PropertyItem[] = [];
+	const questionItems: QuestionItem[] = [];
+	let hasEmotionMapping = $state(false);
+	let hasAssociationMapping = $state(false);
 
 	for (const rawItem of rawTemplateItems) {
 		if (!rawItem || typeof rawItem !== 'object') continue;
@@ -115,31 +115,31 @@ let hasAssociationMapping = $state(false);
 			candidate === undefined || candidate === null ? '0' : String(candidate);
 	}
 
-let propertyValues = $state<Record<string, string>>({ ...initialPropertyValues });
+	let propertyValues = $state<Record<string, string>>({ ...initialPropertyValues });
 
 	const initialQuestionValues = questionItems.reduce<Record<string, string>>((acc, item) => {
 		acc[item.id] = '';
 		return acc;
 	}, {});
 
-let questionValues = $state<Record<string, string>>({ ...initialQuestionValues });
+	let questionValues = $state<Record<string, string>>({ ...initialQuestionValues });
 
-let emotionValues = $state<MappingValue[]>([]);
-let associationValues = $state<MappingValue[]>([]);
+	let emotionValues = $state<MappingValue[]>([]);
+	let associationValues = $state<MappingValue[]>([]);
 
-const MIN_VALENCE = -3;
-const MAX_VALENCE = 3;
-const valenceFieldPresent = propertyItems.some((item) => item.key === 'valence');
-const valenceValue = $derived.by(() => propertyValues.valence ?? '');
-const emotionValenceFilter = $derived.by(() =>
-	valenceFieldPresent ? deriveValenceFilter(valenceValue) : null
-);
+	const MIN_VALENCE = -3;
+	const MAX_VALENCE = 3;
+	const valenceFieldPresent = propertyItems.some((item) => item.key === 'valence');
+	const valenceValue = $derived.by(() => propertyValues.valence ?? '');
+	const emotionValenceFilter = $derived.by(() =>
+		valenceFieldPresent ? deriveValenceFilter(valenceValue) : null
+	);
 
-let submissionPreview = $state<string | null>(null);
-let submitError = $state<string | null>(null);
-let submitSuccessMessage = $state<string | null>(null);
-let isSubmitting = $state(false);
-const INDENT = '  ';
+	let submissionPreview = $state<string | null>(null);
+	let submitError = $state<string | null>(null);
+	let submitSuccessMessage = $state<string | null>(null);
+	let isSubmitting = $state(false);
+	const INDENT = '  ';
 
 	const eventKind =
 		typeof modelDefaults.kind === 'string' && modelDefaults.kind.trim().length > 0
@@ -222,15 +222,15 @@ const INDENT = '  ';
 			return clampValence(value);
 		}
 
-	if (value === undefined) {
-		const candidate = modelDefaults.valence;
-		if (typeof candidate === 'number') {
-			return clampValence(candidate);
+		if (value === undefined) {
+			const candidate = modelDefaults.valence;
+			if (typeof candidate === 'number') {
+				return clampValence(candidate);
+			}
 		}
-	}
 
-	const raw = typeof value === 'string' ? value : '';
-	const parsed = Number.parseInt(raw, 10);
+		const raw = typeof value === 'string' ? value : '';
+		const parsed = Number.parseInt(raw, 10);
 		if (Number.isNaN(parsed)) {
 			return 0;
 		}
@@ -473,10 +473,7 @@ const INDENT = '  ';
 								value={currentValence}
 								onValueChange={(next) => {
 									if (typeof next !== 'number' || Number.isNaN(next)) return;
-									const clamped = Math.max(
-										MIN_VALENCE,
-										Math.min(MAX_VALENCE, Math.round(next))
-									);
+									const clamped = Math.max(MIN_VALENCE, Math.min(MAX_VALENCE, Math.round(next)));
 									propertyValues = {
 										...propertyValues,
 										[item.key]: String(clamped)
@@ -489,15 +486,15 @@ const INDENT = '  ';
 								<span>+{Math.abs(MAX_VALENCE)}</span>
 							</div>
 							<div class="flex justify-end pt-1">
-				<Button
-					type="button"
-					variant="ghost"
-					size="sm"
-					class="text-muted-foreground"
-					onclick={() => {
-						propertyValues = { ...propertyValues, [item.key]: '0' };
-					}}
-				>
+								<Button
+									type="button"
+									variant="ghost"
+									size="sm"
+									class="text-muted-foreground"
+									onclick={() => {
+										propertyValues = { ...propertyValues, [item.key]: '0' };
+									}}
+								>
 									Reset
 								</Button>
 							</div>
@@ -515,11 +512,7 @@ const INDENT = '  ';
 							placeholderText="Select a time"
 						/>
 					{:else}
-						<Input
-							id={fieldId}
-							bind:value={propertyValues[item.key]}
-							required={item.mandatory}
-						/>
+						<Input id={fieldId} bind:value={propertyValues[item.key]} required={item.mandatory} />
 					{/if}
 				</div>
 			{/each}
@@ -606,10 +599,7 @@ const INDENT = '  ';
 </form>
 
 {#if submissionPreview}
-	<section
-		class="template-preview mt-8 space-y-3 rounded-lg border p-4"
-		aria-live="polite"
-	>
+	<section class="template-preview mt-8 space-y-3 rounded-lg border p-4" aria-live="polite">
 		<h2 class="text-lg font-semibold">{$t('create.template.preview.title')}</h2>
 		<pre class="overflow-x-auto rounded-md bg-muted/20 p-4 text-sm leading-relaxed">
 			<code class="language-ts">{submissionPreview}</code>

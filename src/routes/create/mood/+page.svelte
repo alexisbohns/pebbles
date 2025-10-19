@@ -33,7 +33,7 @@
 		p_associations: AssociationPayload[];
 	};
 
-let { data }: { data: PageData } = $props();
+	let { data }: { data: PageData } = $props();
 
 	const kindOptions: Array<{ value: EventKind; label: string }> = [
 		{ value: 'moment', label: 'Moment' },
@@ -43,23 +43,25 @@ let { data }: { data: PageData } = $props();
 	const MIN_VALENCE = -3;
 	const MAX_VALENCE = 3;
 
-let kind = $state<EventKind>('day');
-let date = $state('');
-let time = $state('');
-let valence = $state(0);
-let emotionValues = $state<MappingValue[]>([]);
-let associationValues = $state<MappingValue[]>([]);
-const emotionValenceFilter = $derived.by(() => deriveValenceFilter(valence));
-const emotionSelectionValues = $derived.by(() => emotionValues.filter(isSelectionValue));
-const associationSelectionValues = $derived.by(() => associationValues.filter(isSelectionValue));
-const emotionSelectionIds = $derived.by(() => emotionSelectionValues.map((value) => value.id));
-const associationSelectionIds = $derived.by(() => associationSelectionValues.map((value) => value.id));
-const emotionIntensityValues = $derived.by(() => emotionValues.filter(isIntensityValue));
-const associationIntensityValues = $derived.by(() => associationValues.filter(isIntensityValue));
-let submissionPreview = $state<string | null>(null);
-let submitError = $state<string | null>(null);
-let submitSuccessId = $state<string | null>(null);
-let isSubmitting = $state(false);
+	let kind = $state<EventKind>('day');
+	let date = $state('');
+	let time = $state('');
+	let valence = $state(0);
+	let emotionValues = $state<MappingValue[]>([]);
+	let associationValues = $state<MappingValue[]>([]);
+	const emotionValenceFilter = $derived.by(() => deriveValenceFilter(valence));
+	const emotionSelectionValues = $derived.by(() => emotionValues.filter(isSelectionValue));
+	const associationSelectionValues = $derived.by(() => associationValues.filter(isSelectionValue));
+	const emotionSelectionIds = $derived.by(() => emotionSelectionValues.map((value) => value.id));
+	const associationSelectionIds = $derived.by(() =>
+		associationSelectionValues.map((value) => value.id)
+	);
+	const emotionIntensityValues = $derived.by(() => emotionValues.filter(isIntensityValue));
+	const associationIntensityValues = $derived.by(() => associationValues.filter(isIntensityValue));
+	let submissionPreview = $state<string | null>(null);
+	let submitError = $state<string | null>(null);
+	let submitSuccessId = $state<string | null>(null);
+	let isSubmitting = $state(false);
 	const INDENT = '  ';
 
 	$effect(() => {
@@ -223,24 +225,20 @@ let isSubmitting = $state(false);
 			.join('\n');
 	}
 
-function updateValence(next: number) {
-    if (typeof next !== 'number' || Number.isNaN(next)) return;
-    const clamped = Math.max(MIN_VALENCE, Math.min(MAX_VALENCE, Math.round(next)));
-    if (valence !== clamped) {
-        valence = clamped;
-    }
-}
+	function updateValence(next: number) {
+		if (typeof next !== 'number' || Number.isNaN(next)) return;
+		const clamped = Math.max(MIN_VALENCE, Math.min(MAX_VALENCE, Math.round(next)));
+		if (valence !== clamped) {
+			valence = clamped;
+		}
+	}
 
 	const formattedValence = $derived.by(() => (valence > 0 ? `+${valence}` : String(valence)));
 </script>
 
 <h1 class="text-2xl font-semibold tracking-tight">Event</h1>
 
-<form
-	onsubmit={handleSubmit}
-	class="space-y-6"
-	aria-label="Create event"
->
+<form onsubmit={handleSubmit} class="space-y-6" aria-label="Create event">
 	<div class="grid gap-2">
 		<Label for="kind">Kind</Label>
 		<select
@@ -269,9 +267,7 @@ function updateValence(next: number) {
 
 	<div class="grid gap-3">
 		<div class="flex items-center justify-between gap-3">
-			<Label class="text-base font-semibold" for="valence">
-				Valence
-			</Label>
+			<Label class="text-base font-semibold" for="valence">Valence</Label>
 			<span class="text-sm text-muted-foreground">{formattedValence}</span>
 		</div>
 		<Slider
@@ -334,11 +330,7 @@ function updateValence(next: number) {
 		<input type="hidden" name="associationIntensities" value={`${entry.id}:${entry.value}`} />
 	{/each}
 
-	<Button
-		type="submit"
-		disabled={isSubmitting}
-		class="w-full sm:w-auto"
-	>
+	<Button type="submit" disabled={isSubmitting} class="w-full sm:w-auto">
 		{#if isSubmitting}
 			Saving…
 		{:else}
