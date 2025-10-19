@@ -4,8 +4,6 @@
 	import type { User } from '@supabase/supabase-js';
 	import { ModeWatcher } from 'mode-watcher';
 	import ModeToggle from '$lib/components/ModeToggle.svelte';
-
-	let { user = null } = $props<{ user: User | null }>();
 </script>
 
 <div class="page-footer selectable">
