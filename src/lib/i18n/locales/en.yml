@@ -1,5 +1,11 @@
 common:
   back: Back
+  login: Log in
+  logout: Log out
+  mode: Display
+  light: Light
+  dark: Dark
+  system: System
 landing:
   title: Pebbles
   description: 'Capture meaningful events, track emotions, and reflect on your personal growth.'

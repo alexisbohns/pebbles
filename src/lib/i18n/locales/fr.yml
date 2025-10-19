@@ -1,5 +1,11 @@
 common:
   back: Retour
+  login: Connexion
+  logout: Déconnexion
+  mode: Affichage
+  light: Clair
+  dark: Sombre
+  system: Système
 landing:
   title: Pebbles
   description: 'Capturez vos événements marquants, suivez vos émotions et réfléchissez à votre évolution personnelle.'
