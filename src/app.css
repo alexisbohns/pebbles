@@ -6,6 +6,8 @@
 	--radius: 0.65rem;
 
 	--background-color: rgba(250 250 250);
+	--foreground-color: rgba(15 15 25);
+
 	--background: 250 250 250;
 	--popover: 250 250 250;
 	--primary-foreground: 250 250 250;
@@ -15,30 +17,41 @@
 	--popover-foreground: 15 15 25;
 	--primary: 15 15 25;
 
-	--muted: 255 0 0;
+	--muted: 225 225 225;
 	--muted-foreground: 150 150 150;
 
+	--accent: 225 225 225;
+	--accent-foreground: 0 0 0;
+
+	/* unused for now */
 	--secondary: 0 0 255;
 	--secondary-foreground: 255 0 255;
 
 	--card: 255 0 255;
 	--card-foreground: 255 0 255;
 
-	--accent: 247 247 255;
-	--accent-foreground: 44 37 75;
-	--destructive: 220 25 18;
 	--input: 232 230 245;
-	--ring: 234 55 0;
 
+	/* primary definition */
+	--ring: 255 0 255;
 	--primary: 255 0 255;
-	--primary-foreground: 255 255 0;
+	--primary-foreground: 255 255 255;
 }
 
 .dark {
 	--background-color: rgba(15 15 25);
+	--foreground-color: rgba(250 250 250);
+
 	--background: 15 15 25;
+	--popover: 15 15 25;
+
 	--foreground: 250 250 250;
 	--border: 250 250 250;
-	--popover: 15 15 25;
 	--popover-foreground: 250 250 250;
+
+	--muted: 50 50 50;
+	--muted-foreground: 150 150 150;
+
+	--accent: 30 30 35;
+	--accent-foreground: 250 250 250;
 }
