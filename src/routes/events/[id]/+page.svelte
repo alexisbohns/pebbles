@@ -2,6 +2,9 @@
 	import { resolve } from '$app/paths';
 	import { locale, t } from '$lib';
 	import type { PageData } from './$types';
+	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
+	import ArrowRight from '@lucide/svelte/icons/arrow-right';
+	import { Button } from '$lib/components/ui/button';
 
 	type RawEmotion = {
 		emotion_id?: string | null;
@@ -183,8 +186,16 @@
 	});
 </script>
 
-<nav class="mb-6">
+<nav class="mb-6 flex justify-between items-center">
 	<a class="text-sm text-primary hover:underline" href={resolve('/')}>{backLabel}</a>
+	<div>
+		<Button variant="secondary" size="icon" class="size-8">
+			<ArrowLeft />
+		</Button>
+		<Button variant="secondary" size="icon" class="size-8">
+			<ArrowRight />
+		</Button>
+	</div>
 </nav>
 
 <section class="space-y-8">

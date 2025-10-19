@@ -28,8 +28,8 @@
 	--accent-foreground: 0 0 0;
 
 	/* unused for now */
-	--secondary: 0 0 255;
-	--secondary-foreground: 255 0 255;
+	--secondary: var(--token-foreground);
+	--secondary-foreground: var(--token-background);
 
 	--card: var(--token-background);
 	--card-foreground: var(--token-foreground);
