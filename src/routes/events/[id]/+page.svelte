@@ -5,6 +5,7 @@
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import ArrowRight from '@lucide/svelte/icons/arrow-right';
 	import { Button } from '$lib/components/ui/button';
+	import { blur } from 'svelte/transition';
 
 	type RawEmotion = {
 		emotion_id?: string | null;
@@ -202,7 +203,7 @@
 	});
 </script>
 
-<nav class="mb-6 flex justify-between items-center">
+<nav class="mb-6 flex justify-between items-center" transition:blur>
 	<a class="text-sm text-primary hover:underline" href={resolve('/')}>{backLabel}</a>
 	<div class="flex gap-2">
 		<Button
@@ -228,7 +229,7 @@
 	</div>
 </nav>
 
-<section class="space-y-8">
+<section class="space-y-8" transition:blur>
 	<header class="space-y-2">
 		<h1 class="text-3xl font-semibold tracking-tight">{title}</h1>
 		{#if kindLabel}
