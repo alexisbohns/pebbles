@@ -2,6 +2,7 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import PageFooter from '$lib/components/PageFooter.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
+	import { Toaster } from '$lib/components/ui/sonner';
 	import '../app.css';
 	import '../global.styl';
 
@@ -21,6 +22,8 @@
 <main>{@render children?.()}</main>
 
 <PageFooter user={data?.user ?? null} />
+
+<Toaster />
 
 <style lang="stylus">
 	main

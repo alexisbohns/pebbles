@@ -11,7 +11,7 @@
 	import MousePointerClick from '@lucide/svelte/icons/mouse-pointer-click';
 	import SlidersHorizontal from '@lucide/svelte/icons/sliders-horizontal';
 
-	export let title: string = '';
+	export const title: string = '';
 	export let mode: 'select' | 'intensity' = 'select';
 	export let showAll = false;
 	export let canToggleFilter = false;
