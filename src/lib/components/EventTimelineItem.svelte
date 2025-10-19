@@ -88,4 +88,8 @@
 		&:last-child
 			.timeline-item-line::after
 				visibility hidden
+
+		&:first-child
+			.timeline-item-line::before
+				visibility hidden
 </style>

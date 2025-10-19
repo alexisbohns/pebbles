@@ -1,6 +1,7 @@
 {
 	"name": "mood_basic",
-	"label": "Mood (basique)",
+	"label": "Humeur",
+	"description": "Enregistrez une humeur",
 	"model": "events",
 	"model_properties": {
 		"kind": "moment"

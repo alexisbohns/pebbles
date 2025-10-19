@@ -453,7 +453,7 @@
 	}
 </script>
 
-<h1 class="text-2xl font-semibold tracking-tight">{config.label}</h1>
+<h1>{config.label}</h1>
 
 <form class="template-form space-y-8" onsubmit={handleSubmit}>
 	{#if propertyItems.length > 0}

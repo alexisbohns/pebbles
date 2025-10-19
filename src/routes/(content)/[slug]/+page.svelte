@@ -54,10 +54,6 @@
 	.content
 		line-height 1.6
 
-		:global(h1)
-			font-size 2rem
-			margin-bottom 1rem
-
 		:global(h2)
 			font-size 1.2rem
 			font-weight 600
