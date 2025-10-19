@@ -22,7 +22,7 @@
 	};
 
 	let { data }: { data: PageData } = $props();
-	const event = data.event;
+	const event = $derived.by(() => data.event);
 	const previousEventId = $derived.by(() => {
 		const value =
 			typeof data?.previousEventId === 'string' ? data.previousEventId.trim() : '';
