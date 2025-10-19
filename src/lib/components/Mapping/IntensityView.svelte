@@ -3,11 +3,13 @@
 	import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 	import { Button } from '$lib/components/ui/button';
 	import { Slider } from '$lib/components/ui/slider';
+	import { t } from '$lib';
 	import type { MappingIntensityValue, MappingItem } from './types';
 
 	export let items: MappingItem[] = [];
 	export let initialValues: MappingIntensityValue[] = [];
 	export let containerLabel = 'Intensity controls';
+	export let translationNamespace: string | null = null;
 
 	const dispatch = createEventDispatcher<{ change: MappingIntensityValue[] }>();
 	const MIN_INTENSITY = -3;
@@ -17,6 +19,10 @@
 	let visibleValues = new SvelteMap<string, number>();
 	let visibleIds = new SvelteSet<string>();
 	let lastInitialValues: MappingIntensityValue[] = initialValues;
+	type TranslateFn = (key: string, params?: Record<string, unknown>) => string;
+	let translate: TranslateFn = (key) => key;
+
+	$: translate = $t;
 
 	const clamp = (value: number) =>
 		Math.max(MIN_INTENSITY, Math.min(MAX_INTENSITY, Math.round(value)));
@@ -47,6 +53,13 @@
 		item,
 		value: visibleValues.get(item.id) ?? null
 	}));
+
+	function resolveLabel(item: MappingItem): string {
+		if (!translationNamespace) return item.label;
+		const key = `${translationNamespace}.${item.id}`;
+		const translated = translate(key);
+		return translated !== key ? translated : item.label;
+	}
 
 	function emitChange() {
 		const payload: MappingIntensityValue[] = Array.from(allValues.entries()).map(([id, value]) => ({
@@ -103,7 +116,7 @@
 	{#each entries as { item, value } (item.id)}
 		<section class="rounded-lg border px-4 py-3">
 			<header class="flex items-center justify-between gap-2 pb-2">
-				<span class="font-medium text-sm">{item.label}</span>
+				<span class="font-medium text-sm">{resolveLabel(item)}</span>
 				<span class="text-xs tabular-nums text-muted-foreground">
 					{value === null ? '—' : value}
 				</span>
