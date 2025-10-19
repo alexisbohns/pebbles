@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import MappingComponent from '$lib/components/Mapping/MappingComponent.svelte';
 	import Question from '$lib/components/Question.svelte';
 	import type { MappingItem, MappingValue } from '$lib/components/Mapping/types';
@@ -11,6 +13,7 @@
 	import TimePicker from '$lib/components/ui/time-picker.svelte';
 	import { SvelteMap } from 'svelte/reactivity';
 	import { get } from 'svelte/store';
+	import { toast } from 'svelte-sonner';
 	import type { PageData } from './$types';
 
 	type PropertyItem = {
@@ -419,22 +422,30 @@
 			}
 
 			const payload: { id?: string | null } = await response.json();
-			const eventId = payload?.id ?? null;
+			const rawId = payload?.id;
+			const eventId = typeof rawId === 'string' && rawId.trim().length > 0 ? rawId.trim() : null;
 			const successKey = eventId
 				? 'create.template.success.with_id'
 				: 'create.template.success.default';
-			submitSuccessMessage = eventId
+			const successMessage = eventId
 				? translate(successKey, { id: eventId })
 				: translate(successKey);
+			toast.success(successMessage);
+			submitSuccessMessage = successMessage;
 
 			submissionPreview = [
 				...snippetBase,
 				eventId ? `// → event id: '${eventId}'` : '// → event saved'
 			].join('\n');
+
+			if (eventId) {
+				await goto(resolve(`/events/${eventId}`));
+			}
 		} catch (err) {
 			const fallbackMessage = translate('create.template.error.unexpected');
 			const message = err instanceof Error && err.message ? err.message : fallbackMessage;
 			submitError = message;
+			toast.error(message);
 			submissionPreview = [...snippetBase, `// ! error: ${message}`].join('\n');
 		} finally {
 			isSubmitting = false;
