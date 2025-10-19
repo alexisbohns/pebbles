@@ -17,9 +17,11 @@
 
 	export let user: User | null = null;
 
-	const loginHref = resolve('/login');
-	const profileHref = resolve('/profile');
-	const logoutHref = resolve('/logout');
+	const loginPath = '/login' as const;
+	const profilePath = '/profile' as const;
+	const logoutPath = '/logout' as const;
+
+	const loginHref = resolve(loginPath);
 
 	const getIdentityAvatar = (currentUser: User | null): string | null => {
 		const identities = currentUser?.identities ?? [];
@@ -92,14 +94,18 @@
 		target.src = placeholderAvatar;
 	};
 
-	const navigateTo = (path: string) => {
-		void goto(path);
-	};
-
 	const handleThemeSelect = (value: string) => {
 		const next = value === 'light' || value === 'dark' ? value : 'system';
 		themePreference = next;
 		setMode(next);
+	};
+
+	const goToProfile = () => {
+		void goto(resolve(profilePath));
+	};
+
+	const goToLogout = () => {
+		void goto(resolve(logoutPath));
 	};
 </script>
 
@@ -119,7 +125,7 @@
 			/>
 		</DropdownMenu.Trigger>
 		<DropdownMenu.Content align="end" class="grid min-w-[14rem] gap-1 p-2">
-			<DropdownMenu.Item onSelect={() => navigateTo(profileHref)}>
+			<DropdownMenu.Item onSelect={goToProfile}>
 				<div class="flex flex-col">
 					<span class="font-semibold">{displayName}</span>
 					{#if email}
@@ -141,7 +147,7 @@
 				<DropdownMenu.RadioItem value="system">{$t('common.system')}</DropdownMenu.RadioItem>
 			</DropdownMenu.RadioGroup>
 			<DropdownMenu.Separator />
-			<DropdownMenu.Item onSelect={() => navigateTo(logoutHref)}>
+			<DropdownMenu.Item onSelect={goToLogout}>
 				{$t('common.logout')}
 			</DropdownMenu.Item>
 		</DropdownMenu.Content>
