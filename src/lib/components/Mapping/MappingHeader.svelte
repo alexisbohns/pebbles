@@ -22,8 +22,6 @@
 </script>
 
 <div class="flex items-center justify-between gap-4">
-	<h3 class="text-lg font-semibold">{title}</h3>
-
 	<div class="flex items-center gap-2">
 		<!-- Switch Sélection / Intensité -->
 		<div

@@ -17,50 +17,52 @@ const config = {
 				'2xl': '1400px'
 			}
 		},
+		borderColor: {
+			DEFAULT: 'rgba(var(--border) / 5%)'
+		},
 		extend: {
 			colors: {
-				border: 'oklch(var(--border) / <alpha-value>)',
-				input: 'oklch(var(--input) / <alpha-value>)',
-				ring: 'oklch(var(--ring) / <alpha-value>)',
-				background: 'oklch(var(--background) / <alpha-value>)',
-				foreground: 'oklch(var(--foreground) / <alpha-value>)',
+				input: 'rgba(var(--input) / <alpha-value>)',
+				ring: 'rgba(var(--ring) / <alpha-value>)',
+				background: 'rgba(var(--background) / <alpha-value>)',
+				foreground: 'rgba(var(--foreground) / <alpha-value>)',
 				primary: {
-					DEFAULT: 'oklch(var(--primary) / <alpha-value>)',
-					foreground: 'oklch(var(--primary-foreground) / <alpha-value>)'
+					DEFAULT: 'rgba(var(--primary) / <alpha-value>)',
+					foreground: 'rgba(var(--primary-foreground) / <alpha-value>)'
 				},
 				secondary: {
-					DEFAULT: 'oklch(var(--secondary) / <alpha-value>)',
-					foreground: 'oklch(var(--secondary-foreground) / <alpha-value>)'
+					DEFAULT: 'rgba(var(--secondary) / <alpha-value>)',
+					foreground: 'rgba(var(--secondary-foreground) / <alpha-value>)'
 				},
 				destructive: {
-					DEFAULT: 'oklch(var(--destructive) / <alpha-value>)',
-					foreground: 'oklch(var(--destructive-foreground) / <alpha-value>)'
+					DEFAULT: 'rgba(var(--destructive) / <alpha-value>)',
+					foreground: 'rgba(var(--destructive-foreground) / <alpha-value>)'
 				},
 				muted: {
-					DEFAULT: 'oklch(var(--muted) / <alpha-value>)',
-					foreground: 'oklch(var(--muted-foreground) / <alpha-value>)'
+					DEFAULT: 'rgba(var(--muted) / <alpha-value>)',
+					foreground: 'rgba(var(--muted-foreground) / <alpha-value>)'
 				},
 				accent: {
-					DEFAULT: 'oklch(var(--accent) / <alpha-value>)',
-					foreground: 'oklch(var(--accent-foreground) / <alpha-value>)'
+					DEFAULT: 'rgba(var(--accent) / <alpha-value>)',
+					foreground: 'rgba(var(--accent-foreground) / <alpha-value>)'
 				},
 				popover: {
-					DEFAULT: 'oklch(var(--popover) / <alpha-value>)',
-					foreground: 'oklch(var(--popover-foreground) / <alpha-value>)'
+					DEFAULT: 'rgba(var(--popover) / <alpha-value>)',
+					foreground: 'rgba(var(--popover-foreground) / <alpha-value>)'
 				},
 				card: {
-					DEFAULT: 'oklch(var(--card) / <alpha-value>)',
-					foreground: 'oklch(var(--card-foreground) / <alpha-value>)'
+					DEFAULT: 'rgba(var(--card) / <alpha-value>)',
+					foreground: 'rgba(var(--card-foreground) / <alpha-value>)'
 				},
 				sidebar: {
-					DEFAULT: 'oklch(var(--sidebar-background))',
-					foreground: 'oklch(var(--sidebar-foreground))',
-					primary: 'oklch(var(--sidebar-primary))',
-					'primary-foreground': 'oklch(var(--sidebar-primary-foreground))',
-					accent: 'oklch(var(--sidebar-accent))',
-					'accent-foreground': 'oklch(var(--sidebar-accent-foreground))',
-					border: 'oklch(var(--sidebar-border))',
-					ring: 'oklch(var(--sidebar-ring))'
+					DEFAULT: 'rgba(var(--sidebar-background))',
+					foreground: 'rgba(var(--sidebar-foreground))',
+					primary: 'rgba(var(--sidebar-primary))',
+					'primary-foreground': 'rgba(var(--sidebar-primary-foreground))',
+					accent: 'rgba(var(--sidebar-accent))',
+					'accent-foreground': 'rgba(var(--sidebar-accent-foreground))',
+					border: 'rgba(var(--sidebar-border))',
+					ring: 'rgba(var(--sidebar-ring))'
 				}
 			},
 			borderRadius: {
@@ -70,12 +72,7 @@ const config = {
 				sm: 'calc(var(--radius) - 4px)'
 			},
 			fontFamily: {
-				sans: [
-					'Sora',
-					'ui-sans-serif',
-					'system-ui',
-					'sans-serif'
-				]
+				sans: ['Sora', 'ui-sans-serif', 'system-ui', 'sans-serif']
 			},
 			keyframes: {
 				'accordion-down': {

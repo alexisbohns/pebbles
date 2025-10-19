@@ -2,8 +2,8 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import PageFooter from '$lib/components/PageFooter.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
-	import '../global.styl';
 	import '../app.css';
+	import '../global.styl';
 
 	let { children, data } = $props();
 
