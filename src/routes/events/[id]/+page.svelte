@@ -228,101 +228,106 @@
 		</Button>
 	</div>
 </nav>
+<article transition:blur>
+	{#key title}
+		<section class="space-y-8" transition:blur>
+			<header class="space-y-2" transition:blur>
+				<h1 class="text-3xl font-semibold tracking-tight">{title}</h1>
+				{#if kindLabel}
+					<p class="text-sm text-muted-foreground">{kindLabel}</p>
+				{/if}
+				{#if description}
+					<p class="text-base text-muted-foreground">{description}</p>
+				{/if}
+			</header>
 
-<section class="space-y-8" transition:blur>
-	<header class="space-y-2">
-		<h1 class="text-3xl font-semibold tracking-tight">{title}</h1>
-		{#if kindLabel}
-			<p class="text-sm text-muted-foreground">{kindLabel}</p>
-		{/if}
-		{#if description}
-			<p class="text-base text-muted-foreground">{description}</p>
-		{/if}
-	</header>
-
-	<div class="space-y-4">
-		<h2 class="text-lg font-semibold">{$t('events.detail.sections.details')}</h2>
-		<dl class="grid gap-4 sm:grid-cols-2">
-			<div class="rounded-lg border border-border bg-background/50 p-4">
-				<dt class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-					{$t('events.detail.fields.occurrence_date')}
-				</dt>
-				<dd class="mt-1 text-base font-medium">{occurrenceDate ?? emptyValue}</dd>
-			</div>
-			<div class="rounded-lg border border-border bg-background/50 p-4">
-				<dt class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-					{$t('events.detail.fields.occurrence_time')}
-				</dt>
-				<dd class="mt-1 text-base font-medium">{occurrenceTime ?? emptyValue}</dd>
-			</div>
-			<div class="rounded-lg border border-border bg-background/50 p-4">
-				<dt class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-					{$t('events.detail.fields.created_at')}
-				</dt>
-				<dd class="mt-1 text-base font-medium">{createdAt ?? emptyValue}</dd>
-			</div>
-			<div class="rounded-lg border border-border bg-background/50 p-4">
-				<dt class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-					{$t('events.detail.fields.updated_at')}
-				</dt>
-				<dd class="mt-1 text-base font-medium">{updatedAt ?? emptyValue}</dd>
-			</div>
-			<div class="rounded-lg border border-border bg-background/50 p-4 sm:col-span-2 md:col-span-1">
-				<dt class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-					{$t('events.detail.fields.valence')}
-				</dt>
-				<dd class="mt-1 text-base font-medium">{valence ?? emptyValue}</dd>
-			</div>
-		</dl>
-	</div>
-
-	{#if emotions.length > 0}
-		<div class="space-y-4">
-			<h2 class="text-lg font-semibold">{$t('events.detail.sections.emotions')}</h2>
-			<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-				{#each emotions as emotion (emotion.id)}
-					<div
-						class="flex flex-col items-center justify-between rounded-lg border border-border bg-background/50 px-4 py-3"
-					>
-						<span class="text-sm">{emotion.label}</span>
-						<span class="text-lg text-muted-foreground">
-							{emotion.valence ?? emptyValue}
-						</span>
+			<div class="space-y-4">
+				<h2 class="text-lg font-semibold">{$t('events.detail.sections.details')}</h2>
+				<dl class="grid gap-4 sm:grid-cols-2">
+					<div class="rounded-lg border border-border bg-background/50 p-4">
+						<dt class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+							{$t('events.detail.fields.occurrence_date')}
+						</dt>
+						<dd class="mt-1 text-base font-medium">{occurrenceDate ?? emptyValue}</dd>
 					</div>
-				{/each}
-			</div>
-		</div>
-	{/if}
-
-	{#if associations.length > 0}
-		<div class="space-y-4">
-			<h2 class="text-lg font-semibold">{$t('events.detail.sections.associations')}</h2>
-			<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-				{#each associations as association (association.id)}
-					<div
-						class="flex flex-col items-center justify-between rounded-lg border border-border bg-background/50 px-4 py-3"
-					>
-						<span class="text-sm">{association.label}</span>
-						<span class="text-lg text-muted-foreground">
-							{association.valence ?? emptyValue}
-						</span>
+					<div class="rounded-lg border border-border bg-background/50 p-4">
+						<dt class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+							{$t('events.detail.fields.occurrence_time')}
+						</dt>
+						<dd class="mt-1 text-base font-medium">{occurrenceTime ?? emptyValue}</dd>
 					</div>
-				{/each}
+					<div class="rounded-lg border border-border bg-background/50 p-4">
+						<dt class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+							{$t('events.detail.fields.created_at')}
+						</dt>
+						<dd class="mt-1 text-base font-medium">{createdAt ?? emptyValue}</dd>
+					</div>
+					<div class="rounded-lg border border-border bg-background/50 p-4">
+						<dt class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+							{$t('events.detail.fields.updated_at')}
+						</dt>
+						<dd class="mt-1 text-base font-medium">{updatedAt ?? emptyValue}</dd>
+					</div>
+					<div
+						class="rounded-lg border border-border bg-background/50 p-4 sm:col-span-2 md:col-span-1"
+					>
+						<dt class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+							{$t('events.detail.fields.valence')}
+						</dt>
+						<dd class="mt-1 text-base font-medium">{valence ?? emptyValue}</dd>
+					</div>
+				</dl>
 			</div>
-		</div>
-	{/if}
 
-	{#if responses.length > 0}
-		<div class="space-y-4">
-			<h2 class="text-lg font-semibold">{$t('events.detail.sections.responses')}</h2>
-			<ul class="space-y-3">
-				{#each responses as response (response.id)}
-					<li class="rounded-lg border border-border bg-background/50 px-4 py-3">
-						<p class="text-sm font-semibold text-muted-foreground">{response.label}</p>
-						<p class="mt-1 whitespace-pre-wrap text-base">{response.value}</p>
-					</li>
-				{/each}
-			</ul>
-		</div>
-	{/if}
-</section>
+			{#if emotions.length > 0}
+				<div class="space-y-4">
+					<h2 class="text-lg font-semibold">{$t('events.detail.sections.emotions')}</h2>
+					<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+						{#each emotions as emotion (emotion.id)}
+							<div
+								class="flex flex-col items-center justify-between rounded-lg border border-border bg-background/50 px-4 py-3"
+							>
+								<span class="text-sm">{emotion.label}</span>
+								<span class="text-lg text-muted-foreground">
+									{emotion.valence ?? emptyValue}
+								</span>
+							</div>
+						{/each}
+					</div>
+				</div>
+			{/if}
+
+			{#if associations.length > 0}
+				<div class="space-y-4">
+					<h2 class="text-lg font-semibold">{$t('events.detail.sections.associations')}</h2>
+					<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+						{#each associations as association (association.id)}
+							<div
+								class="flex flex-col items-center justify-between rounded-lg border border-border bg-background/50 px-4 py-3"
+							>
+								<span class="text-sm">{association.label}</span>
+								<span class="text-lg text-muted-foreground">
+									{association.valence ?? emptyValue}
+								</span>
+							</div>
+						{/each}
+					</div>
+				</div>
+			{/if}
+
+			{#if responses.length > 0}
+				<div class="space-y-4">
+					<h2 class="text-lg font-semibold">{$t('events.detail.sections.responses')}</h2>
+					<ul class="space-y-3">
+						{#each responses as response (response.id)}
+							<li class="rounded-lg border border-border bg-background/50 px-4 py-3">
+								<p class="text-sm font-semibold text-muted-foreground">{response.label}</p>
+								<p class="mt-1 whitespace-pre-wrap text-base">{response.value}</p>
+							</li>
+						{/each}
+					</ul>
+				</div>
+			{/if}
+		</section>
+	{/key}
+</article>
