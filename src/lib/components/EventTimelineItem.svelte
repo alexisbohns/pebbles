@@ -2,6 +2,8 @@
 	import { resolve } from '$app/paths';
 	import type { EventSummary } from '$lib/types/events';
 	import { t } from '$lib';
+	import Focus from '@lucide/svelte/icons/focus';
+	import Calendar1 from '@lucide/svelte/icons/calendar-1';
 
 	let { event }: { event: EventSummary } = $props();
 
@@ -29,18 +31,23 @@
 	);
 </script>
 
-<article>
-	<a href={resolve('/events/[id]', { id: event?.id ?? '' })}>
-		<h3>{title}</h3>
+<article class="flex gap-2 items-center timeline-item timeline-item-{event.kind}">
+	<div class="timeline-item-line">
+		{#if event.kind == 'day'}
+			<Calendar1 class="h-[1.2rem] w-[1.2rem] text-primary" />
+		{:else}
+			<Focus class="h-[1.2rem] w-[1.2rem] text-muted-foreground" />
+		{/if}
+	</div>
+	<a href={resolve('/events/[id]', { id: event?.id ?? '' })} class="p-2 flex flex-col grow">
+		{#if occurrenceDate}
+			<span class="text-xs text-muted-foreground">{occurrenceDate}</span>
+		{/if}
 		{#if occurrenceDate || valence !== null}
 			<p>
-				{#if occurrenceDate}
-					<span>{occurrenceDate}</span>
-				{/if}
-				{#if occurrenceDate && valence !== null}
-					<span> · </span>
-				{/if}
+				{title}
 				{#if valence !== null}
+					<span> · </span>
 					<span>{valenceLabel}</span>
 				{/if}
 			</p>
@@ -50,3 +57,35 @@
 		{/if}
 	</a>
 </article>
+
+<style lang="stylus">
+	.timeline-item
+		&:hover
+			a
+				opacity 0.7
+
+		&-line
+			display flex
+			flex-direction column
+			align-items center
+			justify-content stretch
+			align-self stretch
+			gap 0.5rem
+
+			&::before, &::after
+				content " "
+				width 3px
+				flex-grow 1
+				background var(--foreground-color)
+				opacity 0.1
+			
+			&::before
+				border-radius 0 0 10rem 10rem
+			
+			&::after
+				border-radius 10rem 10rem 0 0
+			
+		&:last-child
+			.timeline-item-line::after
+				visibility hidden
+</style>

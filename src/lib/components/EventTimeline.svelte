@@ -19,12 +19,8 @@
 	{#if events.length === 0}
 		<p>{emptyLabel}</p>
 	{:else}
-		<ul>
-			{#each events as event (event.id)}
-				<li>
-					<EventTimelineItem {event} />
-				</li>
-			{/each}
-		</ul>
+		{#each events as event (event.id)}
+			<EventTimelineItem {event} />
+		{/each}
 	{/if}
 </section>
