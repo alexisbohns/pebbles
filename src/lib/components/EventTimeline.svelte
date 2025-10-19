@@ -3,6 +3,7 @@
 	import EventTimelineItem from './EventTimelineItem.svelte';
 	import type { EventSummary } from '$lib/types/events';
 	import { t } from '$lib';
+	import { Button } from '$lib/components/ui/button';
 
 	let { events = [] }: { events?: EventSummary[] } = $props();
 
@@ -11,11 +12,13 @@
 	const createLabel = $derived($t('timeline.create'));
 </script>
 
+<header class="mb-5">
+	<h1>{heading}</h1>
+	<Button href={resolve('/create')}>
+		{createLabel}
+	</Button>
+</header>
 <section>
-	<header>
-		<h1>{heading}</h1>
-		<a href={resolve('/create')}>{createLabel}</a>
-	</header>
 	{#if events.length === 0}
 		<p>{emptyLabel}</p>
 	{:else}
