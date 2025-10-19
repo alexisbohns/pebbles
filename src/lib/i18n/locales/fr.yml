@@ -118,6 +118,18 @@ events:
     back_to_list: Retour aux événements
     kind_title: 'Événement {kind}'
     title_fallback: "Détails de l'événement"
+    sections:
+      details: Détails
+      emotions: Émotions
+      associations: Associations
+      responses: Réponses
+    fields:
+      occurrence_date: Date de survenue
+      occurrence_time: Heure de survenue
+      created_at: Créé le
+      updated_at: Mis à jour le
+      valence: Valence
+    empty_value: Non renseigné
 emotions:
   06f7f887-144f-4fa3-9aa7-213af15c9062: accablement
   27b21533-b83f-4cfe-8fa3-330f3987dcbb: indifférence
