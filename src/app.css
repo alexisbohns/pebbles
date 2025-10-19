@@ -37,7 +37,7 @@
 	--input: 232 230 245;
 
 	/* primary definition */
-	--primary: 255 0 255;
+	--primary: 113 141 83;
 	--ring: var(--primary);
 	--primary-foreground: 255 255 255;
 }
