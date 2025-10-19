@@ -1,6 +1,15 @@
 <!-- src/lib/components/Mapping/MappingHeader.svelte -->
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
+	import { ToggleGroup, ToggleGroupItem } from '$lib/components/ui/toggle-group';
+	import {
+		TooltipProvider,
+		Tooltip,
+		TooltipTrigger,
+		TooltipContent
+	} from '$lib/components/ui/tooltip';
+	import MousePointerClick from '@lucide/svelte/icons/mouse-pointer-click';
+	import SlidersHorizontal from '@lucide/svelte/icons/sliders-horizontal';
 
 	export let title: string = '';
 	export let mode: 'select' | 'intensity' = 'select';
@@ -22,40 +31,42 @@
 </script>
 
 <div class="flex items-center justify-between gap-4">
-	<h3 class="text-lg font-semibold">{title}</h3>
-
 	<div class="flex items-center gap-2">
 		<!-- Switch Sélection / Intensité -->
-		<div
-			class="inline-flex overflow-hidden rounded-xl border"
-			role="tablist"
-			aria-label="Mode de saisie"
-		>
-			<button
-				type="button"
-				class="px-3 py-1.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-				class:bg-gray-900={mode === 'select'}
-				class:text-white={mode === 'select'}
-				class:text-gray-700={mode !== 'select'}
-				role="tab"
-				aria-selected={mode === 'select'}
-				on:click={() => setMode('select')}
+		<TooltipProvider>
+			<ToggleGroup
+				type="single"
+				value={mode}
+				onValueChange={(value) => {
+					if (value === 'select' || value === 'intensity') {
+						setMode(value);
+					}
+				}}
+				aria-label="Mode de saisie"
 			>
-				Sélection
-			</button>
-			<button
-				type="button"
-				class="px-3 py-1.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-				class:bg-gray-900={mode === 'intensity'}
-				class:text-white={mode === 'intensity'}
-				class:text-gray-700={mode !== 'intensity'}
-				role="tab"
-				aria-selected={mode === 'intensity'}
-				on:click={() => setMode('intensity')}
-			>
-				Intensité
-			</button>
-		</div>
+				<Tooltip>
+					<TooltipTrigger>
+						{#snippet child({ props })}
+							<ToggleGroupItem {...props} value="select" aria-label="Sélection">
+								<MousePointerClick />
+							</ToggleGroupItem>
+						{/snippet}
+					</TooltipTrigger>
+					<TooltipContent>Sélection</TooltipContent>
+				</Tooltip>
+
+				<Tooltip>
+					<TooltipTrigger>
+						{#snippet child({ props })}
+							<ToggleGroupItem {...props} value="intensity" aria-label="Intensité">
+								<SlidersHorizontal />
+							</ToggleGroupItem>
+						{/snippet}
+					</TooltipTrigger>
+					<TooltipContent>Intensité</TooltipContent>
+				</Tooltip>
+			</ToggleGroup>
+		</TooltipProvider>
 
 		{#if canToggleFilter}
 			<!-- Bouton filtre valence -->

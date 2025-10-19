@@ -2,65 +2,21 @@
     -webkit-user-select text
     user-select text
 
-:root
-    --mauve-primary #8b575c
-    --mauve-light #c98986
-    --pink-light #fae1dd
-    --pine-dark #283618
-
-
-    --e00 #f1efea
-    --e05 grey
-    --e10 #333c4b
-
-    --a00 var(--pink-light)
-    --a05 #8FC0A9
-    --a10 var(--mauve-primary)
-
-
-    --f-def "Sora", system-ui, sans-serif
-    --f-serif "Alegreya", "Athelas", serif
-    --f-head "Finger Paint", serif
-    
-    box-sizing border-box
-    padding 0
-    margin 0
-
-    --trans all ease 0.2s
-    --trans-m all ease 0.5s
-    --trans-l all ease 1s
-
-:root[data-theme='dark']
-    --e00 #0F131A
-    --e10 #EDE7D9
-
-::selection
-    color var(--a10)
-    background-color var(--a00)
+// :root
+//     box-sizing border-box
+//     padding 0
+//     margin 0
 
 body
-    font-family var(--f-def)
-    background var(--e00)
-    transition var(--trans-l)
-    color var(--e10)
     -webkit-user-select none
     user-select none
     padding 1rem
     margin 0
     display flex
     flex-direction column
-
-h1, h2, h3, h4, h5, h6, p, a
-    margin 0
-    padding 0
-
-h1
-    font-size 1.5rem
-    font-family var(--f-head)
-
-a, a:visited
-    text-decoration none
-    color var(--a05)
-
-    &:hover
-        opacity .7
+    background-color var(--background-color)
+    color var(--foreground-color)
+    // --primary 82 116 122 // stoneblue
+    // --primary 155 89 70 // terracotta
+    // --primary 127 107 158 // lilac
+    
