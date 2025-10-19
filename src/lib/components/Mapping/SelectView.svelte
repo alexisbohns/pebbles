@@ -4,6 +4,7 @@
 	import { Toggle } from '$lib/components/ui/toggle';
 	import { t } from '$lib';
 	import type { MappingItem, MappingSelectionValue } from './types';
+	import { blur } from 'svelte/transition';
 
 	export let items: MappingItem[] = [];
 	export let initialValues: MappingSelectionValue[] = [];
@@ -57,13 +58,15 @@
 
 <div class="flex flex-wrap gap-2">
 	{#each items as item (item.id)}
-		<Toggle
-			variant="outline"
-			size="sm"
-			pressed={selected.has(item.id)}
-			onPressedChange={(value) => updateSelection(item.id, value)}
-		>
-			{resolveLabel(item)}
-		</Toggle>
+		<div transition:blur>
+			<Toggle
+				variant="outline"
+				size="sm"
+				pressed={selected.has(item.id)}
+				onPressedChange={(value) => updateSelection(item.id, value)}
+			>
+				{resolveLabel(item)}
+			</Toggle>
+		</div>
 	{/each}
 </div>

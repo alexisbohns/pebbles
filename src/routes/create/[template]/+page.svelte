@@ -533,6 +533,7 @@
 	{#if hasEmotionMapping}
 		<section
 			class="form-section space-y-4 rounded-lg border p-4"
+			style="transition: all ease 5s;"
 			aria-label={$t('create.template.section.emotions')}
 		>
 			<h2 class="text-lg font-semibold">{$t('create.template.section.emotions')}</h2>
