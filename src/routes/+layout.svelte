@@ -21,7 +21,7 @@
 
 <main>{@render children?.()}</main>
 
-<PageFooter user={data?.user ?? null} />
+<PageFooter />
 
 <Toaster />
 

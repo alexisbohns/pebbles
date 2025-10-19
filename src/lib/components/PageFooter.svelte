@@ -1,22 +1,13 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { t } from '$lib';
-	import type { User } from '@supabase/supabase-js';
 	import { ModeWatcher } from 'mode-watcher';
 	import ModeToggle from '$lib/components/ModeToggle.svelte';
-
-	let { user = null } = $props<{ user: User | null }>();
-
-	const isAuthenticated = $derived(Boolean(user));
-	const authPath = $derived((user ? '/logout' : '/login') as `/${string}`);
 </script>
 
 <div class="page-footer selectable">
 	<p>{$t('legal.mention')}</p>
 	<nav class="page-footer-links">
-		<a href={resolve(authPath)}>
-			{isAuthenticated ? $t('pages.logout.title') : $t('pages.login.title')}
-		</a>
 		<a href={resolve('/legal')}>
 			{$t('pages.legal.title')}
 		</a>
@@ -35,7 +26,7 @@
 	.page-footer
 		display flex
 		flex-direction column
-		align-items start
+		align-items center
 		gap .25rem
 
 		font-size .8rem
