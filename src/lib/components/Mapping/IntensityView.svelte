@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import { SvelteMap, SvelteSet } from 'svelte/reactivity';
+	import { Button } from '$lib/components/ui/button';
+	import { Slider } from '$lib/components/ui/slider';
 	import type { MappingIntensityValue, MappingItem } from './types';
 
 	export let items: MappingItem[] = [];
@@ -55,48 +57,6 @@
 		dispatch('change', payload);
 	}
 
-	function updateValue(id: string, rawValue: string) {
-		if (rawValue.trim() === '') {
-			setValue(id, null);
-			return;
-		}
-
-		const parsed = Number.parseInt(rawValue, 10);
-		if (Number.isNaN(parsed)) {
-			return;
-		}
-
-		const clamped = clamp(parsed);
-		setValue(id, clamped);
-	}
-
-	function handleInput(id: string, event: Event) {
-		const target = event.currentTarget as HTMLInputElement | null;
-		if (!target) return;
-		updateValue(id, target.value);
-	}
-
-	function handleBlur(id: string, event: FocusEvent) {
-		const target = event.currentTarget as HTMLInputElement | null;
-		if (!target) return;
-		const raw = target.value.trim();
-		if (raw === '') {
-			updateValue(id, '');
-			return;
-		}
-		const parsed = Number.parseInt(raw, 10);
-		if (Number.isNaN(parsed)) {
-			target.value = '';
-			updateValue(id, '');
-			return;
-		}
-		const clamped = clamp(parsed);
-		if (clamped !== parsed) {
-			target.value = String(clamped);
-		}
-		updateValue(id, target.value);
-	}
-
 	function setValue(id: string, value: number | null) {
 		const nextAll = new SvelteMap(allValues);
 		let changed = false;
@@ -128,23 +88,53 @@
 
 		emitChange();
 	}
+
+	function handleSliderChange(id: string, next: number) {
+		if (typeof next !== 'number' || Number.isNaN(next)) return;
+		setValue(id, clamp(next));
+	}
+
+	function handleReset(id: string) {
+		setValue(id, null);
+	}
 </script>
 
-<div class="flex flex-col gap-2" role="group" aria-label={containerLabel}>
+<div class="space-y-3" role="group" aria-label={containerLabel}>
 	{#each entries as { item, value } (item.id)}
-		<label class="flex items-center gap-3 text-sm">
-			<span class="w-32 shrink-0 font-medium">{item.label}</span>
-			<input
-				type="number"
-				class="w-20 rounded border px-2 py-1"
-				min={MIN_INTENSITY}
-				max={MAX_INTENSITY}
-				step="1"
-				value={value ?? ''}
-				placeholder="—"
-				on:input={(event) => handleInput(item.id, event)}
-				on:blur={(event) => handleBlur(item.id, event)}
-			/>
-		</label>
+		<section class="rounded-lg border px-4 py-3">
+			<header class="flex items-center justify-between gap-2 pb-2">
+				<span class="font-medium text-sm">{item.label}</span>
+				<span class="text-xs tabular-nums text-muted-foreground">
+					{value === null ? '—' : value}
+				</span>
+			</header>
+			<div class="space-y-2">
+				<Slider
+					type="single"
+					min={MIN_INTENSITY}
+					max={MAX_INTENSITY}
+					step={1}
+					value={value ?? 0}
+					onValueChange={(next) => handleSliderChange(item.id, next)}
+				/>
+				<div class="flex items-center justify-between text-xs text-muted-foreground">
+					<span>{MIN_INTENSITY}</span>
+					<span>0</span>
+					<span>{MAX_INTENSITY}</span>
+				</div>
+			</div>
+			<div class="flex justify-end pt-2">
+			<Button
+				type="button"
+				variant="ghost"
+				size="sm"
+				class="text-muted-foreground"
+				disabled={value === null}
+				onclick={() => handleReset(item.id)}
+			>
+				Reset
+			</Button>
+			</div>
+		</section>
 	{/each}
 </div>

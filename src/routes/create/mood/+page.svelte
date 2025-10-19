@@ -5,6 +5,11 @@
 		MappingSelectionValue,
 		MappingValue
 	} from '$lib/components/Mapping/types';
+	import { Button } from '$lib/components/ui/button';
+	import { Label } from '$lib/components/ui/label';
+	import { Slider } from '$lib/components/ui/slider';
+	import DatePicker from '$lib/components/ui/date-picker.svelte';
+	import TimePicker from '$lib/components/ui/time-picker.svelte';
 	import { SvelteMap } from 'svelte/reactivity';
 	import type { PageData } from './$types';
 
@@ -28,57 +33,49 @@
 		p_associations: AssociationPayload[];
 	};
 
-	export let data: PageData;
+let { data }: { data: PageData } = $props();
 
 	const kindOptions: Array<{ value: EventKind; label: string }> = [
 		{ value: 'moment', label: 'Moment' },
 		{ value: 'day', label: 'Day' }
 	];
 
-	const valenceOptions = ['-3', '-2', '-1', '0', '1', '2', '3'] as const;
-	type ValenceOption = (typeof valenceOptions)[number];
+	const MIN_VALENCE = -3;
+	const MAX_VALENCE = 3;
 
-	let kind: EventKind = 'day';
-	let date = '';
-	let time = '';
-	let valence: ValenceOption = '0';
-	let emotionValues: MappingValue[] = [];
-	let associationValues: MappingValue[] = [];
-	let emotionValenceFilter: number | null = null;
-	let emotionSelectionValues: MappingSelectionValue[] = [];
-	let associationSelectionValues: MappingSelectionValue[] = [];
-	let emotionSelectionIds: string[] = [];
-	let associationSelectionIds: string[] = [];
-	let emotionIntensityValues: MappingIntensityValue[] = [];
-	let associationIntensityValues: MappingIntensityValue[] = [];
-	let submissionPreview: string | null = null;
-	let submitError: string | null = null;
-	let submitSuccessId: string | null = null;
-	let isSubmitting = false;
+let kind = $state<EventKind>('day');
+let date = $state('');
+let time = $state('');
+let valence = $state(0);
+let emotionValues = $state<MappingValue[]>([]);
+let associationValues = $state<MappingValue[]>([]);
+const emotionValenceFilter = $derived.by(() => deriveValenceFilter(valence));
+const emotionSelectionValues = $derived.by(() => emotionValues.filter(isSelectionValue));
+const associationSelectionValues = $derived.by(() => associationValues.filter(isSelectionValue));
+const emotionSelectionIds = $derived.by(() => emotionSelectionValues.map((value) => value.id));
+const associationSelectionIds = $derived.by(() => associationSelectionValues.map((value) => value.id));
+const emotionIntensityValues = $derived.by(() => emotionValues.filter(isIntensityValue));
+const associationIntensityValues = $derived.by(() => associationValues.filter(isIntensityValue));
+let submissionPreview = $state<string | null>(null);
+let submitError = $state<string | null>(null);
+let submitSuccessId = $state<string | null>(null);
+let isSubmitting = $state(false);
 	const INDENT = '  ';
 
-	$: if (kind !== 'moment' && time !== '') {
-		time = '';
-	}
-
-	$: emotionValenceFilter = deriveValenceFilter(valence);
+	$effect(() => {
+		if (kind !== 'moment' && time !== '') {
+			time = '';
+		}
+	});
 	const isSelectionValue = (value: MappingValue): value is MappingSelectionValue =>
 		value.kind === 'selection';
 	const isIntensityValue = (value: MappingValue): value is MappingIntensityValue =>
 		value.kind === 'intensity';
 
-	$: emotionSelectionValues = emotionValues.filter(isSelectionValue);
-	$: associationSelectionValues = associationValues.filter(isSelectionValue);
-	$: emotionSelectionIds = emotionSelectionValues.map((value) => value.id);
-	$: associationSelectionIds = associationSelectionValues.map((value) => value.id);
-	$: emotionIntensityValues = emotionValues.filter(isIntensityValue);
-	$: associationIntensityValues = associationValues.filter(isIntensityValue);
-
-	function deriveValenceFilter(input: string): number | null {
-		const parsed = Number.parseInt(input, 10);
-		if (Number.isNaN(parsed)) return null;
-		if (parsed < 0) return -1;
-		if (parsed === 0) return 0;
+	function deriveValenceFilter(input: number): number | null {
+		if (!Number.isFinite(input)) return null;
+		if (input < 0) return -1;
+		if (input === 0) return 0;
 		return 1;
 	}
 
@@ -173,10 +170,9 @@
 	}
 
 	function buildRpcArgs(): RpcArgs {
-		const parsedValence = Number.parseInt(valence, 10);
 		return {
 			p_kind: kind,
-			p_valence: Number.isNaN(parsedValence) ? 0 : parsedValence,
+			p_valence: Number.isFinite(valence) ? Math.round(valence) : 0,
 			p_occurrence_date: date,
 			p_occurrence_time: kind === 'moment' ? time || null : null,
 			p_name: '',
@@ -226,44 +222,77 @@
 			.map((line) => `${prefix}${line}`)
 			.join('\n');
 	}
+
+function updateValence(next: number) {
+    if (typeof next !== 'number' || Number.isNaN(next)) return;
+    const clamped = Math.max(MIN_VALENCE, Math.min(MAX_VALENCE, Math.round(next)));
+    if (valence !== clamped) {
+        valence = clamped;
+    }
+}
+
+	const formattedValence = $derived.by(() => (valence > 0 ? `+${valence}` : String(valence)));
 </script>
 
-<h1>Event</h1>
+<h1 class="text-2xl font-semibold tracking-tight">Event</h1>
 
-<form on:submit={handleSubmit} class="mood-form" aria-label="Create event">
-	<div class="form-field">
-		<label for="kind">Kind</label>
-		<select id="kind" name="kind" bind:value={kind}>
+<form
+	onsubmit={handleSubmit}
+	class="space-y-6"
+	aria-label="Create event"
+>
+	<div class="grid gap-2">
+		<Label for="kind">Kind</Label>
+		<select
+			id="kind"
+			name="kind"
+			bind:value={kind}
+			class="border-input bg-background ring-offset-background focus-visible:ring-ring h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+		>
 			{#each kindOptions as option (option.value)}
 				<option value={option.value}>{option.label}</option>
 			{/each}
 		</select>
 	</div>
 
-	<div class="form-field">
-		<label for="date">Date</label>
-		<input id="date" name="date" type="date" bind:value={date} required />
+	<div class="grid gap-2">
+		<Label>Date</Label>
+		<DatePicker bind:value={date} placeholderText="Select a date" class="w-full" />
 	</div>
 
 	{#if kind === 'moment'}
-		<div class="form-field">
-			<label for="time">Time</label>
-			<input id="time" name="time" type="time" bind:value={time} required />
+		<div class="grid gap-2">
+			<Label>Time</Label>
+			<TimePicker bind:value={time} placeholderText="Select a time" />
 		</div>
 	{/if}
 
-	<div class="form-field">
-		<label for="valence">Valence</label>
-		<select id="valence" name="valence" bind:value={valence} required>
-			{#each valenceOptions as option (option)}
-				<option value={option}>{option}</option>
-			{/each}
-		</select>
+	<div class="grid gap-3">
+		<div class="flex items-center justify-between gap-3">
+			<Label class="text-base font-semibold" for="valence">
+				Valence
+			</Label>
+			<span class="text-sm text-muted-foreground">{formattedValence}</span>
+		</div>
+		<Slider
+			id="valence"
+			type="single"
+			min={MIN_VALENCE}
+			max={MAX_VALENCE}
+			step={1}
+			value={valence}
+			onValueChange={updateValence}
+		/>
+		<div class="flex items-center justify-between text-xs text-muted-foreground">
+			<span>{MIN_VALENCE}</span>
+			<span>0</span>
+			<span>+{Math.abs(MAX_VALENCE)}</span>
+		</div>
 	</div>
 
-	<div class="form-field">
+	<div class="space-y-4 rounded-lg border p-4">
 		{#if data.emotions.length === 0}
-			<p>No emotions available.</p>
+			<p class="text-sm text-muted-foreground">No emotions available.</p>
 		{:else}
 			<MappingComponent
 				title="Emotions"
@@ -284,9 +313,9 @@
 		<input type="hidden" name="emotionIntensities" value={`${entry.id}:${entry.value}`} />
 	{/each}
 
-	<div class="form-field">
+	<div class="space-y-4 rounded-lg border p-4">
 		{#if data.associations.length === 0}
-			<p>No associations available.</p>
+			<p class="text-sm text-muted-foreground">No associations available.</p>
 		{:else}
 			<MappingComponent
 				title="Associations"
@@ -305,26 +334,32 @@
 		<input type="hidden" name="associationIntensities" value={`${entry.id}:${entry.value}`} />
 	{/each}
 
-	<button type="submit" disabled={isSubmitting}>
+	<Button
+		type="submit"
+		disabled={isSubmitting}
+		class="w-full sm:w-auto"
+	>
 		{#if isSubmitting}
 			Saving…
 		{:else}
 			Save event
 		{/if}
-	</button>
+	</Button>
 
 	{#if submitError}
-		<p class="text-sm text-red-600 mt-2" role="alert">{submitError}</p>
+		<p class="text-sm text-destructive" role="alert">{submitError}</p>
 	{:else if submitSuccessId}
-		<p class="text-sm text-emerald-600 mt-2" role="status">
+		<p class="text-sm text-emerald-600" role="status">
 			Event saved successfully (id: {submitSuccessId}).
 		</p>
 	{/if}
 </form>
 
 {#if submissionPreview}
-	<section class="mood-preview" aria-live="polite">
-		<h2>RPC payload preview</h2>
-		<pre><code class="language-ts">{submissionPreview}</code></pre>
+	<section class="mt-8 space-y-3 rounded-lg border p-4" aria-live="polite">
+		<h2 class="text-lg font-semibold">RPC payload preview</h2>
+		<pre class="overflow-x-auto rounded-md bg-muted/20 p-4 text-sm leading-relaxed">
+			<code class="language-ts">{submissionPreview}</code>
+		</pre>
 	</section>
 {/if}

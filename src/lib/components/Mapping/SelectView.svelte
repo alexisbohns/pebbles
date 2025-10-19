@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import { SvelteSet } from 'svelte/reactivity';
+	import { Toggle } from '$lib/components/ui/toggle';
 	import type { MappingItem, MappingSelectionValue } from './types';
 
 	export let items: MappingItem[] = [];
@@ -23,13 +24,19 @@
 		dispatch('change', values);
 	}
 
-	function toggle(id: string) {
+	function updateSelection(id: string, isPressed: boolean) {
 		const next = new SvelteSet(selected);
-		if (next.has(id)) {
+		let changed = false;
+		if (next.has(id) && !isPressed) {
 			next.delete(id);
-		} else {
+			changed = true;
+		} else if (!next.has(id) && isPressed) {
 			next.add(id);
+			changed = true;
 		}
+
+		if (!changed) return;
+
 		selected = next;
 		emitChange();
 	}
@@ -37,16 +44,13 @@
 
 <div class="flex flex-wrap gap-2">
 	{#each items as item (item.id)}
-		<button
-			type="button"
-			class="px-3 py-1 rounded-full border transition"
-			class:bg-blue-500={selected.has(item.id)}
-			class:text-white={selected.has(item.id)}
-			class:bg-gray-100={!selected.has(item.id)}
-			aria-pressed={selected.has(item.id)}
-			on:click={() => toggle(item.id)}
+		<Toggle
+			variant="outline"
+			size="sm"
+			pressed={selected.has(item.id)}
+			onPressedChange={(value) => updateSelection(item.id, value)}
 		>
 			{item.label}
-		</button>
+		</Toggle>
 	{/each}
 </div>

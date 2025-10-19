@@ -3,6 +3,12 @@
 	import Question from '$lib/components/Question.svelte';
 	import type { MappingItem, MappingValue } from '$lib/components/Mapping/types';
 	import { t } from '$lib';
+	import { Button } from '$lib/components/ui/button';
+	import { Input } from '$lib/components/ui/input';
+	import { Label } from '$lib/components/ui/label';
+	import { Slider } from '$lib/components/ui/slider';
+	import DatePicker from '$lib/components/ui/date-picker.svelte';
+	import TimePicker from '$lib/components/ui/time-picker.svelte';
 	import { SvelteMap } from 'svelte/reactivity';
 	import { get } from 'svelte/store';
 	import type { PageData } from './$types';
@@ -26,17 +32,17 @@
 		placeholder: string | null;
 	};
 
-	export let data: PageData;
+let { data }: { data: PageData } = $props();
 
 	const { config, emotions, associations, questions } = data;
 	const rawTemplateItems = (Array.isArray(config.template) ? config.template : []) as Array<
 		Record<string, unknown> | null | undefined
 	>;
 
-	const propertyItems: PropertyItem[] = [];
-	const questionItems: QuestionItem[] = [];
-	let hasEmotionMapping = false;
-	let hasAssociationMapping = false;
+const propertyItems: PropertyItem[] = [];
+const questionItems: QuestionItem[] = [];
+let hasEmotionMapping = $state(false);
+let hasAssociationMapping = $state(false);
 
 	for (const rawItem of rawTemplateItems) {
 		if (!rawItem || typeof rawItem !== 'object') continue;
@@ -109,43 +115,39 @@
 			candidate === undefined || candidate === null ? '0' : String(candidate);
 	}
 
-	let propertyValues: Record<string, string> = { ...initialPropertyValues };
-
-	for (const item of propertyItems) {
-		if (!(item.key in propertyValues)) {
-			propertyValues[item.key] = '';
-		}
-	}
+let propertyValues = $state<Record<string, string>>({ ...initialPropertyValues });
 
 	const initialQuestionValues = questionItems.reduce<Record<string, string>>((acc, item) => {
 		acc[item.id] = '';
 		return acc;
 	}, {});
 
-	let questionValues: Record<string, string> = { ...initialQuestionValues };
+let questionValues = $state<Record<string, string>>({ ...initialQuestionValues });
 
-	let emotionValues: MappingValue[] = [];
-	let associationValues: MappingValue[] = [];
+let emotionValues = $state<MappingValue[]>([]);
+let associationValues = $state<MappingValue[]>([]);
 
-	const valenceOptions = ['-3', '-2', '-1', '0', '1', '2', '3'] as const;
-	const valenceFieldPresent = propertyItems.some((item) => item.key === 'valence');
+const MIN_VALENCE = -3;
+const MAX_VALENCE = 3;
+const valenceFieldPresent = propertyItems.some((item) => item.key === 'valence');
+const valenceValue = $derived.by(() => propertyValues.valence ?? '');
+const emotionValenceFilter = $derived.by(() =>
+	valenceFieldPresent ? deriveValenceFilter(valenceValue) : null
+);
 
-	let submissionPreview: string | null = null;
-	let submitError: string | null = null;
-	let submitSuccessMessage: string | null = null;
-	let isSubmitting = false;
-	const INDENT = '  ';
-
-	$: valenceValue = propertyValues.valence ?? '';
-	$: emotionValenceFilter = valenceFieldPresent ? deriveValenceFilter(valenceValue) : null;
+let submissionPreview = $state<string | null>(null);
+let submitError = $state<string | null>(null);
+let submitSuccessMessage = $state<string | null>(null);
+let isSubmitting = $state(false);
+const INDENT = '  ';
 
 	const eventKind =
 		typeof modelDefaults.kind === 'string' && modelDefaults.kind.trim().length > 0
 			? modelDefaults.kind
 			: 'moment';
 
-	function deriveValenceFilter(input: string): number | null {
-		const parsed = Number.parseInt(input, 10);
+	function deriveValenceFilter(input: string | number): number | null {
+		const parsed = typeof input === 'number' ? input : Number.parseInt(input, 10);
 		if (Number.isNaN(parsed)) return null;
 		if (parsed < 0) return -1;
 		if (parsed === 0) return 0;
@@ -212,18 +214,23 @@
 	}
 
 	function clampValence(value: number): number {
-		return Math.max(-3, Math.min(3, value));
+		return Math.max(MIN_VALENCE, Math.min(MAX_VALENCE, value));
 	}
 
-	function parseValence(value: string | undefined): number {
-		if (value === undefined) {
-			const candidate = modelDefaults.valence;
-			if (typeof candidate === 'number') {
-				return clampValence(candidate);
-			}
+	function parseValence(value: string | number | undefined): number {
+		if (typeof value === 'number' && Number.isFinite(value)) {
+			return clampValence(value);
 		}
 
-		const parsed = Number.parseInt(value ?? '', 10);
+	if (value === undefined) {
+		const candidate = modelDefaults.valence;
+		if (typeof candidate === 'number') {
+			return clampValence(candidate);
+		}
+	}
+
+	const raw = typeof value === 'string' ? value : '';
+	const parsed = Number.parseInt(raw, 10);
 		if (Number.isNaN(parsed)) {
 			return 0;
 		}
@@ -435,35 +442,81 @@
 	}
 </script>
 
-<h1>{config.label}</h1>
+<h1 class="text-2xl font-semibold tracking-tight">{config.label}</h1>
 
-<form class="template-form" on:submit|preventDefault={handleSubmit}>
+<form class="template-form space-y-8" onsubmit={handleSubmit}>
 	{#if propertyItems.length > 0}
-		<section class="form-section" aria-label={$t('create.template.section.details')}>
+		<section
+			class="form-section space-y-4 rounded-lg border p-4"
+			aria-label={$t('create.template.section.details')}
+		>
 			{#each propertyItems as item (item.key)}
 				{@const label = resolvePropertyLabel(item.key)}
-				<div class="form-field">
-					<label for={`property-${item.key}`}>{label}</label>
+				{@const fieldId = `property-${item.key}`}
+				<div class="space-y-2">
+					<Label for={fieldId} class="font-medium">{label}</Label>
 					{#if item.key === 'valence'}
-						<select
-							id={`property-${item.key}`}
+						{@const currentValence = parseValence(propertyValues[item.key])}
+						<div class="space-y-3">
+							<div class="flex items-center justify-between text-sm text-muted-foreground">
+								<span>Valence range</span>
+								<span class="font-semibold text-foreground">
+									{currentValence > 0 ? `+${currentValence}` : currentValence}
+								</span>
+							</div>
+							<Slider
+								id={fieldId}
+								type="single"
+								min={MIN_VALENCE}
+								max={MAX_VALENCE}
+								step={1}
+								value={currentValence}
+								onValueChange={(next) => {
+									if (typeof next !== 'number' || Number.isNaN(next)) return;
+									const clamped = Math.max(
+										MIN_VALENCE,
+										Math.min(MAX_VALENCE, Math.round(next))
+									);
+									propertyValues = {
+										...propertyValues,
+										[item.key]: String(clamped)
+									};
+								}}
+							/>
+							<div class="flex items-center justify-between text-xs text-muted-foreground">
+								<span>{MIN_VALENCE}</span>
+								<span>0</span>
+								<span>+{Math.abs(MAX_VALENCE)}</span>
+							</div>
+							<div class="flex justify-end pt-1">
+				<Button
+					type="button"
+					variant="ghost"
+					size="sm"
+					class="text-muted-foreground"
+					onclick={() => {
+						propertyValues = { ...propertyValues, [item.key]: '0' };
+					}}
+				>
+									Reset
+								</Button>
+							</div>
+						</div>
+					{:else if item.key === 'date'}
+						<DatePicker
+							class="w-full"
 							bind:value={propertyValues[item.key]}
-							required={item.mandatory}
-						>
-							{#each valenceOptions as option (option)}
-								<option value={option}>{option}</option>
-							{/each}
-						</select>
+							placeholderText="Select a date"
+						/>
+					{:else if item.key === 'time'}
+						<TimePicker
+							class="w-full"
+							bind:value={propertyValues[item.key]}
+							placeholderText="Select a time"
+						/>
 					{:else}
-						<input
-							id={`property-${item.key}`}
-							type={item.key === 'date'
-								? 'date'
-								: item.key === 'time'
-									? 'time'
-									: item.key === 'valence'
-										? 'number'
-										: 'text'}
+						<Input
+							id={fieldId}
 							bind:value={propertyValues[item.key]}
 							required={item.mandatory}
 						/>
@@ -474,10 +527,15 @@
 	{/if}
 
 	{#if hasEmotionMapping}
-		<section class="form-section" aria-label={$t('create.template.section.emotions')}>
-			<h2>{$t('create.template.section.emotions')}</h2>
+		<section
+			class="form-section space-y-4 rounded-lg border p-4"
+			aria-label={$t('create.template.section.emotions')}
+		>
+			<h2 class="text-lg font-semibold">{$t('create.template.section.emotions')}</h2>
 			{#if emotions.length === 0}
-				<p>{$t('create.template.empty.emotions')}</p>
+				<p class="text-sm text-muted-foreground">
+					{$t('create.template.empty.emotions')}
+				</p>
 			{:else}
 				<MappingComponent
 					title={$t('create.template.section.emotions')}
@@ -492,10 +550,15 @@
 	{/if}
 
 	{#if hasAssociationMapping}
-		<section class="form-section" aria-label={$t('create.template.section.associations')}>
-			<h2>{$t('create.template.section.associations')}</h2>
+		<section
+			class="form-section space-y-4 rounded-lg border p-4"
+			aria-label={$t('create.template.section.associations')}
+		>
+			<h2 class="text-lg font-semibold">{$t('create.template.section.associations')}</h2>
 			{#if associations.length === 0}
-				<p>{$t('create.template.empty.associations')}</p>
+				<p class="text-sm text-muted-foreground">
+					{$t('create.template.empty.associations')}
+				</p>
 			{:else}
 				<MappingComponent
 					title={$t('create.template.section.associations')}
@@ -508,8 +571,11 @@
 	{/if}
 
 	{#if questionItems.length > 0}
-		<section class="form-section" aria-label={$t('create.template.section.questions')}>
-			<h2>{$t('create.template.section.questions')}</h2>
+		<section
+			class="form-section space-y-4 rounded-lg border p-4"
+			aria-label={$t('create.template.section.questions')}
+		>
+			<h2 class="text-lg font-semibold">{$t('create.template.section.questions')}</h2>
 			{#each questionItems as item, index (item.id)}
 				{@const meta = resolveQuestionMeta(item.id, index)}
 				<Question
@@ -524,93 +590,29 @@
 		</section>
 	{/if}
 
-	<button type="submit" disabled={isSubmitting}>
+	<Button type="submit" disabled={isSubmitting} class="w-full sm:w-auto">
 		{#if isSubmitting}
 			{$t('create.template.button.saving')}
 		{:else}
 			{$t('create.template.button.save')}
 		{/if}
-	</button>
+	</Button>
 
 	{#if submitError}
-		<p class="form-message error" role="alert">{submitError}</p>
+		<p class="text-sm text-destructive" role="alert">{submitError}</p>
 	{:else if submitSuccessMessage}
-		<p class="form-message success" role="status">{submitSuccessMessage}</p>
+		<p class="text-sm text-emerald-600" role="status">{submitSuccessMessage}</p>
 	{/if}
 </form>
 
 {#if submissionPreview}
-	<section class="template-preview" aria-live="polite">
-		<h2>{$t('create.template.preview.title')}</h2>
-		<pre><code class="language-ts">{submissionPreview}</code></pre>
+	<section
+		class="template-preview mt-8 space-y-3 rounded-lg border p-4"
+		aria-live="polite"
+	>
+		<h2 class="text-lg font-semibold">{$t('create.template.preview.title')}</h2>
+		<pre class="overflow-x-auto rounded-md bg-muted/20 p-4 text-sm leading-relaxed">
+			<code class="language-ts">{submissionPreview}</code>
+		</pre>
 	</section>
 {/if}
-
-<style lang="stylus">
-	.template-form
-		display flex
-		flex-direction column
-		gap 2rem
-		margin-top 1.5rem
-
-	.form-section
-		display flex
-		flex-direction column
-		gap 1rem
-
-	.form-field
-		display flex
-		flex-direction column
-		gap 0.5rem
-
-		label
-			font-weight 600
-
-		input, select
-			padding 0.5rem
-			border 1px solid var(--e05)
-			border-radius 0.5rem
-			font-size 1rem
-			background-color transparent
-			color var(--e10)
-
-		input:focus, select:focus
-			outline 2px solid var(--a05)
-			outline-offset 2px
-
-	button
-		align-self flex-start
-		padding 0.75rem 1.5rem
-		border none
-		border-radius 2rem
-		background-color var(--a05)
-		color var(--e10)
-		font-size 1rem
-		cursor pointer
-		transition background-color 0.2s ease
-
-	button[disabled]
-		cursor progress
-		opacity 0.7
-
-	.form-message
-		font-size 0.95rem
-
-	.form-message.error
-		color var(--r05)
-
-	.form-message.success
-		color var(--g05)
-
-	.template-preview
-		margin-top 2rem
-		display flex
-		flex-direction column
-		gap 1rem
-
-		pre
-			background-color rgba(255, 255, 255, 0.04)
-			padding 1rem
-			border-radius 0.75rem
-			overflow auto
-</style>
