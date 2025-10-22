@@ -46,7 +46,7 @@
 		{/if}
 
 		{#if name}
-			<span class="logo-name" style={`height:${height};width:calc(${nameWidth}*0.5);`}>
+			<span class="logo-name" style={`height:${height};width:calc(${nameWidth}*0.45);`}>
 				<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 				{@html nameMarkup}
 			</span>

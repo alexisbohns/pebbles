@@ -5,12 +5,12 @@
 :root {
 	--radius: 0.65rem;
 
-	--background-color: rgba(250 250 250);
-	--foreground-color: rgba(15 15 25);
+	--background-color: rgb(242 247 242);
+	--foreground-color: rgb(4, 43, 8);
 
 	/* tokens */
-	--token-background: 250 250 250;
-	--token-foreground: 15 15 25;
+	--token-background: 242 247 242;
+	--token-foreground: 4 43 8;
 
 	--background: var(--token-background);
 	--popover: var(--token-background);
@@ -21,11 +21,11 @@
 	--popover-foreground: var(--token-foreground);
 	--primary: var(--token-foreground);
 
-	--muted: 225 225 225;
-	--muted-foreground: 150 150 150;
+	--muted: 228 236 222;
+	--muted-foreground: 101 143 103;
 
-	--accent: 235 235 235;
-	--accent-foreground: 0 0 0;
+	--accent: 228 236 222;
+	--accent-foreground: var(--primary);
 
 	/* unused for now */
 	--secondary: var(--token-foreground);
@@ -37,22 +37,22 @@
 	--input: 232 230 245;
 
 	/* primary definition */
-	--primary: 113 141 83;
+	--primary: 48 92 52;
 	--ring: var(--primary);
 	--primary-foreground: 255 255 255;
 }
 
 .dark {
-	--background-color: rgba(15 15 25);
-	--foreground-color: rgba(250 250 250);
+	--background-color: rgb(1, 18, 2);
+	--foreground-color: rgb(211, 225, 200);
 
 	/* tokens */
-	--token-background: 15 15 25;
-	--token-foreground: 250 250 250;
+	--token-background: 1 18 2;
+	--token-foreground: 211 225 200;
 
-	--muted: 50 50 50;
-	--muted-foreground: 150 150 150;
+	--muted: 13 27 14;
+	--muted-foreground: 101 143 103;
 
-	--accent: 30 30 35;
-	--accent-foreground: 250 250 250;
+	--accent: 13 27 14;
+	--accent-foreground: 101 143 103;
 }
