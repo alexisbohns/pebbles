@@ -6,7 +6,7 @@
 </script>
 
 <div class="page-footer selectable">
-	<p>{$t('legal.mention')}</p>
+	<p class="page-footer-text">{$t('legal.mention')}</p>
 	<nav class="page-footer-links">
 		<a href={resolve('/legal')}>
 			{$t('pages.legal.title')}
@@ -27,17 +27,20 @@
 		display flex
 		flex-direction column
 		align-items center
+		text-align center
+		font-weight 300
 		gap .25rem
+		margin-top 2rem
 
 		font-size .8rem
-		color var(--e05)
 
 		&-links
 			display flex
 			flex-wrap wrap
 			gap .75rem
+			margin-bottom .5rem
 
-			a
-				color var(--e10)
-				opacity 0.3
+		&-text
+			opacity .6
+			font-weight 200
 </style>
