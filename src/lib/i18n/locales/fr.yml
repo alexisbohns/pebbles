@@ -112,6 +112,29 @@ create:
     save: 'Enregistrer'
     finish: Terminer
     next: Suivant
+    error:
+      template_config_unavailable: 'Configuration du modèle indisponible.'
+      supabase_unavailable: 'Client Supabase indisponible.'
+      step_not_found: 'Étape introuvable.'
+      invalid_step: 'Étape invalide.'
+      invalid_template_step: 'Étape de modèle invalide.'
+      property_misconfigured: 'Étape de propriété mal configurée.'
+      date_required_before_continue: "Veuillez renseigner la date de l'événement avant de continuer."
+      date_required_to_create: "La date est requise pour créer l'événement."
+      create_event_failed: "Impossible de créer l'événement. Veuillez réessayer."
+      event_creation_failed: "La création de l'événement a échoué. Veuillez réessayer."
+      update_property_failed: "Impossible d'enregistrer la propriété. Veuillez réessayer."
+      event_missing_start_over: 'Événement introuvable. Reprenez depuis la première étape.'
+      question_misconfigured: 'Étape de question mal configurée.'
+      clear_response_failed: 'Impossible de supprimer la réponse. Veuillez réessayer.'
+      save_response_failed: "Impossible d'enregistrer la réponse. Veuillez réessayer."
+      update_emotions_failed: 'Impossible de mettre à jour les émotions. Veuillez réessayer.'
+      update_associations_failed: 'Impossible de mettre à jour les associations. Veuillez réessayer.'
+      unsupported_model_step: 'Étape de modèle non prise en charge.'
+      unsupported_step_type: "Type d'étape non pris en charge."
+      unexpected_save_error: "Erreur inattendue lors de l'enregistrement. Veuillez réessayer."
+      missing_event_reference: "Référence de l'événement manquante après l'enregistrement."
+      event_data_unavailable: "Impossible de charger les données de l'événement."
 form:
   submit: Ajouter
   create: Nouvelle entrée

@@ -488,7 +488,13 @@
 			</p>
 		{/if}
 
-		{#if form?.message}
+		{#if form?.messageKey}
+			{#if $t(form.messageKey) !== form.messageKey}
+				<p class="text-sm text-destructive">{$t(form.messageKey)}</p>
+			{:else if form?.message}
+				<p class="text-sm text-destructive">{form.message}</p>
+			{/if}
+		{:else if form?.message}
 			<p class="text-sm text-destructive">{form.message}</p>
 		{/if}
 

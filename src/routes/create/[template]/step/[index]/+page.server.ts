@@ -1,4 +1,5 @@
 import { error, fail, redirect } from '@sveltejs/kit';
+import { translateInstant } from '$lib';
 import type { Actions, PageServerLoad } from './$types';
 import { buildTemplateContext, type RawTemplateItem } from '../../template-context.server';
 
@@ -16,6 +17,59 @@ const PROPERTY_COLUMN_MAP: Record<string, string> = {
 	date: 'occurrence_date',
 	time: 'occurrence_time'
 };
+
+type TranslateFn = (key: string, params?: Record<string, unknown>) => string;
+
+const STEP_ERROR_KEYS = {
+	templateConfigUnavailable: 'create.step.error.template_config_unavailable',
+	supabaseUnavailable: 'create.step.error.supabase_unavailable',
+	stepNotFound: 'create.step.error.step_not_found',
+	invalidStep: 'create.step.error.invalid_step',
+	invalidTemplateStep: 'create.step.error.invalid_template_step',
+	propertyMisconfigured: 'create.step.error.property_misconfigured',
+	dateBeforeContinuing: 'create.step.error.date_required_before_continue',
+	dateRequired: 'create.step.error.date_required_to_create',
+	createEventFailed: 'create.step.error.create_event_failed',
+	eventCreationFailed: 'create.step.error.event_creation_failed',
+	updatePropertyFailed: 'create.step.error.update_property_failed',
+	eventMissingStartOver: 'create.step.error.event_missing_start_over',
+	questionMisconfigured: 'create.step.error.question_misconfigured',
+	clearResponseFailed: 'create.step.error.clear_response_failed',
+	saveResponseFailed: 'create.step.error.save_response_failed',
+	updateEmotionsFailed: 'create.step.error.update_emotions_failed',
+	updateAssociationsFailed: 'create.step.error.update_associations_failed',
+	unsupportedModelStep: 'create.step.error.unsupported_model_step',
+	unsupportedStepType: 'create.step.error.unsupported_step_type',
+	unexpectedSaveError: 'create.step.error.unexpected_save_error',
+	missingEventReference: 'create.step.error.missing_event_reference',
+	eventDataUnavailable: 'create.step.error.event_data_unavailable'
+} as const;
+
+const extractUserLocale = (locals: App.Locals): string | undefined => {
+	const metadata = locals.user?.user_metadata as Record<string, unknown> | undefined;
+	const locale = metadata?.locale;
+	if (typeof locale === 'string' && locale.trim().length > 0) {
+		return locale;
+	}
+	return undefined;
+};
+
+const createTranslate = (locals: App.Locals): TranslateFn => {
+	const preferredLocale = extractUserLocale(locals);
+	return (key, params) => translateInstant(key, params, preferredLocale);
+};
+
+const failWith = <T extends Record<string, unknown>>(
+	status: number,
+	messageKey: string,
+	data: T,
+	translate: TranslateFn
+) =>
+	fail(status, {
+		...data,
+		message: translate(messageKey),
+		messageKey
+	});
 
 const clampValence = (value: number): number => {
 	if (!Number.isFinite(value)) return 0;
@@ -124,13 +178,14 @@ const resolveDefaultValence = (configDefaults: Record<string, unknown>): number 
 };
 
 export const load: PageServerLoad = async ({ params, url, parent, locals }) => {
+	const translate = createTranslate(locals);
 	const { supabase } = locals;
 
 	const parentData = await parent();
 	const templateItems = parentData.templateItems as RawTemplateItem[] | undefined;
 
 	if (!Array.isArray(templateItems)) {
-		throw error(500, 'Template configuration unavailable');
+		throw error(500, translate(STEP_ERROR_KEYS.templateConfigUnavailable));
 	}
 
 	const stepIndex = Number.parseInt(params.index, 10);
@@ -149,7 +204,7 @@ export const load: PageServerLoad = async ({ params, url, parent, locals }) => {
 
 	const currentItem = templateItems[stepIndex] ?? null;
 	if (!currentItem) {
-		throw error(404, 'Step not found');
+		throw error(404, translate(STEP_ERROR_KEYS.stepNotFound));
 	}
 
 	const eventIdParam = normalizeString(url.searchParams.get('event'));
@@ -157,7 +212,7 @@ export const load: PageServerLoad = async ({ params, url, parent, locals }) => {
 
 	if (eventIdParam) {
 		if (!supabase) {
-			throw error(500, 'Supabase client unavailable');
+			throw error(500, translate(STEP_ERROR_KEYS.supabaseUnavailable));
 		}
 
 		const { data, error: fetchError } = await supabase.rpc('get_event_full', {
@@ -166,7 +221,7 @@ export const load: PageServerLoad = async ({ params, url, parent, locals }) => {
 
 		if (fetchError) {
 			console.error('Failed to load event for step', fetchError);
-			throw error(500, 'Unable to load event data');
+			throw error(500, translate(STEP_ERROR_KEYS.eventDataUnavailable));
 		}
 
 		eventData = data ?? null;
@@ -211,30 +266,35 @@ const buildAssociationMappingsPayload = (values: MappingFormValue[]) => {
 	return Array.from(map.values());
 };
 
-const readApiError = async (response: Response, fallback: string) => {
+const readApiError = async (
+	response: Response,
+	fallbackKey: string,
+	translate: TranslateFn
+): Promise<{ message: string; messageKey?: string }> => {
 	try {
 		const payload = await response.json();
 		if (payload && typeof payload === 'object' && 'message' in payload) {
 			const message = (payload as { message?: unknown }).message;
 			if (typeof message === 'string' && message.trim().length > 0) {
-				return message.trim();
+				return { message: message.trim() };
 			}
 		}
 	} catch {
 		// ignore
 	}
-	return fallback;
+	return { message: translate(fallbackKey), messageKey: fallbackKey };
 };
 
 export const actions: Actions = {
 	default: async ({ request, params, locals, url, fetch }) => {
+		const translate = createTranslate(locals);
 		const { supabase, user } = locals;
 
 		if (!user) {
 			throw redirect(303, '/login');
 		}
 		if (!supabase) {
-			throw error(500, 'Supabase client unavailable');
+			throw error(500, translate(STEP_ERROR_KEYS.supabaseUnavailable));
 		}
 
 		const formData = await request.formData();
@@ -249,12 +309,12 @@ export const actions: Actions = {
 		const templateItems = context.templateItems;
 		const stepIndex = Number.parseInt(params.index, 10);
 		if (!Number.isFinite(stepIndex) || stepIndex < 0 || stepIndex >= templateItems.length) {
-			return fail(400, { message: 'Invalid step', eventId: null });
+			return failWith(400, STEP_ERROR_KEYS.invalidStep, { eventId: null }, translate);
 		}
 
 		const currentItem = templateItems[stepIndex];
 		if (!currentItem) {
-			return fail(400, { message: 'Invalid template step', eventId: null });
+			return failWith(400, STEP_ERROR_KEYS.invalidTemplateStep, { eventId: null }, translate);
 		}
 
 		const totalSteps = templateItems.length;
@@ -269,33 +329,45 @@ export const actions: Actions = {
 		try {
 			if (currentItem.type === 'property') {
 				const property = normalizeString(currentItem.property);
+				const propertyValue = normalizeString(formData.get('value'));
 				if (!property) {
-					return fail(400, {
-						message: 'Property step misconfigured',
-						eventId: eventId || null,
-						propertyValue: normalizeString(formData.get('value'))
-					});
+					return failWith(
+						400,
+						STEP_ERROR_KEYS.propertyMisconfigured,
+						{
+							eventId: eventId || null,
+							propertyValue
+						},
+						translate
+					);
 				}
 
 				const column = mapPropertyToColumn(property);
-				const rawValue = normalizeString(formData.get('value'));
-				const value = parsePropertyValue(column, rawValue);
+				const value = parsePropertyValue(column, propertyValue);
 
 				if (!eventId) {
 					if (column !== 'occurrence_date') {
-						return fail(400, {
-							message: 'Please provide the event date before continuing.',
-							eventId: null,
-							propertyValue: rawValue
-						});
+						return failWith(
+							400,
+							STEP_ERROR_KEYS.dateBeforeContinuing,
+							{
+								eventId: null,
+								propertyValue
+							},
+							translate
+						);
 					}
 
 					if (typeof value !== 'string' || value.trim().length === 0) {
-						return fail(400, {
-							message: 'Date is required to create the event.',
-							eventId: null,
-							propertyValue: rawValue
-						});
+						return failWith(
+							400,
+							STEP_ERROR_KEYS.dateRequired,
+							{
+								eventId: null,
+								propertyValue
+							},
+							translate
+						);
 					}
 
 					const createResponse = await fetch('/api/events/basic', {
@@ -321,14 +393,15 @@ export const actions: Actions = {
 					});
 
 					if (!createResponse.ok) {
-						const message = await readApiError(
+						const apiError = await readApiError(
 							createResponse,
-							'Unable to create event. Please try again.'
+							STEP_ERROR_KEYS.createEventFailed,
+							translate
 						);
 						return fail(createResponse.status, {
-							message,
+							...apiError,
 							eventId: null,
-							propertyValue: rawValue
+							propertyValue
 						});
 					}
 
@@ -339,11 +412,15 @@ export const actions: Actions = {
 							: null;
 
 					if (!createdId) {
-						return fail(500, {
-							message: 'Event creation failed. Please try again.',
-							eventId: null,
-							propertyValue: rawValue
-						});
+						return failWith(
+							500,
+							STEP_ERROR_KEYS.eventCreationFailed,
+							{
+								eventId: null,
+								propertyValue
+							},
+							translate
+						);
 					}
 
 					eventId = createdId;
@@ -359,82 +436,100 @@ export const actions: Actions = {
 					});
 
 					if (!updateResponse.ok) {
-						const message = await readApiError(
+						const apiError = await readApiError(
 							updateResponse,
-							'Unable to save property. Please try again.'
+							STEP_ERROR_KEYS.updatePropertyFailed,
+							translate
 						);
 						return fail(updateResponse.status, {
-							message,
+							...apiError,
 							eventId,
-							propertyValue: rawValue
+							propertyValue
 						});
 					}
 				}
 			} else if (currentItem.type === 'question') {
+				const questionValue = normalizeString(formData.get('value'));
+
 				if (!eventId) {
-					return fail(400, {
-						message: 'Event not found. Start from the first step.',
-						eventId: null,
-						questionValue: normalizeString(formData.get('value'))
-					});
+					return failWith(
+						400,
+						STEP_ERROR_KEYS.eventMissingStartOver,
+						{
+							eventId: null,
+							questionValue
+						},
+						translate
+					);
 				}
 
 				const questionId = normalizeString(currentItem.entity_id);
 				if (!questionId) {
-					return fail(400, {
-						message: 'Question step misconfigured.',
-						eventId,
-						questionValue: normalizeString(formData.get('value'))
-					});
+					return failWith(
+						400,
+						STEP_ERROR_KEYS.questionMisconfigured,
+						{
+							eventId,
+							questionValue
+						},
+						translate
+					);
 				}
 
-				const value = normalizeString(formData.get('value'));
-				if (value.length === 0) {
+				if (questionValue.length === 0) {
 					const deleteResponse = await fetch(`/api/events/${eventId}/responses/${questionId}`, {
 						method: 'DELETE'
 					});
 
 					if (!deleteResponse.ok && deleteResponse.status !== 404) {
-						const message = await readApiError(
+						const apiError = await readApiError(
 							deleteResponse,
-							'Unable to clear response. Please try again.'
+							STEP_ERROR_KEYS.clearResponseFailed,
+							translate
 						);
 						return fail(deleteResponse.status, {
-							message,
+							...apiError,
 							eventId,
-							questionValue: value
+							questionValue
 						});
 					}
 				} else {
 					const updateResponse = await fetch(`/api/events/${eventId}/responses/${questionId}`, {
 						method: 'PUT',
 						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify({ value })
+						body: JSON.stringify({ value: questionValue })
 					});
 
 					if (!updateResponse.ok) {
-						const message = await readApiError(
+						const apiError = await readApiError(
 							updateResponse,
-							'Unable to save response. Please try again.'
+							STEP_ERROR_KEYS.saveResponseFailed,
+							translate
 						);
 						return fail(updateResponse.status, {
-							message,
+							...apiError,
 							eventId,
-							questionValue: value
+							questionValue
 						});
 					}
 				}
 			} else if (currentItem.type === 'model') {
+				const mappingValue = normalizeString(formData.get('mapping'));
+
 				if (!eventId) {
-					return fail(400, {
-						message: 'Event not found. Start from the first step.',
-						eventId: null,
-						mappingValue: normalizeString(formData.get('mapping'))
-					});
+					return failWith(
+						400,
+						STEP_ERROR_KEYS.eventMissingStartOver,
+						{
+							eventId: null,
+							mappingValue
+						},
+						translate
+					);
 				}
 
 				const model = normalizeString(currentItem.model);
-				const mappingValues = parseMappingPayload(normalizeString(formData.get('mapping')));
+				const mappingValues = parseMappingPayload(mappingValue);
 
 				if (model === 'emotion_mapping') {
 					const payload = buildEmotionMappingsPayload(mappingValues);
@@ -445,14 +540,15 @@ export const actions: Actions = {
 					});
 
 					if (!updateResponse.ok) {
-						const message = await readApiError(
+						const apiError = await readApiError(
 							updateResponse,
-							'Unable to update emotions. Please try again.'
+							STEP_ERROR_KEYS.updateEmotionsFailed,
+							translate
 						);
 						return fail(updateResponse.status, {
-							message,
+							...apiError,
 							eventId,
-							mappingValue: normalizeString(formData.get('mapping'))
+							mappingValue
 						});
 					}
 				} else if (model === 'association_mapping') {
@@ -464,36 +560,52 @@ export const actions: Actions = {
 					});
 
 					if (!updateResponse.ok) {
-						const message = await readApiError(
+						const apiError = await readApiError(
 							updateResponse,
-							'Unable to update associations. Please try again.'
+							STEP_ERROR_KEYS.updateAssociationsFailed,
+							translate
 						);
 						return fail(updateResponse.status, {
-							message,
+							...apiError,
 							eventId,
-							mappingValue: normalizeString(formData.get('mapping'))
+							mappingValue
 						});
 					}
 				} else {
-					return fail(400, {
-						message: 'Unsupported model step.',
-						eventId,
-						mappingValue: normalizeString(formData.get('mapping'))
-					});
+					return failWith(
+						400,
+						STEP_ERROR_KEYS.unsupportedModelStep,
+						{
+							eventId,
+							mappingValue
+						},
+						translate
+					);
 				}
 			} else {
-				return fail(400, { message: 'Unsupported step type', eventId });
+				return failWith(400, STEP_ERROR_KEYS.unsupportedStepType, { eventId }, translate);
 			}
 		} catch (err) {
 			console.error('Unexpected error while processing wizard step', err);
-			return fail(500, {
-				message: 'Unexpected error while saving. Please try again.',
-				eventId: eventId ?? null
-			});
+			return failWith(
+				500,
+				STEP_ERROR_KEYS.unexpectedSaveError,
+				{
+					eventId: eventId ?? null
+				},
+				translate
+			);
 		}
 
 		if (!eventId) {
-			return fail(500, { message: 'Event reference missing after save', eventId: null });
+			return failWith(
+				500,
+				STEP_ERROR_KEYS.missingEventReference,
+				{
+					eventId: null
+				},
+				translate
+			);
 		}
 
 		if (intent === 'previous' && previousIndex !== null) {
