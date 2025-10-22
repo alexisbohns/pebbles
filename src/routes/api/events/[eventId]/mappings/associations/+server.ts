@@ -101,22 +101,18 @@ export const PUT: RequestHandler = async ({ params, request, locals }) => {
 	}
 
 	const dedupe = new Map<string, { association_id: string; valence?: number }>();
+	for (const entry of rawAssociations) {
+		if (!entry || typeof entry !== 'object') continue;
+		const associationId = String(entry.association_id ?? '').trim();
+		if (!associationId) continue;
 
-	rawAssociations
-		.map((entry) => {
-			if (!entry || typeof entry !== 'object') return null;
-			const associationId = String(entry.association_id ?? '').trim();
-			if (!associationId) return null;
-
-			const valence = normalizeOptionalValence(entry.valence);
-			const normalized =
-				valence === undefined
-					? { association_id: associationId }
-					: { association_id: associationId, valence };
-			dedupe.set(associationId, normalized);
-			return normalized;
-		})
-		.filter(Boolean);
+		const valence = normalizeOptionalValence(entry.valence);
+		const normalized =
+			valence === undefined
+				? { association_id: associationId }
+				: { association_id: associationId, valence };
+		dedupe.set(associationId, normalized);
+	}
 
 	const sanitized = Array.from(dedupe.values());
 

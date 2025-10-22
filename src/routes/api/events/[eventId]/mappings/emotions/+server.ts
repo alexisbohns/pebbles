@@ -101,20 +101,16 @@ export const PUT: RequestHandler = async ({ params, request, locals }) => {
 	}
 
 	const dedupe = new Map<string, { emotion_id: string; valence?: number }>();
+	for (const entry of rawEmotions) {
+		if (!entry || typeof entry !== 'object') continue;
+		const emotionId = String(entry.emotion_id ?? '').trim();
+		if (!emotionId) continue;
 
-	rawEmotions
-		.map((entry) => {
-			if (!entry || typeof entry !== 'object') return null;
-			const emotionId = String(entry.emotion_id ?? '').trim();
-			if (!emotionId) return null;
-
-			const valence = normalizeOptionalValence(entry.valence);
-			const normalized =
-				valence === undefined ? { emotion_id: emotionId } : { emotion_id: emotionId, valence };
-			dedupe.set(emotionId, normalized);
-			return normalized;
-		})
-		.filter(Boolean);
+		const valence = normalizeOptionalValence(entry.valence);
+		const normalized =
+			valence === undefined ? { emotion_id: emotionId } : { emotion_id: emotionId, valence };
+		dedupe.set(emotionId, normalized);
+	}
 
 	const sanitized = Array.from(dedupe.values());
 
