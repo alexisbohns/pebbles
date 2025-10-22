@@ -358,7 +358,7 @@
 		<a href={resolve('/create')} class="text-sm text-muted-foreground hover:underline">
 			{$t('create.step.back_to_templates')}
 		</a>
-		<h1 class="text-2xl font-semibold">{data.config?.label}</h1>
+		<h1>{data.config?.label}</h1>
 		<p class="text-sm text-muted-foreground">
 			{$t('create.step.progress', { current: currentIndex + 1, total: totalSteps })}
 		</p>
