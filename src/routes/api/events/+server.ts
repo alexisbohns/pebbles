@@ -1,11 +1,9 @@
 import { json, error } from '@sveltejs/kit';
 import {
-	clampValence,
 	normalizeAssociationCollection,
 	normalizeEmotionCollection,
 	normalizeEventValence,
 	normalizeKind,
-	normalizeOptionalValence,
 	normalizeResponseCollection,
 	normalizeText,
 	normalizeTime

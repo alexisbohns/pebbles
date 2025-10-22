@@ -12,6 +12,7 @@
 	import type { MappingItem, MappingValue } from '$lib/components/Mapping/types';
 	import type { ActionData, PageData } from './$types';
 	import { get } from 'svelte/store';
+	import { SvelteMap } from 'svelte/reactivity';
 
 	const PROPERTY_COLUMN_MAP: Record<string, string> = {
 		date: 'occurrence_date',
@@ -236,7 +237,7 @@
 				return [];
 			}
 
-			const map = new Map<string, MappingValue>();
+			const map = new SvelteMap<string, MappingValue>();
 			for (const entry of parsed) {
 				if (!entry || typeof entry !== 'object') continue;
 				const id = normalizeString((entry as MappingValue).id);
