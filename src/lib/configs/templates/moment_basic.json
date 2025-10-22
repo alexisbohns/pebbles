@@ -18,9 +18,10 @@
 			"mandatory": true
 		},
 		{
-			"type": "question",
-			"entity_id": "35c9a214-86f6-421f-91ea-477b4e1f4a30",
-			"mandatory": false
+			"type": "property",
+			"property": "valence",
+			"mandatory": true,
+			"default": 0
 		},
 		{
 			"type": "model",
@@ -33,10 +34,9 @@
 			"mandatory": false
 		},
 		{
-			"type": "property",
-			"property": "valence",
-			"mandatory": true,
-			"default": 0
+			"type": "question",
+			"entity_id": "35c9a214-86f6-421f-91ea-477b4e1f4a30",
+			"mandatory": false
 		},
 		{
 			"type": "question",

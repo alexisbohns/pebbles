@@ -103,6 +103,38 @@ create:
       field_required: '"{field}" is required.'
       save_status: 'Failed to save event (status {status})'
       unexpected: 'Unexpected error while saving event'
+  step:
+    back_to_templates: 'Back to templates'
+    progress: 'Step {current} of {total}'
+    unsupported: 'This step is not available.'
+    previous: Previous
+    first_hint: 'Start by filling in the basics.'
+    save: 'Save progress'
+    finish: 'Finish'
+    next: Next
+    error:
+      template_config_unavailable: 'Template configuration unavailable.'
+      supabase_unavailable: 'Supabase client unavailable.'
+      step_not_found: 'Step not found.'
+      invalid_step: 'Invalid step.'
+      invalid_template_step: 'Invalid template step.'
+      property_misconfigured: 'Property step misconfigured.'
+      date_required_before_continue: 'Please provide the event date before continuing.'
+      date_required_to_create: 'Date is required to create the event.'
+      create_event_failed: 'Unable to create event. Please try again.'
+      event_creation_failed: 'Event creation failed. Please try again.'
+      update_property_failed: 'Unable to save property. Please try again.'
+      event_missing_start_over: 'Event not found. Start from the first step.'
+      question_misconfigured: 'Question step misconfigured.'
+      clear_response_failed: 'Unable to clear response. Please try again.'
+      save_response_failed: 'Unable to save response. Please try again.'
+      update_emotions_failed: 'Unable to update emotions. Please try again.'
+      update_associations_failed: 'Unable to update associations. Please try again.'
+      unsupported_model_step: 'Unsupported model step.'
+      unsupported_step_type: 'Unsupported step type.'
+      unexpected_save_error: 'Unexpected error while saving. Please try again.'
+      missing_event_reference: 'Event reference missing after save.'
+      event_data_unavailable: 'Unable to load event data.'
 form:
   submit: Add
   create: New entry

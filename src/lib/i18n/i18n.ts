@@ -22,13 +22,32 @@ for (const path in rawFiles) {
 	}
 }
 
+const availableLocales = Object.keys(catalogs);
+const resolvedDefaultLocale =
+	(availableLocales.includes('fr') ? 'fr' : availableLocales[0]) ?? 'en';
+
+export const defaultLocale = resolvedDefaultLocale;
+
 export type Locale = keyof typeof catalogs extends string ? keyof typeof catalogs : string;
 
-export const locale = writable<Locale>(
-	(('fr' in catalogs ? 'fr' : (Object.keys(catalogs)[0] as Locale)) || 'en') as Locale
-);
+export const locale = writable<Locale>(resolvedDefaultLocale as Locale);
 
-export const dictionary: Readable<Dict> = derived(locale, ($l) => catalogs[$l] ?? {});
+function resolveCatalog(targetLocale?: string) {
+	if (targetLocale) {
+		const normalized = targetLocale.toLowerCase();
+		if (normalized in catalogs) {
+			return catalogs[normalized];
+		}
+		const languageOnly = normalized.split('-')[0];
+		if (languageOnly && languageOnly in catalogs) {
+			return catalogs[languageOnly];
+		}
+	}
+
+	return catalogs[resolvedDefaultLocale] ?? {};
+}
+
+export const dictionary: Readable<Dict> = derived(locale, ($l) => resolveCatalog($l));
 
 function get(obj: unknown, path: string) {
 	return path.split('.').reduce<unknown>((current, key) => {
@@ -56,6 +75,17 @@ export const t: Readable<(key: string, params?: Record<string, unknown>) => stri
 		return key;
 	}
 );
+
+export function translateInstant(
+	key: string,
+	params?: Record<string, unknown>,
+	targetLocale?: string
+) {
+	const dict = resolveCatalog(targetLocale);
+	const val = get(dict, key);
+	if (typeof val === 'string') return format(val, params);
+	return key;
+}
 
 export function setLocale(l: Locale) {
 	if (catalogs[l]) locale.set(l);

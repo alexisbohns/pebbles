@@ -9,18 +9,18 @@
 
 <h1>{$t('create.title')}</h1>
 {#each templates as template (template.name)}
-	<a
-		href={resolve(`/create/${template.name}`)}
-		class="bg-card border p-4 rounded-lg mb-4 flex items-center"
-	>
-		<p class="flex flex-col grow">
+	<div class="bg-card border p-4 rounded-lg mb-4 flex flex-col gap-4 sm:flex-row sm:items-center">
+		<div class="flex grow flex-col">
 			<span>
 				{template.label}
 			</span>
 			<span class="text-sm text-muted-foreground">
 				{template.description}
 			</span>
-		</p>
-		<Button>Créer</Button>
-	</a>
+		</div>
+		<div class="flex flex-shrink-0 gap-2">
+			<Button href={resolve(`/create/${template.name}`)}>Créer</Button>
+			<Button variant="outline" href={resolve(`/create/${template.name}/step/0`)}>Pas à pas</Button>
+		</div>
+	</div>
 {/each}
