@@ -4,7 +4,7 @@
 	import LandingContent from '$lib/components/LandingContent.svelte';
 	import type { PageData } from './$types';
 	import { injectAnalytics } from '@vercel/analytics/sveltekit';
- 
+
 	injectAnalytics({ mode: dev ? 'development' : 'production' });
 
 	let { data }: { data: PageData } = $props();
