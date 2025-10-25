@@ -218,6 +218,24 @@ export type TemplateContext = {
 	questions: Record<string, TemplateQuestion>;
 };
 
+export type TemplateDefinition = Pick<TemplateContext, 'config' | 'templateItems'>;
+
+export const findTemplateDefinition = (templateName: string): TemplateDefinition | null => {
+	const config = templates.find((t) => t.name === templateName);
+	if (!config) {
+		return null;
+	}
+
+	const templateItems = (
+		Array.isArray(config.template) ? config.template : []
+	) as RawTemplateItem[];
+
+	return {
+		config,
+		templateItems
+	};
+};
+
 export const buildTemplateContext = async ({
 	supabase,
 	templateName
@@ -225,14 +243,12 @@ export const buildTemplateContext = async ({
 	supabase: SupabaseClient;
 	templateName: string;
 }): Promise<TemplateContext> => {
-	const config = templates.find((t) => t.name === templateName);
-	if (!config) {
+	const definition = findTemplateDefinition(templateName);
+	if (!definition) {
 		throw error(404, 'Template not found');
 	}
 
-	const templateItems = (
-		Array.isArray(config.template) ? config.template : []
-	) as RawTemplateItem[];
+	const { config, templateItems } = definition;
 
 	const needsEmotions = templateItems.some(
 		(item) => item.type === 'model' && item.model === 'emotion_mapping'

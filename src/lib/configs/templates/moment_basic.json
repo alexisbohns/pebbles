@@ -1,6 +1,6 @@
 {
-	"name": "moment_basic",
-	"label": "Moment",
+	"name": "analyse",
+	"label": "Analyse",
 	"description": "Analysez en profondeur un événement",
 	"model": "events",
 	"model_properties": {
