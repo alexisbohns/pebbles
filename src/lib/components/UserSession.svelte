@@ -2,8 +2,8 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { t } from '$lib';
+	import AccountMenu from '$lib/components/AccountMenu.svelte';
 	import placeholderAvatar from '$lib/assets/placeholder.png';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import type { User } from '@supabase/supabase-js';
 	import { setMode, userPrefersMode } from 'mode-watcher';
 
@@ -110,48 +110,16 @@
 </script>
 
 {#if isAuthenticated}
-	<DropdownMenu.Root>
-		<DropdownMenu.Trigger
-			class="inline-flex items-center justify-center"
-			aria-label={displayName || $t('pages.profile.title')}
-		>
-			<img
-				src={avatarUrl}
-				alt={displayName ? `${displayName}'s avatar` : 'Profile avatar'}
-				width="32"
-				height="32"
-				onerror={handleAvatarError}
-				class="avatar"
-			/>
-		</DropdownMenu.Trigger>
-		<DropdownMenu.Content align="end" class="grid min-w-[14rem] gap-1 p-2">
-			<DropdownMenu.Item onSelect={goToProfile}>
-				<div class="flex flex-col">
-					<span class="font-semibold">{displayName}</span>
-					{#if email}
-						<span class="text-xs text-muted-foreground">{email}</span>
-					{/if}
-				</div>
-			</DropdownMenu.Item>
-			<DropdownMenu.Separator />
-			<DropdownMenu.Label class="px-2 text-xs font-medium text-muted-foreground">
-				{$t('common.mode')}
-			</DropdownMenu.Label>
-			<DropdownMenu.RadioGroup
-				class="grid gap-1"
-				value={themePreference}
-				onValueChange={handleThemeSelect}
-			>
-				<DropdownMenu.RadioItem value="light">{$t('common.light')}</DropdownMenu.RadioItem>
-				<DropdownMenu.RadioItem value="dark">{$t('common.dark')}</DropdownMenu.RadioItem>
-				<DropdownMenu.RadioItem value="system">{$t('common.system')}</DropdownMenu.RadioItem>
-			</DropdownMenu.RadioGroup>
-			<DropdownMenu.Separator />
-			<DropdownMenu.Item onSelect={goToLogout}>
-				{$t('common.logout')}
-			</DropdownMenu.Item>
-		</DropdownMenu.Content>
-	</DropdownMenu.Root>
+	<AccountMenu
+		{displayName}
+		{email}
+		{avatarUrl}
+		{themePreference}
+		onAvatarError={handleAvatarError}
+		onThemeSelect={handleThemeSelect}
+		onProfile={goToProfile}
+		onLogout={goToLogout}
+	/>
 {:else}
 	<a href={loginHref} title={$t('common.login')} class="login">
 		{$t('common.login')}
@@ -162,9 +130,4 @@
 	a.login
 		font-size 0.8rem
 
-	.avatar
-		border-radius 9999px
-		width 2rem
-		height 2rem
-		object-fit cover
 </style>
