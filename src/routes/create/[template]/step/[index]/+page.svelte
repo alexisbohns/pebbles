@@ -4,8 +4,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
-	import DatePicker from '$lib/components/ui/date-picker.svelte';
-	import TimePicker from '$lib/components/ui/time-picker.svelte';
+	import { Calendar } from '$lib/components/ui/calendar';
 	import { Slider } from '$lib/components/ui/slider';
 	import MappingComponent from '$lib/components/Mapping/MappingComponent.svelte';
 	import Question from '$lib/components/Question.svelte';
@@ -17,7 +16,7 @@
 	import IconPrevious from '@lucide/svelte/icons/arrow-left';
 	import IconFinish from '@lucide/svelte/icons/check';
 	import IconSave from '@lucide/svelte/icons/save';
-	import { Icon } from 'svelte-sonner';
+	import { getLocalTimeZone, parseDate, today, type DateValue } from '@internationalized/date';
 
 	const PROPERTY_COLUMN_MAP: Record<string, string> = {
 		date: 'occurrence_date',
@@ -26,6 +25,61 @@
 
 	const MIN_VALENCE = -3;
 	const MAX_VALENCE = 3;
+	const TIME_STEP_MINUTES = 15;
+	const localTimeZone = getLocalTimeZone();
+
+	type TimeParts = { hour: number; minute: number };
+
+	const padNumber = (value: number) => String(value).padStart(2, '0');
+
+	const formatTimeParts = ({ hour, minute }: TimeParts): string =>
+		`${padNumber(hour)}:${padNumber(minute)}`;
+
+	const parseTimeValue = (raw: string | null | undefined): TimeParts | null => {
+		if (!raw) return null;
+		const [rawHour, rawMinute] = raw.split(':');
+		const hour = Number.parseInt(rawHour ?? '', 10);
+		const minute = Number.parseInt(rawMinute ?? '', 10);
+		if (!Number.isInteger(hour) || hour < 0 || hour > 23) return null;
+		if (!Number.isInteger(minute) || minute < 0 || minute > 59) return null;
+		return { hour, minute };
+	};
+
+	const getCurrentTimeParts = (): TimeParts => {
+		const now = new Date();
+		return {
+			hour: now.getHours(),
+			minute: now.getMinutes()
+		};
+	};
+
+	const parseCalendarDate = (value: string | null | undefined): DateValue | null => {
+		if (!value) return null;
+		try {
+			return parseDate(value);
+		} catch {
+			return null;
+		}
+	};
+
+	const todayISO = () => today(localTimeZone).toString();
+
+	const toTitleCase = (value: string): string => {
+		if (!value) return '';
+		return value.slice(0, 1).toUpperCase() + value.slice(1);
+	};
+
+	const dateFormatter = new Intl.DateTimeFormat(undefined, {
+		year: 'numeric',
+		month: 'long',
+		day: 'numeric'
+	});
+
+	const formatReadableDate = (value: string): string => {
+		const parsed = parseCalendarDate(value);
+		if (!parsed) return value;
+		return dateFormatter.format(parsed.toDate(localTimeZone));
+	};
 
 	let {
 		data,
@@ -51,6 +105,11 @@
 	const valenceFieldPresent = templateItems.some(
 		(item) => item?.type === 'property' && item.property === 'valence'
 	);
+
+	const propertyKey =
+		currentItem && currentItem.type === 'property' && typeof currentItem.property === 'string'
+			? currentItem.property
+			: null;
 
 	const normalizeString = (value: unknown): string => {
 		if (typeof value !== 'string') return '';
@@ -182,25 +241,61 @@
 
 		const column = resolvePropertyColumn(propertyKey);
 		const eventValue = getEventPropertyValue(propertyKey);
+		const defaultValue = resolveDefaultValue(propertyKey);
+
+		if (propertyKey === 'name') {
+			const normalizedDefault =
+				typeof defaultValue === 'string' ? defaultValue.trim().toLowerCase() : '';
+			if (typeof eventValue === 'string') {
+				const normalizedEvent = eventValue.trim();
+				if (
+					normalizedEvent.length > 0 &&
+					(!normalizedDefault || normalizedEvent.toLowerCase() !== normalizedDefault)
+				) {
+					return normalizedEvent;
+				}
+			}
+			return '';
+		}
 
 		if (column === 'valence') {
 			if (eventValue !== undefined && eventValue !== null) {
 				return String(parseValence(eventValue));
 			}
-			const fallback = resolveDefaultValue(propertyKey);
-			return fallback === undefined || fallback === null ? '0' : String(parseValence(fallback));
+			return defaultValue === undefined || defaultValue === null
+				? '0'
+				: String(parseValence(defaultValue));
+		}
+
+		if (column === 'occurrence_date') {
+			if (typeof eventValue === 'string' && eventValue.trim().length > 0) {
+				return eventValue.trim();
+			}
+			if (typeof defaultValue === 'string' && defaultValue.trim().length > 0) {
+				return defaultValue.trim();
+			}
+			return todayISO();
+		}
+
+		if (column === 'occurrence_time') {
+			if (typeof eventValue === 'string' && eventValue.trim().length > 0) {
+				return eventValue.trim();
+			}
+			if (typeof defaultValue === 'string' && defaultValue.trim().length > 0) {
+				return defaultValue.trim();
+			}
+			return formatTimeParts(getCurrentTimeParts());
 		}
 
 		if (eventValue !== undefined && eventValue !== null) {
 			return String(eventValue);
 		}
 
-		const fallback = resolveDefaultValue(propertyKey);
-		if (fallback === undefined || fallback === null) {
+		if (defaultValue === undefined || defaultValue === null) {
 			return '';
 		}
 
-		return String(fallback);
+		return String(defaultValue);
 	};
 
 	const resolveQuestionInitialValue = (): string => {
@@ -324,6 +419,161 @@
 
 	const mappingPayload = $derived.by(() => JSON.stringify(mappingValues));
 
+	let timeHour = $state(0);
+	let timeMinute = $state(0);
+
+	const normalizeTimeParts = ({ hour, minute }: TimeParts): TimeParts => {
+		let nextHour = Number.isFinite(hour) ? hour : 0;
+		let nextMinute = Number.isFinite(minute) ? minute : 0;
+
+		while (nextMinute >= 60) {
+			nextMinute -= 60;
+			nextHour += 1;
+		}
+
+		while (nextMinute < 0) {
+			nextMinute += 60;
+			nextHour -= 1;
+		}
+
+		nextHour = ((nextHour % 24) + 24) % 24;
+
+		return {
+			hour: nextHour,
+			minute: nextMinute
+		};
+	};
+
+	const setTimeParts = (parts: TimeParts) => {
+		const normalized = normalizeTimeParts(parts);
+		timeHour = normalized.hour;
+		timeMinute = normalized.minute;
+		if (propertyKey === 'time') {
+			propertyValue = formatTimeParts(normalized);
+		}
+	};
+
+	const incrementHour = () => setTimeParts({ hour: timeHour + 1, minute: timeMinute });
+	const decrementHour = () => setTimeParts({ hour: timeHour - 1, minute: timeMinute });
+	const incrementMinute = () =>
+		setTimeParts({ hour: timeHour, minute: timeMinute + TIME_STEP_MINUTES });
+	const decrementMinute = () =>
+		setTimeParts({ hour: timeHour, minute: timeMinute - TIME_STEP_MINUTES });
+	const applyNowTime = () => setTimeParts(getCurrentTimeParts());
+
+	if (propertyKey === 'time') {
+		const initialParts = parseTimeValue(propertyInitialValue) ?? getCurrentTimeParts();
+		setTimeParts(initialParts);
+
+		$effect(() => {
+			const parsed = parseTimeValue(propertyValue);
+			if (!parsed) return;
+			if (parsed.hour !== timeHour || parsed.minute !== timeMinute) {
+				timeHour = parsed.hour;
+				timeMinute = parsed.minute;
+			}
+		});
+	}
+
+	const formattedSelectedTime = $derived.by(() =>
+		propertyKey === 'time' ? formatTimeParts({ hour: timeHour, minute: timeMinute }) : ''
+	);
+
+	let selectedDate = $state<DateValue | undefined>(
+		propertyKey === 'date'
+			? (parseCalendarDate(propertyInitialValue) ?? today(localTimeZone))
+			: undefined
+	);
+
+	let calendarInteracted = false;
+
+	const markCalendarPointerInteraction = () => {
+		calendarInteracted = true;
+	};
+
+	let formElement = $state<HTMLFormElement | null>(null);
+	let nextButtonRef = $state<HTMLButtonElement | null>(null);
+
+	const requestNextStep = () => {
+		if (!formElement) return;
+		if (nextButtonRef) {
+			formElement.requestSubmit(nextButtonRef);
+		} else {
+			formElement.requestSubmit();
+		}
+	};
+
+	const handleCalendarChange = (value: DateValue | undefined) => {
+		if (!value) return;
+		selectedDate = value;
+		const nextValue = value.toString();
+		if (propertyValue !== nextValue) {
+			propertyValue = nextValue;
+		}
+
+		if (calendarInteracted && nextIndex !== null) {
+			calendarInteracted = false;
+			requestNextStep();
+		} else {
+			calendarInteracted = false;
+		}
+	};
+
+	if (propertyKey === 'date') {
+		$effect(() => {
+			if (!propertyValue) {
+				const fallback = today(localTimeZone);
+				selectedDate = fallback;
+				propertyValue = fallback.toString();
+				return;
+			}
+
+			const parsed = parseCalendarDate(propertyValue);
+			if (parsed && (!selectedDate || parsed.toString() !== selectedDate.toString())) {
+				selectedDate = parsed;
+			}
+		});
+	}
+
+	const formattedSelectedDate = $derived.by(() =>
+		propertyKey === 'date' ? formatReadableDate(propertyValue) : ''
+	);
+
+	const shouldAutofocusName = propertyKey === 'name';
+
+	const buildGeneratedName = (): string => {
+		const eventKind = normalizeString(rawEvent.kind);
+		const defaultKind = normalizeString(modelDefaults.kind);
+		const configLabel = normalizeString(data.config?.label);
+
+		const kindLabel = toTitleCase(eventKind || defaultKind || configLabel || 'Event');
+		const datePart = normalizeString(rawEvent.occurrence_date) || todayISO();
+		const timePart =
+			normalizeString(rawEvent.occurrence_time) || formatTimeParts(getCurrentTimeParts());
+
+		return `${kindLabel}, ${datePart} - ${timePart}`;
+	};
+
+	const generatedNamePreview = $derived.by(() =>
+		propertyKey === 'name' ? buildGeneratedName() : ''
+	);
+
+	const handleFormSubmit = () => {
+		if (propertyKey === 'name') {
+			if (propertyValue.trim().length === 0) {
+				propertyValue = buildGeneratedName();
+			}
+		} else if (propertyKey === 'time') {
+			const parsed = parseTimeValue(propertyValue);
+			if (!parsed) {
+				setTimeParts(getCurrentTimeParts());
+			}
+		} else if (propertyKey === 'date' && !propertyValue) {
+			const fallback = today(localTimeZone);
+			selectedDate = fallback;
+			propertyValue = fallback.toString();
+		}
+	};
 	const emotionItems: MappingItem[] = (data.emotions ?? []).map(({ id, label, valence }) => ({
 		id,
 		label,
@@ -347,11 +597,6 @@
 	const questionMeta = questionId ? resolveQuestionMeta(questionId) : null;
 	const questionDescription = questionId ? questionMeta?.description : null;
 	const questionPlaceholder = questionId ? questionMeta?.placeholder : null;
-
-	const propertyKey =
-		currentItem && currentItem.type === 'property' && typeof currentItem.property === 'string'
-			? currentItem.property
-			: null;
 </script>
 
 <svelte:head>
@@ -366,12 +611,12 @@
 		</p>
 	</div>
 
-	<form method="post" class="space-y-6">
+	<form method="post" class="space-y-6" bind:this={formElement} onsubmit={handleFormSubmit}>
 		<input type="hidden" name="eventId" value={eventId ?? ''} />
 
 		{#if currentItem?.type === 'property' && propertyKey}
 			<input type="hidden" name="value" value={propertyValue} />
-			<div class="">
+			<div class="space-y-3 rounded-lg border p-4">
 				<Label for={`property-${propertyKey}`} class="text-sm font-medium">
 					{resolvePropertyLabel(propertyKey)}
 				</Label>
@@ -418,20 +663,104 @@
 						</div>
 					</div>
 				{:else if propertyKey === 'date'}
-					<DatePicker class="w-full" bind:value={propertyValue} placeholderText="Select a date" />
+					<div class="space-y-3" aria-live="polite" onpointerdown={markCalendarPointerInteraction}>
+						<Calendar
+							type="single"
+							bind:value={selectedDate}
+							onValueChange={handleCalendarChange}
+							weekdayFormat="short"
+							aria-label={resolvePropertyLabel(propertyKey)}
+							initialFocus
+						/>
+						<p class="text-sm text-muted-foreground">
+							{$t('create.step.date_selected', { date: formattedSelectedDate })}
+						</p>
+					</div>
 				{:else if propertyKey === 'time'}
-					<TimePicker class="w-full" bind:value={propertyValue} placeholderText="Select a time" />
+					<div class="space-y-4" aria-live="polite">
+						<div class="grid gap-4 sm:grid-cols-2">
+							<div class="grid gap-2 text-center">
+								<span class="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+									{$t('create.step.time_hour_label')}
+								</span>
+								<div class="flex items-center justify-center gap-2">
+									<Button
+										type="button"
+										variant="outline"
+										size="icon"
+										aria-label={$t('create.step.time_decrease_hour')}
+										onclick={decrementHour}
+									>
+										-
+									</Button>
+									<span class="w-12 text-lg font-semibold tabular-nums">
+										{padNumber(timeHour)}
+									</span>
+									<Button
+										type="button"
+										variant="outline"
+										size="icon"
+										aria-label={$t('create.step.time_increase_hour')}
+										onclick={incrementHour}
+									>
+										+
+									</Button>
+								</div>
+							</div>
+							<div class="grid gap-2 text-center">
+								<span class="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+									{$t('create.step.time_minute_label')}
+								</span>
+								<div class="flex items-center justify-center gap-2">
+									<Button
+										type="button"
+										variant="outline"
+										size="icon"
+										aria-label={$t('create.step.time_decrease_minute')}
+										onclick={decrementMinute}
+									>
+										-
+									</Button>
+									<span class="w-12 text-lg font-semibold tabular-nums">
+										{padNumber(timeMinute)}
+									</span>
+									<Button
+										type="button"
+										variant="outline"
+										size="icon"
+										aria-label={$t('create.step.time_increase_minute')}
+										onclick={incrementMinute}
+									>
+										+
+									</Button>
+								</div>
+							</div>
+						</div>
+						<div class="flex items-center justify-between text-sm text-muted-foreground">
+							<span>{$t('create.step.time_selected', { time: formattedSelectedTime })}</span>
+							<Button type="button" variant="ghost" size="sm" onclick={applyNowTime}>
+								{$t('create.step.time_now')}
+							</Button>
+						</div>
+					</div>
 				{:else}
 					<Input
 						id={`property-${propertyKey}`}
 						bind:value={propertyValue}
-						required={currentItem.mandatory === true}
+						required={currentItem.mandatory === true && propertyKey !== 'name'}
+						autofocus={shouldAutofocusName}
+						aria-describedby={propertyKey === 'name' ? 'name-autofill-hint' : undefined}
 					/>
+					{#if propertyKey === 'name'}
+						<p id="name-autofill-hint" class="text-xs text-muted-foreground">
+							{$t('create.step.name_auto_hint', { example: generatedNamePreview })}
+						</p>
+					{/if}
 				{/if}
 			</div>
 		{:else if currentItem?.type === 'question' && questionId}
 			<input type="hidden" name="value" value={questionValue} />
-			<div class="">
+			<div class="space-y-3 rounded-lg border p-4">
 				<Question
 					name={questionMeta?.fieldName ?? questionId}
 					question={`question.${questionId}.question`}
@@ -443,7 +772,7 @@
 			</div>
 		{:else if currentItem?.type === 'model' && currentItem.model === 'emotion_mapping'}
 			<input type="hidden" name="mapping" value={mappingPayload} />
-			<div class="">
+			<div class="space-y-3 rounded-lg border p-4">
 				<h3 class="text-lg font-semibold">{$t('create.template.section.emotions')}</h3>
 				{#if emotionItems.length === 0}
 					<p class="text-sm text-muted-foreground">
@@ -465,7 +794,7 @@
 			</div>
 		{:else if currentItem?.type === 'model' && currentItem.model === 'association_mapping'}
 			<input type="hidden" name="mapping" value={mappingPayload} />
-			<div class="">
+			<div class="space-y-3 rounded-lg border p-4">
 				<h3 class="text-lg font-semibold">{$t('create.template.section.associations')}</h3>
 				{#if associationItems.length === 0}
 					<p class="text-sm text-muted-foreground">
@@ -542,6 +871,7 @@
 					name="intent"
 					value="next"
 					size="icon"
+					bind:ref={nextButtonRef}
 					aria-label={isLastStep ? $t('create.step.finish') : $t('create.step.next')}
 				>
 					{#if isLastStep}

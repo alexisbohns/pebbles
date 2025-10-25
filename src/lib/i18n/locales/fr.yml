@@ -162,6 +162,16 @@ create:
     save: 'Enregistrer'
     finish: Terminer
     next: Suivant
+    date_selected: 'Date sélectionnée : {date}'
+    time_hour_label: Heure
+    time_minute_label: Minutes
+    time_decrease_hour: "Diminuer l'heure"
+    time_increase_hour: "Augmenter l'heure"
+    time_decrease_minute: 'Diminuer les minutes'
+    time_increase_minute: 'Augmenter les minutes'
+    time_selected: 'Heure sélectionnée : {time}'
+    time_now: Maintenant
+    name_auto_hint: 'Si vous laissez ce champ vide, nous le nommerons « {example} ».'
     error:
       template_config_unavailable: 'Configuration du modèle indisponible.'
       supabase_unavailable: 'Client Supabase indisponible.'

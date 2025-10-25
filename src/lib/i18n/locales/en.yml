@@ -162,6 +162,16 @@ create:
     save: 'Save progress'
     finish: 'Finish'
     next: Next
+    date_selected: 'Selected date: {date}'
+    time_hour_label: Hour
+    time_minute_label: Minutes
+    time_decrease_hour: 'Decrease hour'
+    time_increase_hour: 'Increase hour'
+    time_decrease_minute: 'Decrease minutes'
+    time_increase_minute: 'Increase minutes'
+    time_selected: 'Selected time: {time}'
+    time_now: Now
+    name_auto_hint: 'If left blank, we will name it "{example}".'
     error:
       template_config_unavailable: 'Template configuration unavailable.'
       supabase_unavailable: 'Supabase client unavailable.'
