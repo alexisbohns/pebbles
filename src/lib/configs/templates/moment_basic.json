@@ -1,6 +1,6 @@
 {
-	"name": "moment_basic",
-	"label": "Moment",
+	"name": "analyse",
+	"label": "Analyse",
 	"description": "Analysez en profondeur un événement",
 	"model": "events",
 	"model_properties": {
@@ -16,6 +16,12 @@
 			"type": "property",
 			"property": "time",
 			"mandatory": true
+		},
+		{
+			"type": "property",
+			"property": "name",
+			"mandatory": true,
+			"default": "Analyse Moment"
 		},
 		{
 			"type": "property",

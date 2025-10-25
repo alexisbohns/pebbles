@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { normalizeOptionalValence } from '$lib/server/event-normalize';
+import { normalizeEventValence, normalizeOptionalValence } from '$lib/server/event-normalize';
 import type { RequestHandler } from './$types';
 
 type AssociationMappingInput = {
@@ -11,10 +11,10 @@ const ensureEventOwnership = async (
 	supabase: App.Locals['supabase'],
 	eventId: string,
 	profileId: string
-) => {
+): Promise<{ id: string; valence: number | null }> => {
 	const { data, error } = await supabase
 		.from('events')
-		.select('id')
+		.select('id,valence')
 		.eq('id', eventId)
 		.eq('profile_id', profileId)
 		.maybeSingle();
@@ -29,6 +29,8 @@ const ensureEventOwnership = async (
 	if (!data) {
 		throw json({ message: 'Event not found' }, { status: 404 });
 	}
+
+	return data;
 };
 
 export const GET: RequestHandler = async ({ params, locals }) => {
@@ -86,8 +88,9 @@ export const PUT: RequestHandler = async ({ params, request, locals }) => {
 		);
 	}
 
+	let eventRecord: { id: string; valence: number | null };
 	try {
-		await ensureEventOwnership(supabase, eventId, user.id);
+		eventRecord = await ensureEventOwnership(supabase, eventId, user.id);
 	} catch (response) {
 		if (response instanceof Response) {
 			return response;
@@ -118,7 +121,8 @@ export const PUT: RequestHandler = async ({ params, request, locals }) => {
 
 	const { error: rpcError } = await supabase.rpc('update_association_mappings', {
 		p_event_id: eventId,
-		p_associations: sanitized
+		p_associations: sanitized,
+		p_event_valence: normalizeEventValence(eventRecord.valence)
 	});
 
 	if (rpcError) {

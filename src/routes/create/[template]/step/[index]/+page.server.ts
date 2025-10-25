@@ -1,7 +1,7 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 import { translateInstant } from '$lib';
 import type { Actions, PageServerLoad } from './$types';
-import { buildTemplateContext, type RawTemplateItem } from '../../template-context.server';
+import { findTemplateDefinition, type RawTemplateItem } from '../../template-context.server';
 
 type MappingFormValue = {
 	id: string;
@@ -301,12 +301,12 @@ export const actions: Actions = {
 		const rawIntent = normalizeString(formData.get('intent'));
 		const intent = rawIntent === 'previous' ? 'previous' : rawIntent === 'stay' ? 'stay' : 'next';
 
-		const context = await buildTemplateContext({
-			supabase,
-			templateName: params.template
-		});
+		const definition = findTemplateDefinition(params.template);
+		if (!definition) {
+			return failWith(400, STEP_ERROR_KEYS.invalidTemplateStep, { eventId: null }, translate);
+		}
 
-		const templateItems = context.templateItems;
+		const templateItems = definition.templateItems;
 		const stepIndex = Number.parseInt(params.index, 10);
 		if (!Number.isFinite(stepIndex) || stepIndex < 0 || stepIndex >= templateItems.length) {
 			return failWith(400, STEP_ERROR_KEYS.invalidStep, { eventId: null }, translate);
@@ -321,7 +321,7 @@ export const actions: Actions = {
 		const previousIndex = stepIndex > 0 ? stepIndex - 1 : null;
 		const nextIndex = stepIndex < totalSteps - 1 ? stepIndex + 1 : null;
 
-		const defaults = (context.config.model_properties ?? {}) as Record<string, unknown>;
+		const defaults = (definition.config.model_properties ?? {}) as Record<string, unknown>;
 
 		let eventId =
 			normalizeString(formData.get('eventId')) || normalizeString(url.searchParams.get('event'));
