@@ -8,6 +8,7 @@
 	import * as Card from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
+	import { t } from '$lib';
 	import { get } from 'svelte/store';
 
 	let email = '';
@@ -54,12 +55,12 @@
 		const trimmedEmail = email.trim();
 
 		if (!trimmedEmail) {
-			errorMessage = 'Email is required.';
+			errorMessage = $t('auth.login.errors.email_required');
 			return;
 		}
 
 		if (!password) {
-			errorMessage = 'Password is required.';
+			errorMessage = $t('auth.login.errors.password_required');
 			return;
 		}
 
@@ -80,8 +81,9 @@
 				await goto(resolve('/'));
 			}
 		} catch (error) {
-			const message = error instanceof Error ? error.message : 'Unexpected error signing in.';
-			errorMessage = message;
+			const fallback = $t('auth.login.errors.unexpected');
+			const message = error instanceof Error ? error.message : fallback;
+			errorMessage = message || fallback;
 		} finally {
 			passwordSigningIn = false;
 		}
@@ -93,25 +95,25 @@
 >
 	<Card.Root class="w-full shadow-lg">
 		<Card.Header class="space-y-1">
-			<Card.Title>Sign in to your account</Card.Title>
-			<Card.Description>Enter your email and password to continue.</Card.Description>
+			<Card.Title>{$t('auth.login.heading')}</Card.Title>
+			<Card.Description>{$t('auth.login.description')}</Card.Description>
 		</Card.Header>
 		<Card.Content class="space-y-6">
 			<form class="grid gap-4" on:submit|preventDefault={signInWithPassword}>
 				<div class="grid gap-2">
-					<Label for="email">Email</Label>
+					<Label for="email">{$t('auth.login.fields.email')}</Label>
 					<Input
 						id="email"
 						name="email"
 						type="email"
-						placeholder="you@example.com"
+						placeholder={$t('auth.login.fields.email_placeholder')}
 						bind:value={email}
 						autocomplete="email"
 						required
 					/>
 				</div>
 				<div class="grid gap-2">
-					<Label for="password">Password</Label>
+					<Label for="password">{$t('auth.login.fields.password')}</Label>
 					<Input
 						id="password"
 						name="password"
@@ -127,16 +129,16 @@
 				{/if}
 				<Button type="submit" class="w-full" disabled={passwordSigningIn}>
 					{#if passwordSigningIn}
-						Signing in...
+						{$t('auth.login.submitting')}
 					{:else}
-						Sign in
+						{$t('auth.login.submit')}
 					{/if}
 				</Button>
 			</form>
 			<div class="relative">
 				<div class="flex items-center gap-3 text-xs uppercase tracking-wide text-muted-foreground">
 					<span class="h-px w-full bg-border"></span>
-					<span>Or continue with</span>
+					<span>{$t('auth.login.divider')}</span>
 					<span class="h-px w-full bg-border"></span>
 				</div>
 			</div>
@@ -148,16 +150,18 @@
 					disabled={oauthSigningIn || passwordSigningIn}
 				>
 					{#if oauthSigningIn}
-						Signing in with Google...
+						{$t('auth.login.google.submitting')}
 					{:else}
-						Sign in with Google
+						{$t('auth.login.google.submit')}
 					{/if}
 				</Button>
 			</form>
 		</Card.Content>
 		<Card.Footer class="flex items-center justify-between">
-			<p class="text-sm text-muted-foreground">Need an account?</p>
-			<Button variant="link" href={resolve('/signup')} class="px-0">Create one</Button>
+			<p class="text-sm text-muted-foreground">{$t('auth.login.footer.prompt')}</p>
+			<Button variant="link" href={resolve('/signup')} class="px-0">
+				{$t('auth.login.footer.action')}
+			</Button>
 		</Card.Footer>
 	</Card.Root>
 </section>

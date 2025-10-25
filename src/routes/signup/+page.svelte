@@ -6,17 +6,19 @@
 	import * as Card from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
+	import { t } from '$lib';
 
-	const passwordRequirement =
-		'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.';
 	const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
+	let passwordRequirement = '';
 	let name = '';
 	let email = '';
 	let password = '';
 	let acceptedTerms = false;
 	let isSubmitting = false;
 	let errorMessage = '';
+
+	$: passwordRequirement = $t('auth.signup.password_hint');
 
 	const handleSubmit = async (event: SubmitEvent) => {
 		event.preventDefault();
@@ -29,22 +31,22 @@
 		const trimmedEmail = email.trim();
 
 		if (!trimmedName) {
-			errorMessage = 'Name is required.';
+			errorMessage = $t('auth.signup.errors.name_required');
 			return;
 		}
 
 		if (!trimmedEmail) {
-			errorMessage = 'Email is required.';
+			errorMessage = $t('auth.signup.errors.email_required');
 			return;
 		}
 
 		if (!passwordPattern.test(password)) {
-			errorMessage = passwordRequirement;
+			errorMessage = $t('auth.signup.errors.password_strength');
 			return;
 		}
 
 		if (!acceptedTerms) {
-			errorMessage = 'You must accept the terms and privacy policy to continue.';
+			errorMessage = $t('auth.signup.errors.terms_required');
 			return;
 		}
 
@@ -80,9 +82,9 @@
 
 			await goto(resolve('/'));
 		} catch (error) {
-			const message =
-				error instanceof Error ? error.message : 'Unexpected error creating your account.';
-			errorMessage = message;
+			const fallback = $t('auth.signup.errors.unexpected');
+			const message = error instanceof Error ? error.message : fallback;
+			errorMessage = message || fallback;
 		} finally {
 			isSubmitting = false;
 		}
@@ -94,37 +96,37 @@
 >
 	<Card.Root class="w-full shadow-lg">
 		<Card.Header class="space-y-1">
-			<Card.Title>Create an account</Card.Title>
-			<Card.Description>Enter your email and a strong password to sign up.</Card.Description>
+			<Card.Title>{$t('auth.signup.heading')}</Card.Title>
+			<Card.Description>{$t('auth.signup.description')}</Card.Description>
 		</Card.Header>
 		<Card.Content>
 			<form class="grid gap-4" on:submit|preventDefault={handleSubmit}>
 				<div class="grid gap-2">
-					<Label for="name">Name</Label>
+					<Label for="name">{$t('auth.signup.fields.name')}</Label>
 					<Input
 						id="name"
 						name="name"
 						type="text"
-						placeholder="Jane Doe"
+						placeholder={$t('auth.signup.fields.name_placeholder')}
 						bind:value={name}
 						autocomplete="name"
 						required
 					/>
 				</div>
 				<div class="grid gap-2">
-					<Label for="email">Email</Label>
+					<Label for="email">{$t('auth.signup.fields.email')}</Label>
 					<Input
 						id="email"
 						name="email"
 						type="email"
-						placeholder="you@example.com"
+						placeholder={$t('auth.signup.fields.email_placeholder')}
 						bind:value={email}
 						autocomplete="email"
 						required
 					/>
 				</div>
 				<div class="grid gap-2">
-					<Label for="password">Password</Label>
+					<Label for="password">{$t('auth.signup.fields.password')}</Label>
 					<Input
 						id="password"
 						name="password"
@@ -148,40 +150,42 @@
 						class="mt-1 h-4 w-4 rounded border border-input text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
 						required
 					/>
-					<Label for="terms" class="cursor-pointer text-left font-normal">
-						I agree to the
+					<Label for="terms" class="inline-flex flex-wrap items-center gap-1 text-left font-normal">
+						<span>{$t('auth.signup.agreements.prefix')}</span>
 						<a
 							class="text-primary underline"
 							href={resolve('/terms')}
 							target="_blank"
 							rel="noreferrer"
 						>
-							Terms of Service
+							{$t('auth.signup.agreements.terms')}
 						</a>
-						and
+						<span>{$t('auth.signup.agreements.conjunction')}</span>
 						<a
 							class="text-primary underline"
 							href={resolve('/privacy')}
 							target="_blank"
 							rel="noreferrer"
 						>
-							Privacy Policy
+							{$t('auth.signup.agreements.privacy')}
 						</a>
-						.
+						<span>{$t('auth.signup.agreements.suffix')}</span>
 					</Label>
 				</div>
 				<Button type="submit" class="w-full" disabled={isSubmitting}>
 					{#if isSubmitting}
-						Creating account...
+						{$t('auth.signup.submitting')}
 					{:else}
-						Create account
+						{$t('auth.signup.submit')}
 					{/if}
 				</Button>
 			</form>
 		</Card.Content>
 		<Card.Footer class="flex items-center justify-between">
-			<p class="text-sm text-muted-foreground">Already have an account?</p>
-			<Button variant="link" href={resolve('/login')} class="px-0">Sign in</Button>
+			<p class="text-sm text-muted-foreground">{$t('auth.signup.footer.prompt')}</p>
+			<Button variant="link" href={resolve('/login')} class="px-0">
+				{$t('auth.signup.footer.action')}
+			</Button>
 		</Card.Footer>
 	</Card.Root>
 </section>
