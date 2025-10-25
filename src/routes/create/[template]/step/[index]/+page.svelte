@@ -595,8 +595,6 @@
 			? currentItem.entity_id
 			: null;
 	const questionMeta = questionId ? resolveQuestionMeta(questionId) : null;
-	const questionDescription = questionId ? questionMeta?.description : null;
-	const questionPlaceholder = questionId ? questionMeta?.placeholder : null;
 	const shouldAutofocusQuestion = questionId !== null;
 </script>
 
