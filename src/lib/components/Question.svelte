@@ -43,6 +43,7 @@
 		<h2 class="question-name">{$t(question)}</h2>
 		<p class="question-description" id={hintId}>{$t(description)}</p>
 	</label>
+	<!-- svelte-ignore a11y-autofocus -->
 	<textarea
 		id={name}
 		aria-describedby={hintId}
