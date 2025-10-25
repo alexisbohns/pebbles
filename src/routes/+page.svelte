@@ -7,8 +7,10 @@
 
 	injectAnalytics({ mode: dev ? 'development' : 'production' });
 
-	let { data }: { data: PageData } = $props();
-	const events = data.events ?? [];
+	export let data: PageData;
+
+	let events = data.events ?? [];
+	$: events = data.events ?? [];
 </script>
 
 {#if data.user}
