@@ -285,59 +285,53 @@ associations:
 newsroom:
   name: Actualités
   description: 'Restez informé des dernières mises à jour et nouveautés de Pebbles.'
+  empty: 'Aucune actualité pour le moment.'
   filters:
+    heading: 'Filtrer par catégorie'
+  categories:
     all:
       all:
         short: Toutes
-        long: Toutes les actualités
-        action: Voir toutes les actualités
+        action: Afficher toutes les actualités
+    changelog:
+      all:
+        short: Livraisons
+        action: Afficher les notes de version
+      single:
+        action: Détails
     news:
       all:
         short: Actualités
-        long: Toutes les actualités
-        action: Voir toutes les actualités
+        action: Afficher les actualités
       single:
-        short: Actualité
-        long: Actualité
-        action: Lire la suite
-    publications:
+        action: Lire
+    incident:
       all:
-        short: Publications
-        long: Toutes les publications
-        action: Voir toutes les publications
-    publication_other:
-      all:
-        short: Autres
-        long: Publications diverses
-        action: Voir les autres publications
+        short: Incidents
+        action: Afficher les incidents
       single:
-        short: Publication
-        long: Publication
-        action: Lire la publication
+        action: Détails
     publication_medium:
       all:
         short: Medium
-        long: Publications Medium
         action: Voir les publications Medium
       single:
-        short: Medium
-        long: Publication Medium
         action: Lire sur Medium
     publication_substack:
       all:
         short: Substack
-        long: Publications Substack
         action: Voir les publications Substack
       single:
-        short: Substack
-        long: Publication Substack
         action: Lire sur Substack
+    publication_other:
+      all:
+        short: Autres
+        action: Voir les autres publications
+      single:
+        action: Lire la publication
     reference:
       all:
         short: Références
-        long: Références externes
         action: Voir les références
       single:
-        short: Référence
-        long: Référence externe
         action: Accéder à la référence
