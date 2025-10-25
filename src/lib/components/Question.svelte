@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { t } from '$lib';
+	import { tick } from 'svelte';
 
 	export let name: string;
 	export let question: string;
@@ -7,14 +8,33 @@
 	export let placeholder: string;
 	export let value: string = '';
 	export let required = false;
+	export let autofocus = false;
 
 	let hintId: string;
+	let textareaElement: HTMLTextAreaElement | null = null;
 	$: hintId = `${name}-hint`;
+
+	const resizeTextarea = (textarea: HTMLTextAreaElement) => {
+		textarea.style.height = 'auto';
+		textarea.style.height = textarea.scrollHeight + 'px';
+	};
 
 	function autoGrow(event: Event) {
 		const textarea = event.target as HTMLTextAreaElement;
-		textarea.style.height = 'auto';
-		textarea.style.height = textarea.scrollHeight + 'px';
+		resizeTextarea(textarea);
+	}
+
+	const focusTextarea = async () => {
+		if (!autofocus || !textareaElement) return;
+		await tick();
+		if (!textareaElement || !autofocus) return;
+		textareaElement.focus();
+		textareaElement.setSelectionRange(textareaElement.value.length, textareaElement.value.length);
+		resizeTextarea(textareaElement);
+	};
+
+	$: if (autofocus && textareaElement) {
+		focusTextarea();
 	}
 </script>
 
@@ -28,9 +48,11 @@
 		aria-describedby={hintId}
 		placeholder={$t(placeholder)}
 		rows="1"
+		bind:this={textareaElement}
 		bind:value
 		on:input={autoGrow}
 		{required}
+		{autofocus}
 	></textarea>
 </div>
 

@@ -597,6 +597,7 @@
 	const questionMeta = questionId ? resolveQuestionMeta(questionId) : null;
 	const questionDescription = questionId ? questionMeta?.description : null;
 	const questionPlaceholder = questionId ? questionMeta?.placeholder : null;
+	const shouldAutofocusQuestion = questionId !== null;
 </script>
 
 <svelte:head>
@@ -768,6 +769,7 @@
 					placeholder={`question.${questionId}.placeholder`}
 					bind:value={questionValue}
 					required={currentItem.mandatory === true}
+					autofocus={shouldAutofocusQuestion}
 				/>
 			</div>
 		{:else if currentItem?.type === 'model' && currentItem.model === 'emotion_mapping'}
