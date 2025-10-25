@@ -6,6 +6,10 @@ common:
   light: Clair
   dark: Sombre
   system: Système
+  get_started: Commencer
+  loading: Chargement…
+  error: Une erreur inattendue est survenue.
+  retry: Réessayer
 landing:
   title: Pebbles
   description: 'Capturez vos événements marquants, suivez vos émotions et réfléchissez à votre évolution personnelle.'

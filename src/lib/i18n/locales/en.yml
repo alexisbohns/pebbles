@@ -6,6 +6,10 @@ common:
   light: Light
   dark: Dark
   system: System
+  get_started: Get started
+  loading: Loading...
+  error: An unexpected error occurred.
+  retry: Retry
 landing:
   title: Pebbles
   description: 'Capture meaningful events, track emotions, and reflect on your personal growth.'

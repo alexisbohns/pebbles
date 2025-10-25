@@ -2,12 +2,13 @@
 	import logoSvg from '$lib/assets/pebblestones_logo.svg?raw';
 	import nameSvg from '$lib/assets/pebblestones_name.svg?raw';
 
-	type LogoSize = 'sm' | 'md' | 'lg';
+	type LogoSize = 'sm' | 'md' | 'lg' | 'xl';
 
 	const SIZE_MAP: Record<LogoSize, string> = {
 		sm: '1rem',
 		md: '2rem',
-		lg: '3rem'
+		lg: '3rem',
+		xl: '4rem'
 	};
 
 	const NAME_ASPECT_RATIO = 857 / 122;
