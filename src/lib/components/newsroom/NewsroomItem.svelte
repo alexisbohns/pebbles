@@ -5,7 +5,7 @@
 	import { RESOURCE_LINK_CATEGORIES, type NewsroomRecord } from '$lib/newsroom/types';
 	import { getActionLabel, getCategoryLabel } from '$lib/newsroom/utils';
 	import { CircleDot, Newspaper, OctagonAlert, PackagePlus } from '@lucide/svelte';
-	import Capsule from './Capsule.svelte';
+	import Capsule from '../Capsule.svelte';
 
 	export let item: NewsroomRecord;
 
