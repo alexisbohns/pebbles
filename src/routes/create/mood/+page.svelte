@@ -236,7 +236,7 @@
 	const formattedValence = $derived.by(() => (valence > 0 ? `+${valence}` : String(valence)));
 </script>
 
-<h1 class="text-2xl font-semibold tracking-tight">Event</h1>
+<h1>Event</h1>
 
 <form onsubmit={handleSubmit} class="space-y-6" aria-label="Create event">
 	<div class="grid gap-2">

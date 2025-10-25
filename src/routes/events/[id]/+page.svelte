@@ -232,7 +232,7 @@
 	{#key title}
 		<section class="space-y-8" transition:blur>
 			<header class="space-y-2" transition:blur>
-				<h1 class="text-3xl font-semibold tracking-tight">{title}</h1>
+				<h1>{title}</h1>
 				{#if kindLabel}
 					<p class="text-sm text-muted-foreground">{kindLabel}</p>
 				{/if}
