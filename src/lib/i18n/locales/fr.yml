@@ -282,3 +282,62 @@ associations:
   ede9ab19-8c9c-4408-ba19-fe2e2b7455a4: soin de soi
   f1219d1d-d389-4dba-a3fa-89997b481dfc: apprentissage
   fd1193e7-05ae-42d4-854a-0430c56ff488: tâches
+newsroom:
+  name: Actualités
+  description: 'Restez informé des dernières mises à jour et nouveautés de Pebbles.'
+  filters:
+    all:
+      all:
+        short: Toutes
+        long: Toutes les actualités
+        action: Voir toutes les actualités
+    news:
+      all:
+        short: Actualités
+        long: Toutes les actualités
+        action: Voir toutes les actualités
+      single:
+        short: Actualité
+        long: Actualité
+        action: Lire la suite
+    publications:
+      all:
+        short: Publications
+        long: Toutes les publications
+        action: Voir toutes les publications
+    publication_other:
+      all:
+        short: Autres
+        long: Publications diverses
+        action: Voir les autres publications
+      single:
+        short: Publication
+        long: Publication
+        action: Lire la publication
+    publication_medium:
+      all:
+        short: Medium
+        long: Publications Medium
+        action: Voir les publications Medium
+      single:
+        short: Medium
+        long: Publication Medium
+        action: Lire sur Medium
+    publication_substack:
+      all:
+        short: Substack
+        long: Publications Substack
+        action: Voir les publications Substack
+      single:
+        short: Substack
+        long: Publication Substack
+        action: Lire sur Substack
+    reference:
+      all:
+        short: Références
+        long: Références externes
+        action: Voir les références
+      single:
+        short: Référence
+        long: Référence externe
+        action: Accéder à la référence
