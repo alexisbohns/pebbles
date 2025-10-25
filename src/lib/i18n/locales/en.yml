@@ -45,7 +45,7 @@ pages:
       unknown_action: Unknown activity
 auth:
   login:
-    heading: Sign in to your account
+    heading: Welcome
     description: Enter your email and password to continue.
     fields:
       email: Email
@@ -58,8 +58,7 @@ auth:
       submit: Sign in with Google
       submitting: Signing in with Google...
     footer:
-      prompt: Need an account?
-      action: Create one
+      action: Create email account
     errors:
       email_required: Email is required.
       password_required: Password is required.
@@ -77,8 +76,7 @@ auth:
     submit: Create account
     submitting: Creating account...
     footer:
-      prompt: Already have an account?
-      action: Sign in
+      action: I already have an account
     agreements:
       prefix: I agree to the
       conjunction: and

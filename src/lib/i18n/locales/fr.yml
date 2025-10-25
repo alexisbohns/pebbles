@@ -45,7 +45,7 @@ pages:
       unknown_action: Activité inconnue
 auth:
   login:
-    heading: Connectez-vous à votre compte
+    heading: Bienvenue
     description: Saisissez votre email et votre mot de passe pour continuer.
     fields:
       email: Email
@@ -55,11 +55,10 @@ auth:
     submitting: Connexion en cours…
     divider: Ou continuer avec
     google:
-      submit: Se connecter avec Google
+      submit: Continuer avec Google
       submitting: Connexion avec Google en cours…
     footer:
-      prompt: Besoin d'un compte ?
-      action: Créez-en un
+      action: Créer un compte email
     errors:
       email_required: L'email est requis.
       password_required: Le mot de passe est requis.
@@ -77,8 +76,7 @@ auth:
     submit: Créer un compte
     submitting: Création du compte…
     footer:
-      prompt: Vous avez déjà un compte ?
-      action: Connectez-vous
+      action: J'ai déjà un compte
     agreements:
       prefix: J'accepte les
       conjunction: et la

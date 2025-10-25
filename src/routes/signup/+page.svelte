@@ -3,7 +3,6 @@
 	import { resolve } from '$app/paths';
 	import { supabase } from '$lib/supabaseClient';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import * as Card from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { t } from '$lib';
@@ -91,7 +90,7 @@
 	};
 </script>
 
-<section class="mx-auto flex flex-col w-full max-w-md px-4">
+<section class="flex flex-col w-full max-w-md mx-auto">
 	<header class="space-y-1">
 		<h1>{$t('auth.signup.heading')}</h1>
 	</header>
@@ -177,9 +176,7 @@
 			</Button>
 		</form>
 	</div>
-	<div class="flex items-center justify-between">
-		<Button variant="link" href={resolve('/login')} class="px-0">
-			{$t('auth.signup.footer.action')}
-		</Button>
-	</div>
+	<Button variant="link" href={resolve('/login')} class="mt-6">
+		{$t('auth.signup.footer.action')}
+	</Button>
 </section>

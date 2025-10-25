@@ -5,7 +5,6 @@
 	import { page } from '$app/stores';
 	import { supabase } from '$lib/supabaseClient';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import * as Card from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { t } from '$lib';
@@ -90,78 +89,70 @@
 	};
 </script>
 
-<section
-	class="mx-auto flex min-h-[calc(100vh-6rem)] w-full max-w-md items-center justify-center px-4"
->
-	<Card.Root class="w-full shadow-lg">
-		<Card.Header class="space-y-1">
-			<Card.Title>{$t('auth.login.heading')}</Card.Title>
-			<Card.Description>{$t('auth.login.description')}</Card.Description>
-		</Card.Header>
-		<Card.Content class="space-y-6">
-			<form class="grid gap-4" on:submit|preventDefault={signInWithPassword}>
-				<div class="grid gap-2">
-					<Label for="email">{$t('auth.login.fields.email')}</Label>
-					<Input
-						id="email"
-						name="email"
-						type="email"
-						placeholder={$t('auth.login.fields.email_placeholder')}
-						bind:value={email}
-						autocomplete="email"
-						required
-					/>
-				</div>
-				<div class="grid gap-2">
-					<Label for="password">{$t('auth.login.fields.password')}</Label>
-					<Input
-						id="password"
-						name="password"
-						type="password"
-						placeholder="••••••••"
-						bind:value={password}
-						autocomplete="current-password"
-						required
-					/>
-				</div>
-				{#if displayError}
-					<p class="text-sm font-medium text-destructive">{displayError}</p>
-				{/if}
-				<Button type="submit" class="w-full" disabled={passwordSigningIn}>
-					{#if passwordSigningIn}
-						{$t('auth.login.submitting')}
-					{:else}
-						{$t('auth.login.submit')}
-					{/if}
-				</Button>
-			</form>
-			<div class="relative">
-				<div class="flex items-center gap-3 text-xs uppercase tracking-wide text-muted-foreground">
-					<span class="h-px w-full bg-border"></span>
-					<span>{$t('auth.login.divider')}</span>
-					<span class="h-px w-full bg-border"></span>
-				</div>
+<section class="flex flex-col w-full max-w-md mx-auto">
+	<h1>{$t('auth.login.heading')}</h1>
+	<div class="space-y-6">
+		<form class="grid gap-4" on:submit|preventDefault={signInWithPassword}>
+			<div class="grid gap-2">
+				<Label for="email">{$t('auth.login.fields.email')}</Label>
+				<Input
+					id="email"
+					name="email"
+					type="email"
+					placeholder={$t('auth.login.fields.email_placeholder')}
+					bind:value={email}
+					autocomplete="email"
+					required
+				/>
 			</div>
-			<form on:submit={handleGoogleSubmit}>
-				<Button
-					type="submit"
-					variant="outline"
-					class="w-full"
-					disabled={oauthSigningIn || passwordSigningIn}
-				>
-					{#if oauthSigningIn}
-						{$t('auth.login.google.submitting')}
-					{:else}
-						{$t('auth.login.google.submit')}
-					{/if}
-				</Button>
-			</form>
-		</Card.Content>
-		<Card.Footer class="flex items-center justify-between">
-			<p class="text-sm text-muted-foreground">{$t('auth.login.footer.prompt')}</p>
-			<Button variant="link" href={resolve('/signup')} class="px-0">
-				{$t('auth.login.footer.action')}
+			<div class="grid gap-2">
+				<Label for="password">{$t('auth.login.fields.password')}</Label>
+				<Input
+					id="password"
+					name="password"
+					type="password"
+					placeholder="••••••••"
+					bind:value={password}
+					autocomplete="current-password"
+					required
+				/>
+			</div>
+			{#if displayError}
+				<p class="text-sm font-medium text-destructive">{displayError}</p>
+			{/if}
+			<Button type="submit" class="w-full" disabled={passwordSigningIn}>
+				{#if passwordSigningIn}
+					{$t('auth.login.submitting')}
+				{:else}
+					{$t('auth.login.submit')}
+				{/if}
 			</Button>
-		</Card.Footer>
-	</Card.Root>
+		</form>
+		<div class="flex items-center gap-3 text-xs uppercase tracking-wide text-muted-foreground">
+			<span class="h-px w-full bg-muted"></span>
+			<span class="whitespace-nowrap">{$t('auth.login.divider')}</span>
+			<span class="h-px w-full bg-muted"></span>
+		</div>
+		<form on:submit={handleGoogleSubmit}>
+			<Button
+				type="submit"
+				variant="outline"
+				class="w-full"
+				disabled={oauthSigningIn || passwordSigningIn}
+			>
+				<img
+					src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"
+					alt=""
+				/>
+				{#if oauthSigningIn}
+					{$t('auth.login.google.submitting')}
+				{:else}
+					{$t('auth.login.google.submit')}
+				{/if}
+			</Button>
+		</form>
+	</div>
+	<Button variant="link" href={resolve('/signup')} class="mt-6">
+		{$t('auth.login.footer.action')}
+	</Button>
 </section>
