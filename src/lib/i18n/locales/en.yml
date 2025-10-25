@@ -282,3 +282,56 @@ associations:
   ede9ab19-8c9c-4408-ba19-fe2e2b7455a4: selfCare
   f1219d1d-d389-4dba-a3fa-89997b481dfc: education
   fd1193e7-05ae-42d4-854a-0430c56ff488: tasks
+newsroom:
+  name: Newsroom
+  description: 'Stay up to date with the latest Pebbles updates and stories.'
+  empty: 'No updates available yet.'
+  filters:
+    heading: 'Filter by category'
+  categories:
+    all:
+      all:
+        short: All
+        action: Show every update
+    changelog:
+      all:
+        short: Changelog
+        action: Show release notes
+      single:
+        action: Read the notes
+    news:
+      all:
+        short: News
+        action: Show news
+      single:
+        action: Read the story
+    incident:
+      all:
+        short: Incidents
+        action: Show incidents
+      single:
+        action: Review the incident
+    publication_medium:
+      all:
+        short: Medium
+        action: View Medium posts
+      single:
+        action: Read on Medium
+    publication_substack:
+      all:
+        short: Substack
+        action: View Substack posts
+      single:
+        action: Read on Substack
+    publication_other:
+      all:
+        short: Other
+        action: View other publications
+      single:
+        action: Read the publication
+    reference:
+      all:
+        short: References
+        action: View references
+      single:
+        action: Open the reference

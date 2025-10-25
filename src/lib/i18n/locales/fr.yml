@@ -23,7 +23,7 @@ pages:
   legal:
     title: Mentions légales
   privacy:
-    title: Vie privée
+    title: Confidentialité
   login:
     title: Connexion
   profile:
@@ -282,3 +282,56 @@ associations:
   ede9ab19-8c9c-4408-ba19-fe2e2b7455a4: soin de soi
   f1219d1d-d389-4dba-a3fa-89997b481dfc: apprentissage
   fd1193e7-05ae-42d4-854a-0430c56ff488: tâches
+newsroom:
+  name: Actualités
+  description: 'Restez informé des dernières mises à jour et nouveautés de Pebbles.'
+  empty: 'Aucune actualité pour le moment.'
+  filters:
+    heading: 'Filtrer par catégorie'
+  categories:
+    all:
+      all:
+        short: Toutes
+        action: Afficher toutes les actualités
+    changelog:
+      all:
+        short: Livraisons
+        action: Afficher les notes de version
+      single:
+        action: Détails
+    news:
+      all:
+        short: Actualités
+        action: Afficher les actualités
+      single:
+        action: Lire
+    incident:
+      all:
+        short: Incidents
+        action: Afficher les incidents
+      single:
+        action: Détails
+    publication_medium:
+      all:
+        short: Medium
+        action: Voir les publications Medium
+      single:
+        action: Lire sur Medium
+    publication_substack:
+      all:
+        short: Substack
+        action: Voir les publications Substack
+      single:
+        action: Lire sur Substack
+    publication_other:
+      all:
+        short: Autres
+        action: Voir les autres publications
+      single:
+        action: Lire la publication
+    reference:
+      all:
+        short: Références
+        action: Voir les références
+      single:
+        action: Accéder à la référence
