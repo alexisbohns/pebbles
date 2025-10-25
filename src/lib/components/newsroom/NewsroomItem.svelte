@@ -5,6 +5,7 @@
 	import { RESOURCE_LINK_CATEGORIES, type NewsroomRecord } from '$lib/newsroom/types';
 	import { getActionLabel, getCategoryLabel } from '$lib/newsroom/utils';
 	import { CircleDot, Newspaper, OctagonAlert, PackagePlus } from '@lucide/svelte';
+	import Capsule from './Capsule.svelte';
 
 	export let item: NewsroomRecord;
 
@@ -80,23 +81,11 @@
 		{/if}
 	</div>
 	<div class="flex flex-col items-start gap-2 pb-3">
-		<header class="flex gap-2 items-center rounded-xl border pe-2">
-			{#if item.category}
-				<div
-					class="text-xs {item.category == 'news'
-						? 'bg-muted-foreground'
-						: 'bg-muted'} rounded-xl px-2 py-1 {item.category == 'news'
-						? 'text-muted'
-						: 'text-muted-foreground'} font-[500]"
-				>
-					{categoryLabel}
-				</div>
-			{/if}
-			<time datetime={item.created_at} class="text-muted-foreground text-xs">{formattedDate}</time>
-			{#if item.type}
-				<span>{item.type}</span>
-			{/if}
-		</header>
+		<Capsule
+			capsuleLabel={item.category ? categoryLabel : ''}
+			time={formattedDate}
+			datetime={item.created_at}
+		/>
 		<div class="flex gap-3">
 			<div>
 				<h3 class="font-semibold">{localizedName}</h3>
