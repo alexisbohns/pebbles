@@ -1,18 +1,26 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { resolve } from '$app/paths';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { supabase } from '$lib/supabaseClient';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import { Input } from '$lib/components/ui/input';
+	import { Label } from '$lib/components/ui/label';
+	import { t } from '$lib';
 	import { get } from 'svelte/store';
 
-	let signingIn = false;
+	let email = '';
+	let password = '';
+	let passwordSigningIn = false;
+	let oauthSigningIn = false;
 	let errorMessage = '';
 	$: queryError = $page.url.searchParams.get('error');
 	$: displayError = errorMessage || queryError || '';
 
 	const signInWithGoogle = async () => {
-		if (signingIn) return;
-		signingIn = true;
+		if (oauthSigningIn || passwordSigningIn) return;
+		oauthSigningIn = true;
 		errorMessage = '';
 
 		const currentPage = get(page);
@@ -27,15 +35,124 @@
 
 		if (error) {
 			errorMessage = error.message;
-			signingIn = false;
+			oauthSigningIn = false;
+		}
+	};
+
+	const handleGoogleSubmit = async (event: SubmitEvent) => {
+		event.preventDefault();
+		await signInWithGoogle();
+	};
+
+	const signInWithPassword = async (event: SubmitEvent) => {
+		event.preventDefault();
+
+		if (passwordSigningIn || oauthSigningIn) return;
+
+		errorMessage = '';
+
+		const trimmedEmail = email.trim();
+
+		if (!trimmedEmail) {
+			errorMessage = $t('auth.login.errors.email_required');
+			return;
+		}
+
+		if (!password) {
+			errorMessage = $t('auth.login.errors.password_required');
+			return;
+		}
+
+		passwordSigningIn = true;
+
+		try {
+			const { data, error } = await supabase.auth.signInWithPassword({
+				email: trimmedEmail,
+				password
+			});
+
+			if (error) {
+				errorMessage = error.message;
+				return;
+			}
+
+			if (data.session) {
+				await goto(resolve('/'));
+			}
+		} catch (error) {
+			const fallback = $t('auth.login.errors.unexpected');
+			const message = error instanceof Error ? error.message : fallback;
+			errorMessage = message || fallback;
+		} finally {
+			passwordSigningIn = false;
 		}
 	};
 </script>
 
-<button type="button" on:click={signInWithGoogle} disabled={signingIn}>
-	Sign in with Google
-</button>
-
-{#if displayError}
-	<p>{displayError}</p>
-{/if}
+<section class="flex flex-col w-full max-w-md mx-auto">
+	<h1>{$t('auth.login.heading')}</h1>
+	<div class="space-y-6">
+		<form class="grid gap-4" on:submit|preventDefault={signInWithPassword}>
+			<div class="grid gap-2">
+				<Label for="email">{$t('auth.login.fields.email')}</Label>
+				<Input
+					id="email"
+					name="email"
+					type="email"
+					placeholder={$t('auth.login.fields.email_placeholder')}
+					bind:value={email}
+					autocomplete="email"
+					required
+				/>
+			</div>
+			<div class="grid gap-2">
+				<Label for="password">{$t('auth.login.fields.password')}</Label>
+				<Input
+					id="password"
+					name="password"
+					type="password"
+					placeholder="••••••••"
+					bind:value={password}
+					autocomplete="current-password"
+					required
+				/>
+			</div>
+			{#if displayError}
+				<p class="text-sm font-medium text-destructive">{displayError}</p>
+			{/if}
+			<Button type="submit" class="w-full" disabled={passwordSigningIn}>
+				{#if passwordSigningIn}
+					{$t('auth.login.submitting')}
+				{:else}
+					{$t('auth.login.submit')}
+				{/if}
+			</Button>
+		</form>
+		<div class="flex items-center gap-3 text-xs uppercase tracking-wide text-muted-foreground">
+			<span class="h-px w-full bg-muted"></span>
+			<span class="whitespace-nowrap">{$t('auth.login.divider')}</span>
+			<span class="h-px w-full bg-muted"></span>
+		</div>
+		<form on:submit={handleGoogleSubmit}>
+			<Button
+				type="submit"
+				variant="outline"
+				class="w-full"
+				disabled={oauthSigningIn || passwordSigningIn}
+			>
+				<img
+					src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"
+					alt=""
+				/>
+				{#if oauthSigningIn}
+					{$t('auth.login.google.submitting')}
+				{:else}
+					{$t('auth.login.google.submit')}
+				{/if}
+			</Button>
+		</form>
+	</div>
+	<Button variant="link" href={resolve('/signup')} class="mt-6">
+		{$t('auth.login.footer.action')}
+	</Button>
+</section>

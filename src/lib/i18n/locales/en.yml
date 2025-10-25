@@ -6,6 +6,10 @@ common:
   light: Light
   dark: Dark
   system: System
+  get_started: Get started
+  loading: Loading...
+  error: An unexpected error occurred.
+  retry: Retry
 landing:
   title: Pebbles
   description: 'Capture meaningful events, track emotions, and reflect on your personal growth.'
@@ -39,6 +43,52 @@ pages:
       logout: Logout
       user_signedup: Account creation
       unknown_action: Unknown activity
+auth:
+  login:
+    heading: Welcome
+    description: Enter your email and password to continue.
+    fields:
+      email: Email
+      email_placeholder: you@example.com
+      password: Password
+    submit: Sign in
+    submitting: Signing in...
+    divider: Or continue with
+    google:
+      submit: Sign in with Google
+      submitting: Signing in with Google...
+    footer:
+      action: Create email account
+    errors:
+      email_required: Email is required.
+      password_required: Password is required.
+      unexpected: Unexpected error signing in.
+  signup:
+    heading: Create an account
+    description: Enter your details to get started.
+    fields:
+      name: Name
+      name_placeholder: Jane Doe
+      email: Email
+      email_placeholder: you@example.com
+      password: Password
+    password_hint: Password must be at least 8 characters and include uppercase, lowercase, number, and special character.
+    submit: Create account
+    submitting: Creating account...
+    footer:
+      action: I already have an account
+    agreements:
+      prefix: I agree to the
+      conjunction: and
+      suffix: .
+      terms: Terms of Service
+      privacy: Privacy Policy
+    errors:
+      name_required: Name is required.
+      email_required: Email is required.
+      password_strength: Password must meet the required complexity.
+      terms_required: You must accept the terms and privacy policy to continue.
+      unexpected: Unexpected error creating your account.
 legal:
   mention: 'Pebblestones is an open project, it is not a medical device.'
   external_label: Access AFTCC directory
