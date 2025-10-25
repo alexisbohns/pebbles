@@ -616,7 +616,7 @@
 
 		{#if currentItem?.type === 'property' && propertyKey}
 			<input type="hidden" name="value" value={propertyValue} />
-			<div class="space-y-3 rounded-lg border p-4">
+			<div>
 				<Label for={`property-${propertyKey}`} class="text-sm font-medium">
 					{resolvePropertyLabel(propertyKey)}
 				</Label>
@@ -760,19 +760,19 @@
 			</div>
 		{:else if currentItem?.type === 'question' && questionId}
 			<input type="hidden" name="value" value={questionValue} />
-			<div class="space-y-3 rounded-lg border p-4">
+			<div>
 				<Question
 					name={questionMeta?.fieldName ?? questionId}
 					question={`question.${questionId}.question`}
-					description={questionDescription ? `question.${questionId}.description` : ''}
-					placeholder={questionPlaceholder ? `question.${questionId}.placeholder` : ''}
+					description={`question.${questionId}.description`}
+					placeholder={`question.${questionId}.placeholder`}
 					bind:value={questionValue}
 					required={currentItem.mandatory === true}
 				/>
 			</div>
 		{:else if currentItem?.type === 'model' && currentItem.model === 'emotion_mapping'}
 			<input type="hidden" name="mapping" value={mappingPayload} />
-			<div class="space-y-3 rounded-lg border p-4">
+			<div>
 				<h3 class="text-lg font-semibold">{$t('create.template.section.emotions')}</h3>
 				{#if emotionItems.length === 0}
 					<p class="text-sm text-muted-foreground">
@@ -794,7 +794,7 @@
 			</div>
 		{:else if currentItem?.type === 'model' && currentItem.model === 'association_mapping'}
 			<input type="hidden" name="mapping" value={mappingPayload} />
-			<div class="space-y-3 rounded-lg border p-4">
+			<div>
 				<h3 class="text-lg font-semibold">{$t('create.template.section.associations')}</h3>
 				{#if associationItems.length === 0}
 					<p class="text-sm text-muted-foreground">
