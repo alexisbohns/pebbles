@@ -32,3 +32,27 @@ h1
     margin-bottom 1rem
     font-family 'Fraunces', serif
     font-weight 300
+
+:global(::view-transition-old(root))
+:global(::view-transition-new(root))
+    animation-duration 250ms
+    animation-timing-function ease-in-out
+    animation-fill-mode both
+
+:global(::view-transition-old(root))
+    animation-name fade-out
+
+:global(::view-transition-new(root))
+    animation-name fade-in
+
+@keyframes fade-in
+    from
+        opacity 0
+    to
+        opacity 1
+
+@keyframes fade-out
+    from
+        opacity 1
+    to
+        opacity 0

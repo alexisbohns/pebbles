@@ -9,8 +9,39 @@
 	let { children, data } = $props();
 
 	import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
+	import { afterNavigate } from '$app/navigation';
+	import { browser } from '$app/environment';
+	import { tick } from 'svelte';
 
 	injectSpeedInsights();
+
+	if (browser && 'startViewTransition' in document) {
+		const doc = document as Document & {
+			startViewTransition: (callback: () => Promise<void> | void) => ViewTransition;
+		};
+		let initialLoad = true;
+
+		afterNavigate(async ({ from, to }) => {
+			if (initialLoad || !from) {
+				initialLoad = false;
+				return;
+			}
+
+			if (to?.url.pathname === from.url.pathname && to.url.search === from.url.search) {
+				return;
+			}
+
+			const transition = doc.startViewTransition(async () => {
+				await tick();
+			});
+
+			try {
+				await transition.finished;
+			} catch {
+				// Ignore failures so navigation continues smoothly
+			}
+		});
+	}
 </script>
 
 <svelte:head>
