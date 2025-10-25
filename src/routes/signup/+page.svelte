@@ -1,23 +1,22 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { page } from '$app/stores';
 	import { supabase } from '$lib/supabaseClient';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Card from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
-	import { get } from 'svelte/store';
 
 	const passwordRequirement =
 		'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.';
 	const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
+	let name = '';
 	let email = '';
 	let password = '';
+	let acceptedTerms = false;
 	let isSubmitting = false;
 	let errorMessage = '';
-	let successMessage = '';
 
 	const handleSubmit = async (event: SubmitEvent) => {
 		event.preventDefault();
@@ -25,9 +24,14 @@
 		if (isSubmitting) return;
 
 		errorMessage = '';
-		successMessage = '';
 
+		const trimmedName = name.trim();
 		const trimmedEmail = email.trim();
+
+		if (!trimmedName) {
+			errorMessage = 'Name is required.';
+			return;
+		}
 
 		if (!trimmedEmail) {
 			errorMessage = 'Email is required.';
@@ -39,18 +43,22 @@
 			return;
 		}
 
+		if (!acceptedTerms) {
+			errorMessage = 'You must accept the terms and privacy policy to continue.';
+			return;
+		}
+
 		isSubmitting = true;
 
 		try {
-			const currentPage = get(page);
-			const redirectTo = browser
-				? new URL(resolve('/auth/callback'), currentPage.url).toString()
-				: undefined;
-
-			const { error } = await supabase.auth.signUp({
+			const { data, error } = await supabase.auth.signUp({
 				email: trimmedEmail,
 				password,
-				options: redirectTo ? { emailRedirectTo: redirectTo } : undefined
+				options: {
+					data: {
+						full_name: trimmedName
+					}
+				}
 			});
 
 			if (error) {
@@ -58,9 +66,19 @@
 				return;
 			}
 
-			successMessage = 'Success! Check your email to verify your account.';
-			email = '';
-			password = '';
+			if (!data.session) {
+				const { error: signInError } = await supabase.auth.signInWithPassword({
+					email: trimmedEmail,
+					password
+				});
+
+				if (signInError) {
+					errorMessage = signInError.message;
+					return;
+				}
+			}
+
+			await goto(resolve('/'));
 		} catch (error) {
 			const message =
 				error instanceof Error ? error.message : 'Unexpected error creating your account.';
@@ -81,6 +99,18 @@
 		</Card.Header>
 		<Card.Content>
 			<form class="grid gap-4" on:submit|preventDefault={handleSubmit}>
+				<div class="grid gap-2">
+					<Label for="name">Name</Label>
+					<Input
+						id="name"
+						name="name"
+						type="text"
+						placeholder="Jane Doe"
+						bind:value={name}
+						autocomplete="name"
+						required
+					/>
+				</div>
 				<div class="grid gap-2">
 					<Label for="email">Email</Label>
 					<Input
@@ -108,9 +138,38 @@
 				</div>
 				{#if errorMessage}
 					<p class="text-sm font-medium text-destructive">{errorMessage}</p>
-				{:else if successMessage}
-					<p class="text-sm font-medium text-emerald-600">{successMessage}</p>
 				{/if}
+				<div class="flex items-start gap-3 text-sm leading-tight text-muted-foreground">
+					<input
+						id="terms"
+						name="terms"
+						type="checkbox"
+						bind:checked={acceptedTerms}
+						class="mt-1 h-4 w-4 rounded border border-input text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+						required
+					/>
+					<Label for="terms" class="cursor-pointer text-left font-normal">
+						I agree to the
+						<a
+							class="text-primary underline"
+							href={resolve('/terms')}
+							target="_blank"
+							rel="noreferrer"
+						>
+							Terms of Service
+						</a>
+						and
+						<a
+							class="text-primary underline"
+							href={resolve('/privacy')}
+							target="_blank"
+							rel="noreferrer"
+						>
+							Privacy Policy
+						</a>
+						.
+					</Label>
+				</div>
 				<Button type="submit" class="w-full" disabled={isSubmitting}>
 					{#if isSubmitting}
 						Creating account...
