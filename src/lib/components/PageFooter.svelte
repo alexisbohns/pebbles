@@ -17,6 +17,9 @@
 		<a href={resolve('/about')}>
 			{$t('pages.about.title')}
 		</a>
+		<a href={resolve('/newsroom')}>
+			{$t('newsroom.name')}
+		</a>
 	</nav>
 	<ModeWatcher />
 	<ModeToggle />
