@@ -19,6 +19,12 @@
 		},
 		{
 			"type": "property",
+			"property": "name",
+			"mandatory": true,
+			"default": "Analyse Moment"
+		},
+		{
+			"type": "property",
 			"property": "valence",
 			"mandatory": true,
 			"default": 0
