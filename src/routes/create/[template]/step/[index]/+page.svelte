@@ -13,6 +13,11 @@
 	import type { ActionData, PageData } from './$types';
 	import { get } from 'svelte/store';
 	import { SvelteMap } from 'svelte/reactivity';
+	import IconNext from '@lucide/svelte/icons/arrow-right';
+	import IconPrevious from '@lucide/svelte/icons/arrow-left';
+	import IconFinish from '@lucide/svelte/icons/check';
+	import IconSave from '@lucide/svelte/icons/save';
+	import { Icon } from 'svelte-sonner';
 
 	const PROPERTY_COLUMN_MAP: Record<string, string> = {
 		date: 'occurrence_date',
@@ -355,14 +360,10 @@
 
 <section class="space-y-6">
 	<div class="space-y-2">
-		<a href={resolve('/create')} class="text-sm text-muted-foreground hover:underline">
-			{$t('create.step.back_to_templates')}
-		</a>
-		<h1>{data.config?.label}</h1>
+		<h1 class="hidden">{data.config?.label}</h1>
 		<p class="text-sm text-muted-foreground">
 			{$t('create.step.progress', { current: currentIndex + 1, total: totalSteps })}
 		</p>
-		<h2 class="text-xl font-semibold">{stepTitle}</h2>
 	</div>
 
 	<form method="post" class="space-y-6">
@@ -370,7 +371,7 @@
 
 		{#if currentItem?.type === 'property' && propertyKey}
 			<input type="hidden" name="value" value={propertyValue} />
-			<div class="space-y-3 rounded-lg border p-4">
+			<div class="">
 				<Label for={`property-${propertyKey}`} class="text-sm font-medium">
 					{resolvePropertyLabel(propertyKey)}
 				</Label>
@@ -430,7 +431,7 @@
 			</div>
 		{:else if currentItem?.type === 'question' && questionId}
 			<input type="hidden" name="value" value={questionValue} />
-			<div class="space-y-3 rounded-lg border p-4">
+			<div class="">
 				<Question
 					name={questionMeta?.fieldName ?? questionId}
 					question={`question.${questionId}.question`}
@@ -442,7 +443,7 @@
 			</div>
 		{:else if currentItem?.type === 'model' && currentItem.model === 'emotion_mapping'}
 			<input type="hidden" name="mapping" value={mappingPayload} />
-			<div class="space-y-3 rounded-lg border p-4">
+			<div class="">
 				<h3 class="text-lg font-semibold">{$t('create.template.section.emotions')}</h3>
 				{#if emotionItems.length === 0}
 					<p class="text-sm text-muted-foreground">
@@ -464,7 +465,7 @@
 			</div>
 		{:else if currentItem?.type === 'model' && currentItem.model === 'association_mapping'}
 			<input type="hidden" name="mapping" value={mappingPayload} />
-			<div class="space-y-3 rounded-lg border p-4">
+			<div class="">
 				<h3 class="text-lg font-semibold">{$t('create.template.section.associations')}</h3>
 				{#if associationItems.length === 0}
 					<p class="text-sm text-muted-foreground">
@@ -498,28 +499,55 @@
 			<p class="text-sm text-destructive">{form.message}</p>
 		{/if}
 
-		<div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+		<div class="flex justify-between gap-3">
 			{#if !isFirstStep}
-				<Button type="submit" variant="outline" name="intent" value="previous">
-					{$t('create.step.previous')}
+				<Button
+					type="submit"
+					variant="ghost"
+					name="intent"
+					value="previous"
+					size="icon"
+					aria-label={$t('create.step.previous')}
+				>
+					<IconPrevious />
 				</Button>
 			{:else}
-				<span class="text-sm text-muted-foreground">
-					{$t('create.step.first_hint')}
-				</span>
+				<Button
+					href={resolve('/create')}
+					variant="ghost"
+					name="intent"
+					value="stay"
+					size="icon"
+					aria-label={$t('create.step.back_to_templates')}
+				>
+					<IconPrevious />
+				</Button>
 			{/if}
 
 			<div class="flex gap-2">
 				{#if eventId}
-					<Button type="submit" variant="ghost" name="intent" value="stay">
-						{$t('create.step.save')}
+					<Button
+						type="submit"
+						variant="ghost"
+						name="intent"
+						value="stay"
+						size="icon"
+						aria-label={$t('create.step.save')}
+					>
+						<IconSave />
 					</Button>
 				{/if}
-				<Button type="submit" name="intent" value="next">
+				<Button
+					type="submit"
+					name="intent"
+					value="next"
+					size="icon"
+					aria-label={isLastStep ? $t('create.step.finish') : $t('create.step.next')}
+				>
 					{#if isLastStep}
-						{$t('create.step.finish')}
+						<IconFinish />
 					{:else}
-						{$t('create.step.next')}
+						<IconNext />
 					{/if}
 				</Button>
 			</div>
