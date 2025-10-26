@@ -78,7 +78,7 @@
 				User Profile
 			{/if}
 		</h1>
-	
+
 		<p class="text-muted-foreground text-sm">
 			<strong>Created at ·</strong>
 			{profile.created_at ? new Date(profile.created_at).toLocaleString() : '—'}
@@ -92,11 +92,7 @@
 	<section class="mt-8 space-y-3">
 		<h2 class="text-lg font-semibold">Activity Calendar</h2>
 
-		<Calendar.Calendar
-			type="single"
-			bind:value
-			numberOfMonths={1}
-		>
+		<Calendar.Calendar type="single" bind:value numberOfMonths={1}>
 			{#snippet child({ months, weekdays })}
 				<Calendar.Header>
 					<Calendar.PrevButton />
