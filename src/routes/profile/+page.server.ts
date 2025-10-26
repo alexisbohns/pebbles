@@ -1,6 +1,11 @@
 import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
+type ActivityCount = {
+	date: string;
+	value: number;
+};
+
 export const load: PageServerLoad = async ({ locals }) => {
 	const { user, supabase } = locals;
 
@@ -45,12 +50,37 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const hasProfileInfo = Boolean(
 		resolvedProfile?.full_name ??
 			resolvedProfile?.avatar_url ??
-			resolvedProfile?.role ??
-			resolvedProfile?.created_at
+				resolvedProfile?.role ??
+				resolvedProfile?.created_at
 	);
+
+	let activityCounts: ActivityCount[] = [];
+
+	const { data: activityProjection, error: activityError } = await supabase
+		.from('event_activity_projection')
+		.select('created_activity')
+		.eq('profile_id', user.id)
+		.maybeSingle();
+
+	if (!activityError && activityProjection?.created_activity && Array.isArray(activityProjection.created_activity)) {
+		activityCounts = activityProjection.created_activity.flatMap((entry) => {
+			if (!entry || typeof entry !== 'object') {
+				return [];
+			}
+
+			const { date, value } = entry as Record<string, unknown>;
+
+			return typeof date === 'string' && typeof value === 'number'
+				? [{ date, value }]
+				: [];
+		});
+	}
+
+	activityCounts.sort((a, b) => a.date.localeCompare(b.date));
 
 	return {
 		profile: resolvedProfile,
-		hasProfileInfo
+		hasProfileInfo,
+		activityCounts
 	};
 };
