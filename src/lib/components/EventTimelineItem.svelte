@@ -70,32 +70,31 @@
 	</a>
 </article>
 
-<style lang="stylus">
-	.timeline-item
-		&:hover
-			a
-				opacity 0.7
+<style lang="postcss">
+	.timeline-item:hover a {
+		opacity: 0.7;
+	}
 
-		&-line
-			display flex
-			flex-direction column
-			align-items center
-			justify-content stretch
-			align-self stretch
-			gap 0.5rem
-			padding-top 0.25rem
+	.timeline-item-line {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: stretch;
+		align-self: stretch;
+		gap: 0.5rem;
+		padding-top: 0.25rem;
+	}
 
-			&::after
-				content " "
-				width 3px
-				flex-grow 1
-				background var(--foreground-color)
-				opacity 0.1
-			
-			&::after
-				border-radius 10rem 10rem 0 0
-			
-		&:last-child
-			.timeline-item-line::after
-				visibility hidden
+	.timeline-item-line::after {
+		content: ' ';
+		width: 3px;
+		flex-grow: 1;
+		background: var(--foreground-color);
+		opacity: 0.1;
+		border-radius: 10rem 10rem 0 0;
+	}
+
+	.timeline-item:last-child .timeline-item-line::after {
+		visibility: hidden;
+	}
 </style>

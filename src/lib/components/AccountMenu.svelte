@@ -59,10 +59,11 @@
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
 
-<style lang="stylus">
-	.avatar
-		border-radius 9999px
-		width 2rem
-		height 2rem
-		object-fit cover
+<style lang="postcss">
+	.avatar {
+		border-radius: 9999px;
+		width: 2rem;
+		height: 2rem;
+		object-fit: cover;
+	}
 </style>

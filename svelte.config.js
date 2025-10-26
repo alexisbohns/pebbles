@@ -6,12 +6,7 @@ import preprocess from 'svelte-preprocess';
 const config = {
 	// Consult https://svelte.dev/docs/kit/integrations
 	// for more information about preprocessors
-	preprocess: [
-		vitePreprocess(),
-		preprocess({
-			stylus: {}
-		})
-	],
+	preprocess: [vitePreprocess()],
 	kit: { adapter: adapter() }
 };
 
