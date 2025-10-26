@@ -4,6 +4,8 @@
 	import { t } from '$lib';
 	import Focus from '@lucide/svelte/icons/focus';
 	import Calendar1 from '@lucide/svelte/icons/calendar-1';
+	import Capsule from './Capsule.svelte';
+	import { Activity } from '@lucide/svelte';
 
 	let { event }: { event: EventSummary } = $props();
 
@@ -31,7 +33,7 @@
 	);
 </script>
 
-<article class="flex gap-2 items-center timeline-item timeline-item-{event.kind}">
+<article class="flex gap-4 items-center timeline-item timeline-item-{event.kind}">
 	<div class="timeline-item-line">
 		{#if event.kind == 'day'}
 			<Calendar1 class="h-[1.2rem] w-[1.2rem] text-primary" />
@@ -39,22 +41,32 @@
 			<Focus class="h-[1.2rem] w-[1.2rem] text-muted-foreground" />
 		{/if}
 	</div>
-	<a href={resolve('/events/[id]', { id: event?.id ?? '' })} class="p-2 flex flex-col grow">
-		{#if occurrenceDate}
-			<span class="text-xs text-muted-foreground">{occurrenceDate}</span>
+	<a
+		href={resolve('/events/[id]', { id: event?.id ?? '' })}
+		class="flex flex-col items-start gap-2 pb-5 grow"
+	>
+		{#if occurrenceDate && event.kind != null}
+			<Capsule capsuleLabel={event.kind} time={occurrenceDate} datetime={occurrenceDate} />
 		{/if}
-		{#if occurrenceDate || valence !== null}
-			<p>
-				{title}
-				{#if valence !== null}
-					<span> · </span>
-					<span>{valenceLabel}</span>
+		<div class="flex gap-3 w-full">
+			<div class="flex flex-col gap-1 grow">
+				<h3 class="font-semibold">
+					{title}
+				</h3>
+				{#if typeof event.description === 'string' && event.description.trim().length > 0}
+					<p>{event.description}</p>
 				{/if}
-			</p>
-		{/if}
-		{#if typeof event.description === 'string' && event.description.trim().length > 0}
-			<p>{event.description}</p>
-		{/if}
+			</div>
+			{#if valence !== null}
+				<span aria-label={valenceLabel} class="flex text-xs items-center gap-1">
+					<Activity
+						size="12"
+						color={valence > 0 ? 'rgba(var(--primary))' : valence == 0 ? 'slategray' : 'sienna'}
+					/>
+					{valence}
+				</span>
+			{/if}
+		</div>
 	</a>
 </article>
 
@@ -71,25 +83,19 @@
 			justify-content stretch
 			align-self stretch
 			gap 0.5rem
+			padding-top 0.25rem
 
-			&::before, &::after
+			&::after
 				content " "
 				width 3px
 				flex-grow 1
 				background var(--foreground-color)
 				opacity 0.1
 			
-			&::before
-				border-radius 0 0 10rem 10rem
-			
 			&::after
 				border-radius 10rem 10rem 0 0
 			
 		&:last-child
 			.timeline-item-line::after
-				visibility hidden
-
-		&:first-child
-			.timeline-item-line::before
 				visibility hidden
 </style>
