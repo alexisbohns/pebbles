@@ -5,6 +5,7 @@
 	import { RESOURCE_LINK_CATEGORIES, type NewsroomRecord } from '$lib/newsroom/types';
 	import { getActionLabel, getCategoryLabel } from '$lib/newsroom/utils';
 	import { CircleDot, Newspaper, OctagonAlert, PackagePlus } from '@lucide/svelte';
+	import Capsule from '../Capsule.svelte';
 
 	export let item: NewsroomRecord;
 
@@ -24,7 +25,6 @@
 
 	let actionLabel = '';
 	let categoryLabel = '';
-	let isExternal = false;
 	let ctaHref: string | null = null;
 	let ctaTarget: '_blank' | undefined;
 	let ctaRel: 'noopener noreferrer' | undefined;
@@ -33,13 +33,14 @@
 		const category = item.category;
 		actionLabel = getActionLabel(translate, category);
 		categoryLabel = getCategoryLabel(translate, category);
-		isExternal = externalCategories.has(category as never);
+		const isExternal = externalCategories.has(category as never);
+		const internalHref = resolve('/newsroom/[id]', { id: item.id });
 		if (isExternal) {
 			ctaHref = item.resource ?? null;
 			ctaTarget = ctaHref ? '_blank' : undefined;
 			ctaRel = ctaHref ? 'noopener noreferrer' : undefined;
 		} else {
-			ctaHref = resolve(`/newsroom/${item.id}`);
+			ctaHref = internalHref;
 			ctaTarget = undefined;
 			ctaRel = undefined;
 		}
@@ -79,26 +80,14 @@
 			<CircleDot class="h-[1.2rem] w-[1.2rem] text-muted-foreground" />
 		{/if}
 	</div>
-	<div class="flex flex-col items-start gap-2 pb-3">
-		<header class="flex gap-2 items-center rounded-xl border pe-2">
-			{#if item.category}
-				<div
-					class="text-xs {item.category == 'news'
-						? 'bg-muted-foreground'
-						: 'bg-muted'} rounded-xl px-2 py-1 {item.category == 'news'
-						? 'text-muted'
-						: 'text-muted-foreground'} font-[500]"
-				>
-					{categoryLabel}
-				</div>
-			{/if}
-			<time datetime={item.created_at} class="text-muted-foreground text-xs">{formattedDate}</time>
-			{#if item.type}
-				<span>{item.type}</span>
-			{/if}
-		</header>
-		<div class="flex gap-3">
-			<div>
+	<div class="newsroom-item-content flex flex-col items-start gap-2 pb-5">
+		<Capsule
+			capsuleLabel={item.category ? categoryLabel : ''}
+			time={formattedDate}
+			datetime={item.created_at}
+		/>
+		<div class="flex gap-3 w-full">
+			<div class="flex flex-col gap-1 grow">
 				<h3 class="font-semibold">{localizedName}</h3>
 				{#if localizedDescription}
 					<p class="text-sm">{localizedDescription}</p>
