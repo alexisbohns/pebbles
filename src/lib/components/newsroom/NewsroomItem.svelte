@@ -110,28 +110,27 @@
 	</div>
 </article>
 
-<style lang="stylus">
-	.newsroom-item
-		&-line
-			display flex
-			flex-direction column
-			align-items center
-			justify-content stretch
-			align-self stretch
-			gap 0.5rem
-			padding-top 0.25rem
+<style lang="postcss">
+	.newsroom-item-line {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: stretch;
+		align-self: stretch;
+		gap: 0.5rem;
+		padding-top: 0.25rem;
+	}
 
-			&::after
-				content " "
-				width 3px
-				flex-grow 1
-				background var(--foreground-color)
-				opacity 0.1
-			
-			&::after
-				border-radius 10rem 10rem 0 0
-			
-		&:last-child
-			.newsroom-item-line::after
-				visibility hidden
+	.newsroom-item-line::after {
+		content: ' ';
+		width: 3px;
+		flex-grow: 1;
+		background: var(--foreground-color);
+		opacity: 0.1;
+		border-radius: 10rem 10rem 0 0;
+	}
+
+	.newsroom-item:last-child .newsroom-item-line::after {
+		visibility: hidden;
+	}
 </style>

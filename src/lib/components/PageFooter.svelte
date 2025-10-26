@@ -25,25 +25,28 @@
 	<ModeToggle />
 </div>
 
-<style lang="stylus">
-	.page-footer
-		display flex
-		flex-direction column
-		align-items center
-		text-align center
-		font-weight 300
-		gap .25rem
-		margin-top 2rem
+<style lang="postcss">
+	.page-footer {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		font-weight: 300;
+		gap: 0.25rem;
+		margin-top: 2rem;
+		font-size: 0.8rem;
+	}
 
-		font-size .8rem
+	.page-footer-links {
+		display: flex;
+		justify-content: center;
+		flex-wrap: wrap;
+		gap: 0.25rem 0.75rem;
+		margin-bottom: 0.5rem;
+	}
 
-		&-links
-			display flex
-			flex-wrap wrap
-			gap .75rem
-			margin-bottom .5rem
-
-		&-text
-			opacity .6
-			font-weight 200
+	.page-footer-text {
+		opacity: 0.6;
+		font-weight: 200;
+	}
 </style>

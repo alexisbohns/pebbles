@@ -34,45 +34,54 @@
 	</div>
 </div>
 
-<style lang="stylus">
-	.page
-		display flex
-		flex-direction column
-		gap 1.5rem
-		padding 0 0 3rem
+<style lang="postcss">
+	.page {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+		padding: 0 0 3rem;
+	}
 
-	.page__header
-		display flex
-		align-items center
-		justify-content space-between
-		gap 1rem
+	.page__header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+	}
 
-	.back
-		font-size .9rem
-		font-weight 500
+	.back {
+		font-size: 0.9rem;
+		font-weight: 500;
+	}
 
-	.content
-		line-height 1.6
+	.content {
+		line-height: 1.6;
+	}
 
-		:global(h2)
-			font-size 1.2rem
-			font-weight 600
-			margin 2rem 0 1rem
+	.content :global(h2) {
+		font-size: 1.2rem;
+		font-weight: 600;
+		margin: 2rem 0 1rem;
+	}
 
-		:global(p)
-			margin 0 0 1rem
-			opacity 0.8
+	.content :global(p) {
+		margin: 0 0 1rem;
+		opacity: 0.8;
+	}
 
-		:global(ul)
-			margin 0 0 1.5rem
-			padding-left 1.2rem
+	.content :global(ul) {
+		margin: 0 0 1.5rem;
+		padding-left: 1.2rem;
+	}
 
-		:global(li)
-			margin 0.4rem 0
-			list-style-type "✻"
-			padding-left 1rem
+	.content :global(li) {
+		margin: 0.4rem 0;
+		list-style-type: '✻';
+		padding-left: 1rem;
+	}
 
-		:global(a)
-			text-decoration underline
-			color inherit
+	.content :global(a) {
+		text-decoration: underline;
+		color: inherit;
+	}
 </style>

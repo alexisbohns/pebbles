@@ -57,45 +57,53 @@
 	></textarea>
 </div>
 
-<style lang="stylus">
-	.question
-		padding 1rem 0
-		display flex
-		flex-direction column
-		gap 0.5rem
-		opacity 0.6
+<style lang="postcss">
+	.question {
+		padding: 1rem 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		opacity: 0.6;
+	}
 
-		&-name
-			font-size 1rem
+	.question-name {
+		font-size: 1rem;
+	}
 
-		&-description
-			font-size 0.8rem
-			font-weight 400
-			max-height 0
-			opacity 0
-			overflow hidden
-			transition all 0.5s ease
-			margin-top 0.5rem
-			
-		&:focus-within
-			opacity 1
-		&:focus-within &-description
-			max-height 200px
-			opacity 0.6
-		
-		textarea
-			width 100%
-			background transparent
-			border none
-			border-left 0 solid transparent
-			padding 0
-			padding-left 0
-			position relative
-			resize none
-			overflow hidden
-			transition all 0.25s ease
+	.question-description {
+		font-size: 0.8rem;
+		font-weight: 400;
+		max-height: 0;
+		opacity: 0;
+		overflow: hidden;
+		transition: all 0.5s ease;
+		margin-top: 0.5rem;
+	}
 
-			&:focus
-				border none
-				outline none
+	.question:focus-within {
+		opacity: 1;
+	}
+
+	.question:focus-within .question-description {
+		max-height: 200px;
+		opacity: 0.6;
+	}
+
+	.question textarea {
+		width: 100%;
+		background: transparent;
+		border: none;
+		border-left: 0 solid transparent;
+		padding: 0;
+		padding-left: 0;
+		position: relative;
+		resize: none;
+		overflow: hidden;
+		transition: all 0.25s ease;
+	}
+
+	.question textarea:focus {
+		border: none;
+		outline: none;
+	}
 </style>

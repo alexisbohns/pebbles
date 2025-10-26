@@ -126,8 +126,8 @@
 	</a>
 {/if}
 
-<style lang="stylus">
-	a.login
-		font-size 0.8rem
-
+<style lang="postcss">
+	a.login {
+		font-size: 0.8rem;
+	}
 </style>
