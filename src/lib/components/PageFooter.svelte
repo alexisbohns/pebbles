@@ -39,8 +39,9 @@
 
 	.page-footer-links {
 		display: flex;
+		justify-content: center;
 		flex-wrap: wrap;
-		gap: 0.75rem;
+		gap: 0.25rem 0.75rem;
 		margin-bottom: 0.5rem;
 	}
 
